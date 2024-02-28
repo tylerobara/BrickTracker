@@ -7,8 +7,6 @@ import rebrick #rebrickable api
 # json things
 import json
 
-from bs4 import BeautifulSoup
-
 import requests # request img from web
 import shutil # save img locally
 
@@ -34,9 +32,11 @@ with open('api','r') as f:
 rb = rebrick.init(api_key)
 
 Path(set_path).mkdir(parents=True, exist_ok=True)
+Path('./static/parts').mkdir(parents=True, exist_ok=True)
+Path('./info').mkdir(parents=True, exist_ok=True)
 
 # Get set info
-response = json.loads(rebrick.lego.get_set(int(set_num)).read())
+response = json.loads(rebrick.lego.get_set(set_num).read())
 with open(set_path+'info.json', 'w', encoding='utf-8') as f:
     json.dump(response, f, ensure_ascii=False, indent=4)
 
@@ -53,17 +53,17 @@ else:
     logging.error('set_img_url: ' + set_num)
 
 # set inventory
-response = json.loads(rebrick.lego.get_set_elements(int(set_num)).read())
+response = json.loads(rebrick.lego.get_set_elements(set_num).read())
 with open(set_path+'inventory.json', 'w', encoding='utf-8') as f:
     json.dump(response, f, ensure_ascii=False, indent=4)
 
 # get part images if not exists
 for i in response["results"]:
-	if not Path("./parts/"+i["element_id"]+".jpg").is_file():
+	if not Path("./static/parts/"+i["element_id"]+".jpg").is_file():
 		res = requests.get(i["part"]["part_img_url"], stream = True)
 
 		if res.status_code == 200:
-			with open("./parts/"+i["element_id"]+".jpg",'wb') as f:
+			with open("./static/parts/"+i["element_id"]+".jpg",'wb') as f:
 				shutil.copyfileobj(res.raw, f)
 			print('image saved')
 		else:
