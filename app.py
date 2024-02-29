@@ -11,8 +11,11 @@ def index():
           info_file = json.loads(info.read())
     with open('./sets/'+tmp+'/inventory.json') as inventory:
           inventory_file = json.loads(inventory.read())
+    with open('./info/'+tmp+'.json') as info:
+          json_file = json.loads(info.read())
+
     return render_template('bootstrap_table.html', title=info_file['set_num']+" - "+info_file['name'],
-                           info_file=info_file,inventory_file=inventory_file)
+                           info_file=info_file,inventory_file=inventory_file,json_file=json_file)
            
     #return render_template('index.html') 
 
