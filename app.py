@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import json
-
+from pprint import pprint as pp
 app = Flask(__name__)
 
 tmp = '71386-10'
@@ -13,7 +13,7 @@ def index():
           inventory_file = json.loads(inventory.read())
     with open('./info/'+tmp+'.json') as info:
           json_file = json.loads(info.read())
-
+    pp(json_file['unit'][0]['bricks']['missing'])
     return render_template('bootstrap_table.html', title=info_file['set_num']+" - "+info_file['name'],
                            info_file=info_file,inventory_file=inventory_file,json_file=json_file)
            
