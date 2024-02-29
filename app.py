@@ -35,13 +35,22 @@ def save_number():
             json_file = json.loads(info.read())
         print(json_file['count'])
 
-        print(json_file['unit'][0]['bricks']['missing'])
+        data = '''
+        {
+	  "brick" : {
+            "ID": ''' + data1 + ''',
+            "color_name": ''' + data2 + ''',
+            "amount":''' + number + '''
+            }
+        }
+        '''
+        json_file['unit'][0]['bricks']['missing'].append(data)
 
         # Save number to JSON file
         with open('data.json', 'w') as json_file:
-            json.dump({'number': number}, json_file)
+            json.dump(json_file, json_file)
     
     return  ('', 204)
 
 if __name__ == '__main__':
-    app.run(host='192.168.10.109', debug=True, port=3333)
+    app.run(host='23.88.46.240', debug=True, port=3333)

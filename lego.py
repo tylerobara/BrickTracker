@@ -12,7 +12,7 @@ import shutil # save img locally
 
 log_name='lego.log'
 
-logging.basicConfig(filename=log_name, encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename=log_name, level=logging.DEBUG)
 logging.FileHandler(log_name,mode='w')
 
 set_num=sys.argv[1]
