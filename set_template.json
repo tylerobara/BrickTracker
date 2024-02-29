@@ -1,16 +1,12 @@
 {
   "count": 1,
   "unit": [
-    "location": "",
-    "minifigs": "",
-    "bricks": {
-        "missing": [
-          "brick" : {
-            "ID": ,
-            "color_name": ,
-            "amount": 
-            }
-          ]
-        }
+    {
+      "location": "",
+      "minifigs": "",
+      "bricks": {
+        "missing": []
+      }
+    }
   ]
 }

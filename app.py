@@ -16,10 +16,6 @@ def index():
     pp(json_file['unit'][0]['bricks']['missing'])
     return render_template('bootstrap_table.html', title=info_file['set_num']+" - "+info_file['name'],
                            info_file=info_file,inventory_file=inventory_file,json_file=json_file)
-           
-    #return render_template('index.html') 
-
-#'Welcome to the Flask App'
 
 
 @app.route('/saveNumber', methods=['POST'])
@@ -39,12 +35,9 @@ def save_number():
         print(json_file['count'])
 
         data = '{"brick" : {"ID":"' + data1 + '","color_name": "' + data2 + '","amount":"' + number + '"}}'
-        print(data)
-        print(json.loads(data))
-
+        
         json_file['unit'][0]['bricks']['missing'].append(json.loads(data))
-        print(json_file['unit'][0]['bricks'])
-        # Save number to JSON file
+
         with open('./info/'+tmp+'.json', 'w') as dump_file:
             json.dump(json_file,dump_file)
     
