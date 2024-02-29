@@ -22,6 +22,7 @@ def index():
 def save_number():
     data1 = request.form.get('brick.part.part_num')
     data2 = request.form.get('brick.color.name')
+    data3 = request.form.get('index')
     number = request.form.get('numberInput')
 
     if number is not None:
@@ -36,7 +37,7 @@ def save_number():
 
         data = '{"brick" : {"ID":"' + data1 + '","color_name": "' + data2 + '","amount":"' + number + '"}}'
         
-        json_file['unit'][0]['bricks']['missing'].append(json.loads(data))
+        json_file['unit'][int(data3)]['bricks']['missing'].append(json.loads(data))
 
         with open('./info/'+tmp+'.json', 'w') as dump_file:
             json.dump(json_file,dump_file)

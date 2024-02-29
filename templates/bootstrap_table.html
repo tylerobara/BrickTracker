@@ -13,7 +13,7 @@
         <th>qty</th>
         <th>is_spare</th>
         {% for i in json_file['unit'] %}
-          <th>Missing?</th>
+          <th>Missing ({{ loop.index }})</th>
         {% endfor %}
       </tr>
     </thead>
@@ -28,24 +28,27 @@
           <td>{{ brick.color.name }}</td>
           <td>{{ brick.quantity }}</td>
           <td>{{ brick.is_spare }}</td>
-	  {% for i in json_file['unit'] %}
-		  <td>
-			{% set ns = namespace(count='') %}
-		      <form action="/saveNumber" method="post">
-			<input type="hidden" name="brick.part.part_num" value="{{ brick.part.part_num }}">
-			<input type="hidden" name="count" value="{{ i }}">
-			<input type="hidden" name="brick.color.name" value="{{ brick.color.name }}">
-			{% for j in i['bricks']['missing'] %}
-			  {% if j['brick']['ID'] == brick.part.part_num and j['brick']['color_name'] == brick.color.name %}
-			    {% set ns.count = j['brick']['amount'] %}
-			  {% endif %}
-			{% endfor %}
-			<input type="text" style="height:auto;width:20px" id="numberInput" name="numberInput" value={{ ns.count }}><button type="submit"><i class="fa fa-save"></i></button>
-		      </form>
-		  </td>
-	  {% endfor %}
+    	  {% for i in json_file['unit'] %}
+        
+    		  <td>
+    			{% set ns = namespace(count='') %}
+    		      <form action="/saveNumber" method="post">
+    			<input type="hidden" name="brick.part.part_num" value="{{ brick.part.part_num }}">
+    			<input type="hidden" name="count" value="{{ i }}">
+          <input type="hidden" name="index" value="{{ loop.index0 }}">
+    			<input type="hidden" name="brick.color.name" value="{{ brick.color.name }}">
+    			{% for j in json_file['unit'][loop.index0]['bricks']['missing'] %}
+    			  {% if j['brick']['ID'] == brick.part.part_num and j['brick']['color_name'] == brick.color.name %}
+    			    {% set ns.count = j['brick']['amount'] %}
+    			  {% endif %}
+    			{% endfor %}
+    			<input type="text" style="height:auto;width:40px" id="numberInput" name="numberInput" value={{ ns.count }}><button type="submit"><i class="fa fa-save"></i></button>
+    		      </form>
+    		  </td>
+    	  {% endfor %}
         </tr>
       {% endfor %}
     </tbody>
   </table>
+
 {% endblock %}
