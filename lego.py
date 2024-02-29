@@ -54,9 +54,8 @@ if Path("./info/"+set_num + ".json").is_file():
         with open("./info/" + set_num + ".json",'w') as f:
             json.dump(data,f,indent = 4)
 
-    else:
-        with open(set_path+'info.json', 'w', encoding='utf-8') as f:
-            json.dump(response, f, ensure_ascii=False, indent=4)
+with open(set_path+'info.json', 'w', encoding='utf-8') as f:
+    json.dump(response, f, ensure_ascii=False, indent=4)
 
 # save set image to folder
 set_img_url = response["set_img_url"]

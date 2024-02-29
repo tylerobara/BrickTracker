@@ -3,10 +3,10 @@ import json
 from pprint import pprint as pp
 app = Flask(__name__)
 
-tmp = '71386-10'
+#tmp = '71386-10'
 
-@app.route('/')
-def index():
+@app.route('/<tmp>')
+def index(tmp):
     with open('./sets/'+tmp+'/info.json') as info:
           info_file = json.loads(info.read())
     with open('./sets/'+tmp+'/inventory.json') as inventory:
@@ -14,12 +14,12 @@ def index():
     with open('./info/'+tmp+'.json') as info:
           json_file = json.loads(info.read())
     pp(json_file['unit'][0]['bricks']['missing'])
-    return render_template('bootstrap_table.html', title=info_file['set_num']+" - "+info_file['name'],
+    return render_template('bootstrap_table.html', tmp=tmp,title=info_file['set_num']+" - "+info_file['name'],
                            info_file=info_file,inventory_file=inventory_file,json_file=json_file)
 
 
-@app.route('/saveNumber', methods=['POST'])
-def save_number():
+@app.route('/<tmp>/saveNumber', methods=['POST'])
+def save_number(tmp):
     data1 = request.form.get('brick.part.part_num')
     data2 = request.form.get('brick.color.name')
     data3 = request.form.get('index')

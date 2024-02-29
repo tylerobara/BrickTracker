@@ -32,7 +32,7 @@
         
     		  <td>
     			{% set ns = namespace(count='') %}
-    		      <form action="/saveNumber" method="post">
+			<form action="/{{ tmp }}/saveNumber" method="post">
     			<input type="hidden" name="brick.part.part_num" value="{{ brick.part.part_num }}">
     			<input type="hidden" name="count" value="{{ i }}">
           <input type="hidden" name="index" value="{{ loop.index0 }}">
