@@ -5,14 +5,16 @@
     <thead>
       <tr>
         <th>img</th>
-        <th>part.element_id</th>
-        <th>part.part_num</th>
-        <th>part.name</th>
+        <th>element_id</th>
+        <th>part_num</th>
+        <th>name</th>
         <th>color.id</th>
-        <th>color.name</th>
-        <th>part.quantity</th>
-        <th>part.is_spare</th>
-        <th>Missing?</th>
+        <th>color</th>
+        <th>qty</th>
+        <th>is_spare</th>
+        {% for i in json_file['unit'] %}
+          <th>Missing?</th>
+        {% endfor %}
       </tr>
     </thead>
     <tbody>
