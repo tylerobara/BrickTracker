@@ -70,7 +70,7 @@ else:
     logging.error('set_img_url: ' + set_num)
 
 # set inventory
-response = json.loads(rebrick.lego.get_set_elements(set_num).read())
+response = json.loads(rebrick.lego.get_set_elements(set_num,page_size=20000).read())
 with open(set_path+'inventory.json', 'w', encoding='utf-8') as f:
     json.dump(response, f, ensure_ascii=False, indent=4)
 

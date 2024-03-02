@@ -24,18 +24,20 @@ def save_number(tmp):
     data2 = request.form.get('brick.color.name')
     data3 = request.form.get('index')
     number = request.form.get('numberInput')
+    is_spare = request.form.get('is_spare')
 
     if number is not None:
 
         print(data1)
         print(data2)
         print(number)
+        print(is_spare)
 
         with open('./info/'+tmp+'.json') as info:
             json_file = json.loads(info.read())
         print(json_file['count'])
 
-        data = '{"brick" : {"ID":"' + data1 + '","color_name": "' + data2 + '","amount":"' + number + '"}}'
+        data = '{"brick" : {"ID":"' + data1 + '","is_spare": "' + is_spare + '","color_name": "' + data2 + '","amount":"' + number + '"}}'
         
         json_file['unit'][int(data3)]['bricks']['missing'].append(json.loads(data))
 
