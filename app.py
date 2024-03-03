@@ -1,12 +1,25 @@
 from flask import Flask, request, jsonify, render_template
 import json
 from pprint import pprint as pp
+from pathlib import Path
+import re
 app = Flask(__name__)
 
 #tmp = '71386-10'
 
+
+@app.route('/')
+def index():
+    pathlist = Path('./info/').rglob('*.json')
+    set_list = []
+    for path in pathlist:
+        print(str(path))
+        set_list.append(re.findall(r"\b\d+(?:-\d+)?\b",str(path)))
+
+    return set_list
+
 @app.route('/<tmp>')
-def index(tmp):
+def sets(tmp):
     with open('./sets/'+tmp+'/info.json') as info:
           info_file = json.loads(info.read())
     with open('./sets/'+tmp+'/inventory.json') as inventory:
