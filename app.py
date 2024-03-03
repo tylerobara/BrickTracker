@@ -13,16 +13,18 @@ def index():
     pathlist = Path('./info/').rglob('*.json')
     set_list = []
     for path in pathlist:
-        print(str(path))
-        set_list.append(re.findall(r"\b\d+(?:-\d+)?\b",str(path)))
-
-    return set_list
+        set_num = re.findall(r"\b\d+(?:-\d+)?\b",str(path))[0]
+        with open('./static/sets/'+set_num+'/info.json') as info:
+            info_file = json.loads(info.read())
+        set_list.append(info_file)
+    print(set_list) 
+    return render_template('frontpage.html',set_list=set_list)
 
 @app.route('/<tmp>')
 def sets(tmp):
-    with open('./sets/'+tmp+'/info.json') as info:
+    with open('./static/sets/'+tmp+'/info.json') as info:
           info_file = json.loads(info.read())
-    with open('./sets/'+tmp+'/inventory.json') as inventory:
+    with open('./static/sets/'+tmp+'/inventory.json') as inventory:
           inventory_file = json.loads(inventory.read())
     with open('./info/'+tmp+'.json') as info:
           json_file = json.loads(info.read())

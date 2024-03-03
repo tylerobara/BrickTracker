@@ -15,10 +15,14 @@ log_name='lego.log'
 logging.basicConfig(filename=log_name, level=logging.DEBUG)
 logging.FileHandler(log_name,mode='w')
 
-set_num=sys.argv[1]
-online_set_num=set_num+"-1"
+if '-' not in sys.argv[1]:
+    set_num = sys.argv[1] + '-1'
+else:
+    set_num=sys.argv[1]
 
-set_path="./sets/" + sys.argv[1] + "/"
+#online_set_num=set_num+"-1"
+
+set_path="./static/sets/" + set_num + "/"
 Path('./static/parts').mkdir(parents=True, exist_ok=True)
 Path('./info').mkdir(parents=True, exist_ok=True)
 
@@ -76,16 +80,33 @@ with open(set_path+'inventory.json', 'w', encoding='utf-8') as f:
 
 # get part images if not exists
 for i in response["results"]:
-    if not Path("./static/parts/"+i["element_id"]+".jpg").is_file():
-        res = requests.get(i["part"]["part_img_url"], stream = True)
+    try:
+        if i['element_id'] == None:
+            if not Path("./static/parts/p_"+i["part"]["part_id"]+".jpg").is_file():
+                res = requests.get(i["part"]["part_img_url"], stream = True)
 
-        if res.status_code == 200:
-            with open("./static/parts/"+i["element_id"]+".jpg",'wb') as f:
-                shutil.copyfileobj(res.raw, f)
-            print('image saved')
+                if res.status_code == 200:
+                    with open("./static/parts/p_"+i["part"]["part_id"]+".jpg",'wb') as f:
+                        shutil.copyfileobj(res.raw, f)
+                    print('image saved')
         else:
-            print('Image Couldn\'t be retrieved for set ' + set_num + ": " + i["element_id"])
-            logging.error(set_num + ": " + i["element_id"])
+            if not Path("./static/parts/"+i["element_id"]+".jpg").is_file():
+                res = requests.get(i["part"]["part_img_url"], stream = True)
+
+                if res.status_code == 200:
+                    with open("./static/parts/"+i["element_id"]+".jpg",'wb') as f:
+                        shutil.copyfileobj(res.raw, f)
+                    print('image saved')
+            if not Path("./static/parts/"+i["element_id"]+".jpg").is_file():
+                res = requests.get(i["part"]["part_img_url"], stream = True)
+
+                if res.status_code == 200:
+                    with open("./static/parts/"+i["element_id"]+".jpg",'wb') as f:
+                        shutil.copyfileobj(res.raw, f)
+                    print('image saved')
+    except Exception as e:
+        print(e)
+        logging.error(set_num + ": " + str(e))
 
 # read info file with missing pieces
 
