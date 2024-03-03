@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Responsive Grid</title>
+<!-- CSS Reset -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+
+<!-- Milligram CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+
 <style>
   body {
     margin: 0;
@@ -34,19 +40,33 @@
     display: inline-block;
     margin: 0; /* Remove default margin */
   }
+  .button {
+  background-color: black;
+  border-color: black;
+}
+.button.button-clear,
+.button.button-outline {
+  background-color: transparent;
+  color: black;
+}
+.button.button-clear {
+  border-color: transparent;
+}
+.search-container {
+  padding: 10px;
+}
 </style>
 </head>
 <body>
 	<div class="search-container">
 		<input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search...">
-		<select id="sortSelect" onchange="sortFunction()">
-    <option value="default">Default</option>
-    <option value="alphabetical">Alphabetical</option>
   </select>
-  <button onclick="dynamicSort('set_id')">Sort by ID</button>
-  <button onclick="dynamicSort('set_year')">Sort by Year</button>
-  <button onclick="dynamicSort('set_parts')">Sort by Parts</button>
-  <button onclick="dynamicSort('set_name')">Sort by Name</button>
+  <center>
+  <button class="button button-outline" onclick="dynamicSort('set_id')">Sort by ID</button>
+  <button class="button button-outline" onclick="dynamicSort('set_year')">Sort by Year</button>
+  <button class="button button-outline" onclick="dynamicSort('set_parts')">Sort by Parts</button>
+  <button class="button button-outline" onclick="dynamicSort('set_name')">Sort by Name</button>
+  </center>
   <!-- Add more buttons for other text values if needed -->
 	</div>
 
@@ -130,10 +150,9 @@ function dynamicSort(className) {
     var textA = a.getElementsByClassName(className)[0].textContent.trim();
     var textB = b.getElementsByClassName(className)[0].textContent.trim();
     
-    // Remove "-1" suffix if present
-    textA = textA.replace(/-1$/, '').trim();
-    textB = textB.replace(/-1$/, '').trim();
-    
+       // Remove digits after hyphen if present
+    textA = textA.replace(/-\d+$/, '').trim();
+    textB = textB.replace(/-\d+$/, '').trim(); 
     // If text1 is an integer, parse it as a number
     if (!isNaN(textA) && !isNaN(textB)) {
       var result = parseInt(textA) - parseInt(textB);
