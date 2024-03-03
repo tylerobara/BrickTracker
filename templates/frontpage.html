@@ -29,29 +29,140 @@
     height: auto;
     display: block;
   }
+    /* Style to display paragraphs inline */
+  .grid-item p {
+    display: inline-block;
+    margin: 0; /* Remove default margin */
+  }
 </style>
 </head>
 <body>
+	<div class="search-container">
+		<input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search...">
+		<select id="sortSelect" onchange="sortFunction()">
+    <option value="default">Default</option>
+    <option value="alphabetical">Alphabetical</option>
+  </select>
+  <button onclick="dynamicSort('set_id')">Sort by ID</button>
+  <button onclick="dynamicSort('set_year')">Sort by Year</button>
+  <button onclick="dynamicSort('set_parts')">Sort by Parts</button>
+  <button onclick="dynamicSort('set_name')">Sort by Name</button>
+  <!-- Add more buttons for other text values if needed -->
+	</div>
 
-	<div class="grid-container">
+	<div class="grid-container" id="gridContainer">
 
 {% for i in set_list %}
 
 <div class="grid-item">
 	<center><img src="/static/sets/{{ i['set_num'] }}/cover.jpg" style="height: 150px; width: auto;" alt="Image"></center>
-	<h2>{{ i['name'] }}</h2>
-	<p>
-	<b>Set:</b> {{ i['set_num'] }}
+	<h2 class='set_name'>{{ i['name'] }}</h2>
+	<p><b>Set:</b></p><p class='set_id'>{{ i['set_num'] }}</p>
 	<br>
-	<b>Year:</b> {{ i['year'] }}
+	<p><b>Year: </b></p><p class='set_year'>{{ i['year'] }}</p>
 	<br>
-	<b>Parts:</b> {{ i['num_parts'] }}
+	<p><b>Parts:</b></p><p class='set_parts'>{{ i['num_parts'] }}</p>
 	<br>
-	<b>Inventory:</b> <a href="/{{ i['set_num'] }}">Link</a></p> 
+	<p><b>Inventory:</b> <a href="/{{ i['set_num'] }}">Link</a></p>
 </div>
 
 {% endfor %}
 
 	</div>
+<script>
+function searchFunction() {
+  var input, filter, gridContainer, gridItems, i, txtValue;
+  input = document.getElementById('searchInput');
+  filter = input.value.toUpperCase();
+  gridContainer = document.getElementById('gridContainer');
+  gridItems = gridContainer.getElementsByClassName('grid-item');
+
+  for (i = 0; i < gridItems.length; i++) {
+    txtValue = gridItems[i].textContent || gridItems[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      gridItems[i].style.display = "";
+    } else {
+      gridItems[i].style.display = "none";
+    }
+  }
+}
+function sortFunction() {
+  var sortSelect, sortValue, gridContainer, gridItems, sortedItems, i;
+  sortSelect = document.getElementById('sortSelect');
+  sortValue = sortSelect.value;
+  gridContainer = document.getElementById('gridContainer');
+  gridItems = gridContainer.getElementsByClassName('grid-item');
+  sortedItems = Array.from(gridItems);
+
+  if (sortValue === 'alphabetical') {
+    sortedItems.sort(function(a, b) {
+      var textA = a.textContent.trim().toUpperCase();
+      var textB = b.textContent.trim().toUpperCase();
+      if (textA < textB) {
+        return -1;
+      }
+      if (textA > textB) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
+  // Remove existing items
+  while (gridContainer.firstChild) {
+    gridContainer.removeChild(gridContainer.firstChild);
+  }
+
+  // Append sorted items
+  for (i = 0; i < sortedItems.length; i++) {
+    gridContainer.appendChild(sortedItems[i]);
+  }
+}
+var sortOrder = 'asc';
+
+function dynamicSort(className) {
+  var gridContainer, gridItems, sortedItems, i;
+  gridContainer = document.getElementById('gridContainer');
+  gridItems = gridContainer.getElementsByClassName('grid-item');
+  sortedItems = Array.from(gridItems);
+
+  sortedItems.sort(function(a, b) {
+    var textA = a.getElementsByClassName(className)[0].textContent.trim();
+    var textB = b.getElementsByClassName(className)[0].textContent.trim();
+    
+    // Remove "-1" suffix if present
+    textA = textA.replace(/-1$/, '').trim();
+    textB = textB.replace(/-1$/, '').trim();
+    
+    // If text1 is an integer, parse it as a number
+    if (!isNaN(textA) && !isNaN(textB)) {
+      var result = parseInt(textA) - parseInt(textB);
+      // Toggle result based on current sort order
+      return sortOrder === 'asc' ? result : -result;
+    }
+    // If text1 is not an integer, treat it as a string
+    else {
+      textA = textA.toUpperCase();
+      textB = textB.toUpperCase();
+      var result = textA.localeCompare(textB);
+      // Toggle result based on current sort order
+      return sortOrder === 'asc' ? result : -result;
+    }
+  });
+
+  // Reverse sort order for next click
+  sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+
+  // Remove existing items
+  while (gridContainer.firstChild) {
+    gridContainer.removeChild(gridContainer.firstChild);
+  }
+
+  // Append sorted items
+  for (i = 0; i < sortedItems.length; i++) {
+    gridContainer.appendChild(sortedItems[i]);
+  }
+}
+</script>
 </body>
 </html>
