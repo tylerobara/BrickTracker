@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsive Grid</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .grid-item {
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .grid-item img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+	<div class="grid-container">
+
+{% for i in set_list %}
+
+<div class="grid-item">
+	<img src="/static/sets/{{ i['set_num'] }}/cover.jpg" style="height: 150px; width: auto;" alt="Image">
+	<h2>{{ i['name'] }}</h2>
+	<p>Set: {{ i['set_num'] }}</p>
+	<p>Year: {{ i['year'] }}</p>
+	<p>Parts: {{ i['num_parts'] }}</p>
+	<p>Inventory: <a href="/{{ i['set_num'] }}">Link</a></p> 
+</div>
+
+{% endfor %}
+
+	</div>
+</body>
+</html>

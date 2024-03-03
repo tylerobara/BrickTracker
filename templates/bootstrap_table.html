@@ -21,8 +21,12 @@
       {% for brick in inventory_file.results %}
       {% if brick.is_spare == False %}
         <tr>
-          <td><img src="{{ '/static/parts/'+brick.element_id+'.jpg' }}" style="height: 50px; width: auto;"></td>
-          <td>{{ brick.element_id }}</td>
+	  {% if brick.element_id == None %}
+	  <td><img src="{{ '/static/none.jpg' }}" style="height: 50px; width: auto;"></td>
+	  {% else %}
+	  <td><img src="{{ '/static/parts/' + brick.element_id + '.jpg' }}" style="height: 50px; width: auto;"></td>
+	  {% endif %}
+	  <td>{{ brick.element_id }}</td>	
           <td>{{ brick.part.part_num }}</td>
           <td>{{ brick.part.name }}</td>
           <td>{{ brick.color.id }}</td>
@@ -76,7 +80,11 @@
       {% for brick in inventory_file.results %}
       {% if brick.is_spare == True %}
         <tr>
-          <td><img src="{{ '/static/parts/'+brick.element_id+'.jpg' }}" style="height: 50px; width: auto;"></td>
+	  {% if brick.element_id == None %}
+	  <td><img src="{{ '/static/none.jpg' }}" style="height: 50px; width: auto;"></td>
+	  {% else %}
+	  <td><img src="{{ '/static/parts/' + brick.element_id + '.jpg' }}" style="height: 50px; width: auto;"></td>
+	  {% endif %}
           <td>{{ brick.element_id }}</td>
           <td>{{ brick.part.part_num }}</td>
           <td>{{ brick.part.name }}</td>
