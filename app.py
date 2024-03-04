@@ -58,7 +58,7 @@ def save_number(tmp):
         elif number == '0':
             for idx,i in enumerate(json_file['unit'][int(index)]['bricks']['missing']):
                 if i['brick']['ID'] == part_num and i['brick']['is_spare'] == is_spare and i['brick']['color_name'] == color:
-                    json_file['unit'][int(index)]['bricks']['missing'].pop(0)
+                    json_file['unit'][int(index)]['bricks']['missing'].pop(idx)
         else:
             found = False
             

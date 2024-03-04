@@ -67,17 +67,17 @@
 </div>
 
   <h1>Spares</h1>
-  <table id="data" class="table table-striped">
+<div class="center-table">
+<table id="data" class="table">
     <thead>
       <tr>
-        <th>img</th>
-        <th>element_id</th>
-        <th>part_num</th>
-        <th>name</th>
-        <th>color</th>
-        <th>qty</th>
+        <th></th>
+        <th style="text-align:center;margin:0px;" class="fixed-width hidden-mobile">ID</th>
+        <th class="fixed-width hidden-mobile">Name</th>
+        <th class="fixed-width">Color</th>
+        <th style="text-align: center;" class="fixed-width">Qty</th>
         {% for i in json_file['unit'] %}
-	<th>Missing ({{ loop.index }})</th>
+    <th style="text-align: center;" class="fixed-width">Missing ({{ loop.index }})</th>
         {% endfor %}
       </tr>
     </thead>
@@ -85,41 +85,55 @@
       {% for brick in inventory_file.results %}
       {% if brick.is_spare == True %}
         <tr>
-	  {% if brick.element_id == None %}
-	  <td><img src="{{ '/static/none.jpg' }}" style="height: 50px; width: auto;"></td>
-	  {% else %}
-	  <td><img src="{{ '/static/parts/' + brick.element_id + '.jpg' }}" style="height: 50px; width: auto;"></td>
-	  {% endif %}
-          <td>{{ brick.element_id }}</td>
-          <td>{{ brick.part.part_num }}</td>
-          <td>{{ brick.part.name }}</td>
+    {% if brick.element_id == None %}
+    <td><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" style="height: 50px; width: auto;"></td>
+    {% else %}
+    <td><img src="{{ '/static/parts/' + brick.element_id + '.jpg' }}" class="lightbox-trigger" style="height: 50px; width: auto;"></td>
+    {% endif %}
+          <td  style="text-align:center;margin:0px;" class="hidden-mobile">{{ brick.part.part_num }}</td>
+          <td class="hidden-mobile">{{ brick.part.name }}</td>
           <td>{{ brick.color.name }}</td>
-          <td>{{ brick.quantity }}</td>
-    	  {% for i in json_file['unit'] %}
+          <td style="text-align:center;">{{ brick.quantity }}</td>
+        {% for i in json_file['unit'] %}
         
-    		  <td>
-    			{% set ns = namespace(count='') %}
-			<form action="/{{ tmp }}/saveNumber" method="post">
-    			<input type="hidden" name="brick.part.part_num" value="{{ brick.part.part_num }}">
-    			<input type="hidden" name="count" value="{{ i }}">
+          <td class="centered-cell">
+      <div class="inputContainer">
+          {% set ns = namespace(count='') %}
+      <form id="number-form" action="/{{ tmp }}/saveNumber" method="post">
+          <input type="hidden" name="brick.part.part_num" value="{{ brick.part.part_num }}">
+          <input type="hidden" name="count" value="{{ i }}">
           <input type="hidden" name="index" value="{{ loop.index0 }}">
           <input type="hidden" name="is_spare" value="{{ brick.is_spare }}">
-    			<input type="hidden" name="brick.color.name" value="{{ brick.color.name }}">
-    			{% for j in json_file['unit'][loop.index0]['bricks']['missing'] %}
-    			  {% if j['brick']['ID'] == brick.part.part_num and j['brick']['color_name'] == brick.color.name and j['brick']['is_spare']|lower == brick.is_spare|lower %}
-    			    {% set ns.count = j['brick']['amount'] %}
-    			  {% endif %}
-    			{% endfor %}
-    			<input type="text" style="height:auto;width:40px" id="numberInput" name="numberInput" value={{ ns.count }}><button type="submit"><i class="fa fa-save"></i></button>
-    		      </form>
-    		  </td>
-    	  {% endfor %}
-        </tr>
-	{% endif %}
+          <input type="hidden" name="brick.color.name" value="{{ brick.color.name }}">
+          {% for j in json_file['unit'][loop.index0]['bricks']['missing'] %}
+            {% if j['brick']['ID'] == brick.part.part_num and j['brick']['color_name'] == brick.color.name %}
 
+        {% if j['brick']['is_spare']|lower == brick.is_spare|lower %} 
+
+              {% set ns.count = j['brick']['amount'] %}
+          {% endif %} 
+            {% endif %}
+          {% endfor %}
+      <div class='inputField'>
+  <input type="number" style="text-align:center;" id="numberInput" name="numberInput" value="{{ ns.count }}" pattern="\d+" required>
+  <button class="square-button" type="submit">
+    <img src="/static/save.svg" alt="Save Icon">
+  </button>
+      </div>
+              </form>
+      </div>
+          </td>
+        {% endfor %}
+        </tr>
+  {% endif %}
       {% endfor %}
     </tbody>
   </table>
+</div>
+
+
+
+
 
 
 <div id="lightbox-modal">
