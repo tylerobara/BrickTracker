@@ -5,13 +5,11 @@
 <table id="data" class="table table-striped">
     <thead>
       <tr>
-        <th>img</th>
-        <th>element_id</th>
-        <th>part_num</th>
-        <th>name</th>
-        <th>color.id</th>
-        <th>color</th>
-        <th>qty</th>
+        <th></th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Color</th>
+        <th>Qty</th>
         {% for i in json_file['unit'] %}
           <th>Missing ({{ loop.index }})</th>
         {% endfor %}
@@ -26,15 +24,14 @@
 	  {% else %}
 	  <td><img src="{{ '/static/parts/' + brick.element_id + '.jpg' }}" style="height: 50px; width: auto;"></td>
 	  {% endif %}
-	  <td>{{ brick.element_id }}</td>	
           <td>{{ brick.part.part_num }}</td>
           <td>{{ brick.part.name }}</td>
-          <td>{{ brick.color.id }}</td>
           <td>{{ brick.color.name }}</td>
           <td>{{ brick.quantity }}</td>
     	  {% for i in json_file['unit'] %}
         
-    		  <td>
+    		  <td class="centered-cell">
+			<div class="inputContainer">
     			{% set ns = namespace(count='') %}
 			<form action="/{{ tmp }}/saveNumber" method="post">
     			<input type="hidden" name="brick.part.part_num" value="{{ brick.part.part_num }}">
@@ -51,8 +48,14 @@
 			    {% endif %} 
     			  {% endif %}
     			{% endfor %}
-    			<input type="text" style="height:auto;width:40px" id="numberInput" name="numberInput" value={{ ns.count }}><button type="submit"><i class="fa fa-save"></i></button>
+			<div class='inputField'>
+	<input type="text" id="numberInput" name="numberInput" value={{ ns.count }}>
+	<button class="square-button" type="submit">
+		<img src="/static/save.svg" alt="Save Icon">
+	</button>
+			</div>
     		      </form>
+			</div>
     		  </td>
     	  {% endfor %}
         </tr>
