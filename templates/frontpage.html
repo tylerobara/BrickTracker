@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Responsive Grid</title>
+<title>Set Overview</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
 <!-- CSS Reset -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
 
 <!-- Milligram CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+
 
 <style>
   body {
@@ -23,23 +26,49 @@
     gap: 10px;
     padding: 10px;
   }
-  
+
   .grid-item {
+  	display: flex;
+	flex-direction: column; /* Arrange content vertically */
+  }
+
+  .card {
+    height: 100%;
+    overflow: hidden;
     border: 1px solid #ccc;
     padding: 10px;
     box-sizing: border-box;
+    padding-bottom:40px;   /* Height of the footer */
+  }
+
+/* Adjust height for smaller screens */
+@media (max-width: 768px) {
+  .card {
+    height: auto; /* Let the height adjust dynamically */
   }
   
-  .grid-item img {
-    max-width: 100%;
-    height: auto;
-    display: block;
+  .grid-item {
+    height: auto; /* Let the height adjust dynamically */
+    overflow: visible; /* Allow content to overflow if necessary */
   }
-    /* Style to display paragraphs inline */
-  .grid-item p {
-    display: inline-block;
+}
+
+  .grid-item img { 
+    max-width: 100%; 
+    height: auto; 
+    display: block;
+
+  }
+  .card p {
     margin: 0; /* Remove default margin */
   }
+  .card-footer {
+	  position:absolute;
+   bottom:0;
+   width:90%;
+   height:40px;   /* Height of the footer */
+  }
+  
   .button {
   background-color: black;
   border-color: black;
@@ -75,15 +104,44 @@
 {% for i in set_list %}
 
 <div class="grid-item">
-	<center><img src="/static/sets/{{ i['set_num'] }}/cover.jpg" style="height: 150px; width: auto;" alt="Image"></center>
-	<h2 class='set_name'>{{ i['name'] }}</h2>
-	<p><b>Set:</b></p><p class='set_id'>{{ i['set_num'] }}</p>
-	<br>
-	<p><b>Year: </b></p><p class='set_year'>{{ i['year'] }}</p>
-	<br>
-	<p><b>Parts:</b></p><p class='set_parts'>{{ i['num_parts'] }}</p>
-	<br>
-	<p><b>Inventory:</b> <a href="/{{ i['set_num'] }}">Link</a></p>
+<div class="card">
+	<div class="card-image">
+    	  <figure class="image is-4by3">
+	    <a href="/{{ i['set_num'] }}">
+	      <img style='height: 100%; width: 100%; object-fit: contain'  src="/static/sets/{{ i['set_num'] }}/cover.jpg" alt="Image">
+	    </a>
+	  </figure>
+	</div>
+ 	<div class="wrapper" style="min-height: 120px;display:flex;flex-direction:column;"> 
+	<div class="card-content" style="display: flex;flex-direction: column;flex: 1;">
+	  <p class="title">
+	  <span class="set_id">{{ i['set_num'] }}</span> <span class="set_name">{{ i['name'] }}</span>
+	  </p>
+
+	  <p class="subtitle"style="margin-bottom:auto;">
+	    Theme - <span class='set_year'>{{ i['year'] }}</span>
+	  </p>
+	  <div style="margin:auto auto 0 0;">
+            <b>Parts:</b> 
+	    <span class='set_parts'>{{ i['num_parts'] }}</span>
+	  </div>
+	</div>
+	
+	<footer class="card-footer">
+	  <p class="card-footer-item">
+	    <span>
+	      <a href="/{{ i['set_num'] }}">Inventory</a>
+	    </span>
+	  </p>
+
+	  <p class="card-footer-item">
+	    <span>
+	      <a href="/{{ i['set_num'] }}">Instructions</a>
+	    </span>
+	  </p>
+	</footer>
+	</div>
+</div>
 </div>
 
 {% endfor %}
