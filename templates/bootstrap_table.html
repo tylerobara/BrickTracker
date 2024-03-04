@@ -21,7 +21,7 @@
       {% if brick.is_spare == False %}
         <tr>
 	  {% if brick.element_id == None %}
-	  <td><img src="{{ '/static/none.jpg' }}" style="height: 50px; width: auto;"></td>
+	  <td><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" style="height: 50px; width: auto;"></td>
 	  {% else %}
 	  <td><img src="{{ '/static/parts/' + brick.element_id + '.jpg' }}" class="lightbox-trigger" style="height: 50px; width: auto;"></td>
 	  {% endif %}
@@ -34,7 +34,7 @@
     		  <td class="centered-cell">
 			<div class="inputContainer">
     			{% set ns = namespace(count='') %}
-			<form action="/{{ tmp }}/saveNumber" method="post">
+			<form id="number-form" action="/{{ tmp }}/saveNumber" method="post">
     			<input type="hidden" name="brick.part.part_num" value="{{ brick.part.part_num }}">
     			<input type="hidden" name="count" value="{{ i }}">
           <input type="hidden" name="index" value="{{ loop.index0 }}">
@@ -50,7 +50,7 @@
     			  {% endif %}
     			{% endfor %}
 			<div class='inputField'>
-	<input type="text" id="numberInput" name="numberInput" value={{ ns.count }}>
+	<input type="number" style="text-align:center;" id="numberInput" name="numberInput" value="{{ ns.count }}" pattern="\d+" required>
 	<button class="square-button" type="submit">
 		<img src="/static/save.svg" alt="Save Icon">
 	</button>
@@ -194,6 +194,19 @@ document.addEventListener('DOMContentLoaded', function () {
       lightboxModal.style.display = 'none';
     }
   });
+});
+
+	document.addEventListener('DOMContentLoaded', function () {
+  const numberInput = document.getElementById('numberInput');
+
+  // Add event listener to input to prevent non-numeric input
+  numberInput.addEventListener('input', function () {
+    // Remove non-numeric characters
+    this.value = this.value.replace(/\D/g, '');
+  });
+
+  // Force numeric keyboard on mobile devices
+  numberInput.setAttribute('inputmode', 'numeric');
 });
 
 </script>

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, redirect, jsonify, render_template
 import json
 from pprint import pprint as pp
 from pathlib import Path
@@ -54,17 +54,33 @@ def save_number(tmp):
 
         data = '{"brick" : {"ID":"' + part_num + '","is_spare": "' + is_spare + '","color_name": "' + color + '","amount":"' + number + '"}}'
         
-        for i in json_file['unit'][int(index)]['bricks']['missing']:
-            if i['brick']['ID'] == part_num and i['brick']['is_spare'] == is_spare and i['brick']['color_name'] == color:
-                print(i)
+        if len(json_file['unit'][int(index)]['bricks']['missing']) == 0:
+            json_file['unit'][int(index)]['bricks']['missing'].append(json.loads(data))
+            print(json_file)
+        elif number == '0':
+            for idx,i in enumerate(json_file['unit'][int(index)]['bricks']['missing']):
+                if i['brick']['ID'] == part_num and i['brick']['is_spare'] == is_spare and i['brick']['color_name'] == color:
+                    json_file['unit'][int(index)]['bricks']['missing'].pop(0)
+        else:
+            found = False
+            
+            for idx,i in enumerate(json_file['unit'][int(index)]['bricks']['missing']):
+                if not found and i['brick']['ID'] == part_num and i['brick']['is_spare'] == is_spare and i['brick']['color_name'] == color:
+                    print('found one ')
+                    print(part_num,i['brick']['ID'])
+                    print(is_spare,i['brick']['is_spare'])
+                    print(color,i['brick']['color_name'])
 
-        json_file['unit'][int(index)]['bricks']['missing'].append(json.loads(data))
+                    json_file['unit'][int(index)]['bricks']['missing'][idx]['brick']['amount'] = number
+                    found = True
+            if not found:
+                json_file['unit'][int(index)]['bricks']['missing'].append(json.loads(data))
 
         if not number == '':
             with open('./info/'+tmp+'.json', 'w') as dump_file:
                 json.dump(json_file,dump_file)
         
-    return  ('', 204)
+    return  redirect('/{}'.format(tmp))
 
 if __name__ == '__main__':
     app.run(host='192.168.10.109', debug=True, port=3333)
