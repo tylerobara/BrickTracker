@@ -35,16 +35,16 @@ def sets(tmp):
 
 @app.route('/<tmp>/saveNumber', methods=['POST'])
 def save_number(tmp):
-    data1 = request.form.get('brick.part.part_num')
-    data2 = request.form.get('brick.color.name')
-    data3 = request.form.get('index')
+    part_num = request.form.get('brick.part.part_num')
+    color = request.form.get('brick.color.name')
+    index = request.form.get('index')
     number = request.form.get('numberInput')
     is_spare = request.form.get('is_spare')
 
     if number is not None:
 
-        print(data1)
-        print(data2)
+        print(part_num)
+        print(color)
         print(number)
         print(is_spare)
 
@@ -52,13 +52,18 @@ def save_number(tmp):
             json_file = json.loads(info.read())
         print(json_file['count'])
 
-        data = '{"brick" : {"ID":"' + data1 + '","is_spare": "' + is_spare + '","color_name": "' + data2 + '","amount":"' + number + '"}}'
+        data = '{"brick" : {"ID":"' + part_num + '","is_spare": "' + is_spare + '","color_name": "' + color + '","amount":"' + number + '"}}'
         
-        json_file['unit'][int(data3)]['bricks']['missing'].append(json.loads(data))
+        for i in json_file['unit'][int(index)]['bricks']['missing']:
+            if i['brick']['ID'] == part_num and i['brick']['is_spare'] == is_spare and i['brick']['color_name'] == color:
+                print(i)
 
-        with open('./info/'+tmp+'.json', 'w') as dump_file:
-            json.dump(json_file,dump_file)
-    
+        json_file['unit'][int(index)]['bricks']['missing'].append(json.loads(data))
+
+        if not number == '':
+            with open('./info/'+tmp+'.json', 'w') as dump_file:
+                json.dump(json_file,dump_file)
+        
     return  ('', 204)
 
 if __name__ == '__main__':
