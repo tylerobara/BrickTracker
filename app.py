@@ -17,7 +17,6 @@ def index():
         with open('./static/sets/'+set_num+'/info.json') as info:
             info_file = json.loads(info.read())
         set_list.append(info_file)
-    print(set_list) 
     return render_template('frontpage.html',set_list=set_list)
 
 @app.route('/<tmp>')
@@ -28,8 +27,7 @@ def sets(tmp):
           inventory_file = json.loads(inventory.read())
     with open('./info/'+tmp+'.json') as info:
           json_file = json.loads(info.read())
-    pp(json_file['unit'][0]['bricks']['missing'])
-    return render_template('bootstrap_table.html', tmp=tmp,title=info_file['set_num']+" - "+info_file['name'],
+    return render_template('bootstrap_table.html', tmp=tmp,title=info_file['name'],
                            info_file=info_file,inventory_file=inventory_file,json_file=json_file)
 
 

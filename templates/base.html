@@ -33,6 +33,14 @@ table {
   text-overflow: ellipsis;
 }
 
+#data th:nth-child(4),
+#data td:nth-child(4) {
+  max-width: 100px; /* Adjust as needed */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .center-table {
 }
 
@@ -211,8 +219,11 @@ input[type=number] {
   <body>
 	  <button style="background-color: white;color: black;border: 1px dotted black;width: 98%;margin: 1%;" onclick="goToPage('/')">Home</button> 
     <div class="container">
-      <h2 style="margin: 20px 0px 0px 0px;">{{ title }}</h2>
-      <hr>
+      <center>
+
+      <h2 style="margin: 0px 0px 0px 0px;"> {{ tmp }}</h2>
+      <img style='height: 100px; width: auto; object-fit: contain'  src="/static/sets/{{ tmp }}/cover.jpg" alt="Image">
+      <h2 style="margin: 0px 0px 0px 0px;">{{ title }}</h2></center>
       {% block content %}{% endblock %}
     </div>
     {% block scripts %}{% endblock %}
