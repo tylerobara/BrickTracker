@@ -50,7 +50,7 @@
     			  {% endif %}
     			{% endfor %}
 			<div class='inputField'>
-	<input type="number" style="text-align:center;" id="numberInput" name="numberInput" value="{{ ns.count }}" pattern="\d+" required>
+	<input type="tel" style="text-align:center;" id="numberInput" name="numberInput" value="{{ ns.count }}" pattern="\d+">
 	<button class="square-button" type="submit">
 		<img src="/static/save.svg" alt="Save Icon">
 	</button>
@@ -115,7 +115,7 @@
             {% endif %}
           {% endfor %}
       <div class='inputField'>
-  <input type="number" style="text-align:center;" id="numberInput" name="numberInput" value="{{ ns.count }}" pattern="\d+" required>
+  <input type="tel" style="text-align:center;" id="numberInput" name="numberInput" value="{{ ns.count }}" pattern="\d+">
   <button class="square-button" type="submit">
     <img src="/static/save.svg" alt="Save Icon">
   </button>

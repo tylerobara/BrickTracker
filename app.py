@@ -6,7 +6,7 @@ import re
 app = Flask(__name__)
 
 #tmp = '71386-10'
-
+@app.route('/favicon.ico')
 
 @app.route('/')
 def index():
@@ -55,28 +55,22 @@ def save_number(tmp):
         if len(json_file['unit'][int(index)]['bricks']['missing']) == 0:
             json_file['unit'][int(index)]['bricks']['missing'].append(json.loads(data))
             print(json_file)
-        elif number == '0':
+        elif number == '0' or number == '':
             for idx,i in enumerate(json_file['unit'][int(index)]['bricks']['missing']):
                 if i['brick']['ID'] == part_num and i['brick']['is_spare'] == is_spare and i['brick']['color_name'] == color:
                     json_file['unit'][int(index)]['bricks']['missing'].pop(idx)
         else:
             found = False
-            
             for idx,i in enumerate(json_file['unit'][int(index)]['bricks']['missing']):
                 if not found and i['brick']['ID'] == part_num and i['brick']['is_spare'] == is_spare and i['brick']['color_name'] == color:
-                    print('found one ')
-                    print(part_num,i['brick']['ID'])
-                    print(is_spare,i['brick']['is_spare'])
-                    print(color,i['brick']['color_name'])
-
                     json_file['unit'][int(index)]['bricks']['missing'][idx]['brick']['amount'] = number
                     found = True
             if not found:
                 json_file['unit'][int(index)]['bricks']['missing'].append(json.loads(data))
 
-        if not number == '':
-            with open('./info/'+tmp+'.json', 'w') as dump_file:
-                json.dump(json_file,dump_file)
+        
+        with open('./info/'+tmp+'.json', 'w') as dump_file:
+            json.dump(json_file,dump_file)
         
     return  redirect('/{}'.format(tmp))
 
