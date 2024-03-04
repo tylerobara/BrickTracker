@@ -1,17 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Inventory</h1>
-<table id="data" class="table table-striped">
+<center><button class="hidden-desktop" style="background-color: white;border: 1px solid black; color: black;" id="expand-button">Expand Columns</button></center>
+<div class="center-table">
+<table id="data">
     <thead>
       <tr>
         <th></th>
-        <th>ID</th>
-        <th>Name</th>
+        <th style="text-align:center;margin:0px;" class="fixed-width hidden-mobile">ID</th>
+        <th class="fixed-width hidden-mobile">Name</th>
         <th>Color</th>
-        <th>Qty</th>
+        <th style="text-align: center;" class="fixed-width">Qty</th>
         {% for i in json_file['unit'] %}
-          <th>Missing ({{ loop.index }})</th>
+	  <th style="text-align: center;" class="fixed-width">Missing ({{ loop.index }})</th>
         {% endfor %}
       </tr>
     </thead>
@@ -22,12 +23,12 @@
 	  {% if brick.element_id == None %}
 	  <td><img src="{{ '/static/none.jpg' }}" style="height: 50px; width: auto;"></td>
 	  {% else %}
-	  <td><img src="{{ '/static/parts/' + brick.element_id + '.jpg' }}" style="height: 50px; width: auto;"></td>
+	  <td><img src="{{ '/static/parts/' + brick.element_id + '.jpg' }}" class="lightbox-trigger" style="height: 50px; width: auto;"></td>
 	  {% endif %}
-          <td>{{ brick.part.part_num }}</td>
-          <td>{{ brick.part.name }}</td>
+          <td  style="text-align:center;margin:0px;" class="hidden-mobile">{{ brick.part.part_num }}</td>
+          <td class="hidden-mobile">{{ brick.part.name }}</td>
           <td>{{ brick.color.name }}</td>
-          <td>{{ brick.quantity }}</td>
+          <td style="text-align:center;">{{ brick.quantity }}</td>
     	  {% for i in json_file['unit'] %}
         
     		  <td class="centered-cell">
@@ -63,6 +64,7 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
 
   <h1>Spares</h1>
   <table id="data" class="table table-striped">
@@ -114,7 +116,68 @@
     	  {% endfor %}
         </tr>
 	{% endif %}
+
       {% endfor %}
     </tbody>
   </table>
+
+
+<div id="lightbox-modal">
+  <span class="close">&times;</span>
+  <img class="lightbox-content" id="lightbox-image">
+</div>
+
 {% endblock %}
+
+
+
+{% block scripts %}
+<script>
+	const expandButton = document.getElementById('expand-button');
+const dataTable = document.getElementById('data');
+let isExpanded = false;
+
+expandButton.addEventListener('click', () => {
+  const hiddenColumns = dataTable.querySelectorAll('.hidden-mobile');
+  hiddenColumns.forEach(column => {
+    if (isExpanded) {
+      column.style.display = 'none';
+      expandButton.textContent = 'Expand Columns';
+    } else {
+      column.style.display = 'table-cell';
+      expandButton.textContent = 'Hide Columns';
+    }
+  });
+  isExpanded = !isExpanded;
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const lightboxTrigger = document.querySelectorAll('.lightbox-trigger');
+  const lightboxModal = document.getElementById('lightbox-modal');
+  const lightboxImage = document.getElementById('lightbox-image');
+  const closeModal = document.querySelector('.close');
+
+  lightboxTrigger.forEach(function (element) {
+    element.addEventListener('click', function () {
+      const imgSrc = element.getAttribute('src');
+      lightboxImage.setAttribute('src', imgSrc);
+      lightboxModal.style.display = 'block';
+    });
+  });
+
+  closeModal.addEventListener('click', function () {
+    lightboxModal.style.display = 'none';
+  });
+
+  lightboxModal.addEventListener('click', function (event) {
+    if (event.target === lightboxModal) {
+      lightboxModal.style.display = 'none';
+    }
+  });
+});
+
+
+</script>
+
+{% endblock %}
+

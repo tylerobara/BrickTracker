@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
   <head>
-    <title>{{ title }}</title>
-
+      <title>{{ title }}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- CSS Reset -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
 
@@ -11,11 +11,73 @@
 
 <style>
 
+th {
+	text-align: left;
+	margin: 0px;
+	padding: 5px 0px 5px 0px;
+}
+
+table {
+}
+
+.center-table {
+}
+
 td {
 	padding: 0px 0px 0px 0px;
 	margin-left: 10px;
 	height: 50px;
+	min-width: 55px;
+  	display: table-cell;
+  	white-space: nowrap; /* Prevent text wrapping */
+  	overflow: hidden; /* Hide overflow content */
+  	text-overflow: ellipsis; /* Display ellipsis for overflow content */
 }
+
+
+.hidden-mobile {
+  display: table-cell;
+}
+
+.table-container {
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+.table-wrapper {
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+@media only screen and (min-width: 600px) {
+
+  .hidden-desktop {
+    display: none;
+  }
+
+}
+@media only screen and (max-width: 600px) {
+  table {
+    width: 100%; /* Expand table to full width on mobile */
+    table-layout: fixed;
+  }
+
+  
+  .fixed-width {
+    width: 100%;
+  }
+
+    td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background-color: #fff; /* Make the first column background white */
+  }
+
+
+  .hidden-mobile {
+    display: none;
+  }
+}
+
 
 .centered-cell {
   text-align: center; /* Center the content horizontally within the cell */
@@ -57,8 +119,38 @@ td {
 td img{
     display: block;
     margin-left: auto;
-    margin-right: auto;
+    margin-right: 5px;
 
+}
+
+
+      /* Modal Styles */
+#lightbox-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 50px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+
+#lightbox-modal .close {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  font-size: 50px;
+  color: white;
+  cursor: pointer;
+}
+
+#lightbox-modal img {
+  display: block;
+  margin: 0 auto;
+  max-width: 90%;
+  max-height: 90%;
 }
 
 </style>
@@ -66,7 +158,7 @@ td img{
   </head>
   <body>
     <div class="container">
-      <h1>{{ title }}</h1>
+      <h1 style="margin: 20px 0px 0px 0px;">{{ title }}</h1>
       <hr>
       {% block content %}{% endblock %}
     </div>
