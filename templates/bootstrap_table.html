@@ -3,7 +3,7 @@
 {% block content %}
 <center><button class="hidden-desktop" style="background-color: white;border: 1px solid black; color: black;" id="expand-button">Expand Columns</button></center>
 <div class="center-table">
-<table id="data">
+<table id="data" class="table">
     <thead>
       <tr>
         <th></th>
@@ -123,16 +123,25 @@
 
 
 <div id="lightbox-modal">
-  <span class="close">&times;</span>
-  <img class="lightbox-content" id="lightbox-image">
+  <div class="lightbox-wrapper">
+    <span class="close">&times;</span>
+    <img class="lightbox-content" id="lightbox-image">
+    <div class="text-container" id="lightbox-text"></div>
+  </div>
 </div>
 
-{% endblock %}
+
+  {% endblock %}
 
 
 
 {% block scripts %}
 <script>
+
+	function goToPage(url) {
+		window.location.href = url;
+	}
+
 	const expandButton = document.getElementById('expand-button');
 const dataTable = document.getElementById('data');
 let isExpanded = false;
@@ -155,12 +164,15 @@ document.addEventListener('DOMContentLoaded', function () {
   const lightboxTrigger = document.querySelectorAll('.lightbox-trigger');
   const lightboxModal = document.getElementById('lightbox-modal');
   const lightboxImage = document.getElementById('lightbox-image');
+  const lightboxText = document.getElementById('lightbox-text');
   const closeModal = document.querySelector('.close');
 
   lightboxTrigger.forEach(function (element) {
     element.addEventListener('click', function () {
       const imgSrc = element.getAttribute('src');
+      const textContent = element.closest('tr').querySelector('td:nth-child(3)').textContent; // Adjust the index accordingly
       lightboxImage.setAttribute('src', imgSrc);
+      lightboxText.textContent = textContent;
       lightboxModal.style.display = 'block';
     });
   });
@@ -170,12 +182,19 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   lightboxModal.addEventListener('click', function (event) {
-    if (event.target === lightboxModal) {
+    if (event.target === lightboxModal || event.target === lightboxImage || event.target === lightboxText) {
+      // Dismiss only if the clicked element is part of the content area
+      lightboxModal.style.display = 'none';
+    }
+  });
+
+  // Dismiss the lightbox when clicking outside the content area (i.e., the background)
+  lightboxModal.addEventListener('click', function (event) {
+    if (event.target != lightboxModal) {
       lightboxModal.style.display = 'none';
     }
   });
 });
-
 
 </script>
 
