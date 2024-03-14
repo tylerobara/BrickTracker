@@ -34,12 +34,14 @@
     		  <td class="centered-cell">
 			<div class="inputContainer">
     			{% set ns = namespace(count='') %}
-			<form id="number-form" action="/{{ tmp }}/saveNumber" method="post">
-    			<input type="hidden" name="brick.part.part_num" value="{{ brick.part.part_num }}">
-    			<input type="hidden" name="count" value="{{ i }}">
-          <input type="hidden" name="index" value="{{ loop.index0 }}">
-          <input type="hidden" name="is_spare" value="{{ brick.is_spare }}">
-    			<input type="hidden" name="brick.color.name" value="{{ brick.color.name }}">
+      <!-- <form id="number-form" action="/{{ tmp }}" method="post"> -->
+      <form id="number-form">
+          <input type="hidden" name="numberID" id="numberID" value="{{ tmp }}"> 
+          <input type="hidden" name="brickpartpart_num" id="brickpartpart_num" value="{{ brick.part.part_num }}">
+          <input type="hidden" name="count" value="{{ i }}">
+          <input type="hidden" name="index" id="index" value="{{ loop.index0 }}">
+          <input type="hidden" name="is_spare" id="is_spare" value="{{ brick.is_spare }}">
+          <input type="hidden" name="brickcolorname" id="brickcolorname" value="{{ brick.color.name }}">
     			{% for j in json_file['unit'][loop.index0]['bricks']['missing'] %}
     			  {% if j['brick']['ID'] == brick.part.part_num and j['brick']['color_name'] == brick.color.name %}
 
@@ -50,10 +52,12 @@
     			  {% endif %}
     			{% endfor %}
 			<div class='inputField'>
-	<input type="tel" style="text-align:center;" id="numberInput" name="numberInput" value="{{ ns.count }}" pattern="\d+">
-	<button class="square-button" type="submit">
-		<img src="/static/save.svg" alt="Save Icon">
-	</button>
+	<input type="tel" style="text-align:center;font-size: 16px;" id="numberInput" name="numberInput" value="{{ ns.count }}" pattern="\d+">
+	<span style="display:none">{{ ns.count }}</span>
+  <button class="square-button" id="bnumber-form" type="submit">
+    <img src="/static/save.svg" alt="Save Icon">
+  </button>
+
 			</div>
     		      </form>
 			</div>
@@ -68,7 +72,7 @@
 
   <h1>Spares</h1>
 <div class="center-table">
-<table id="data" class="table">
+<table id="sdata" class="table">
     <thead>
       <tr>
         <th></th>
@@ -99,12 +103,13 @@
           <td class="centered-cell">
       <div class="inputContainer">
           {% set ns = namespace(count='') %}
-      <form id="number-form" action="/{{ tmp }}/saveNumber" method="post">
-          <input type="hidden" name="brick.part.part_num" value="{{ brick.part.part_num }}">
+      <form id="number-form" action="/{{ tmp }}" method="post">
+          <input type="hidden" name="numberID" id="numberID" value="{{ tmp }}"> 
+          <input type="hidden" name="brickpartpart_num" value="{{ brick.part.part_num }}">
           <input type="hidden" name="count" value="{{ i }}">
           <input type="hidden" name="index" value="{{ loop.index0 }}">
           <input type="hidden" name="is_spare" value="{{ brick.is_spare }}">
-          <input type="hidden" name="brick.color.name" value="{{ brick.color.name }}">
+          <input type="hidden" name="brickcolor.name" value="{{ brick.color.name }}">
           {% for j in json_file['unit'][loop.index0]['bricks']['missing'] %}
             {% if j['brick']['ID'] == brick.part.part_num and j['brick']['color_name'] == brick.color.name %}
 
@@ -120,8 +125,11 @@
     <img src="/static/save.svg" alt="Save Icon">
   </button>
       </div>
+
               </form>
       </div>
+
+
           </td>
         {% endfor %}
         </tr>
@@ -150,18 +158,47 @@
 
 
 {% block scripts %}
+
 <script>
+// $(document).ready( function () {
+//     $('#data').DataTable();
+// } );
+
+
+
+
+
+// document.addEventListener('DOMContentLoaded', function () {
+//   const myDataTable = document.getElementById('data');
+
+//   myDataTable.addEventListener('click', function (event) {
+//     const clickedRow = event.target.closest('td');
+//     if (clickedRow) {
+//       // Remove highlighting from all rows
+//       const rows = myDataTable.querySelectorAll('tr');
+//       rows.forEach(row => row.classList.remove('highlighted'));
+
+//       // Add highlighting to the clicked row
+// 	if (clickedRow.classList.contains('highlighted')) {
+		
+//       clickedRow.classList.remove('highlighted');
+// 	} else {
+//       clickedRow.classList.add('highlighted');
+// 	}
+//     }
+//   });
+// });
 
 	function goToPage(url) {
 		window.location.href = url;
 	}
 
 	const expandButton = document.getElementById('expand-button');
-const dataTable = document.getElementById('data');
+const myDataTable = document.getElementById('data');
 let isExpanded = false;
 
 expandButton.addEventListener('click', () => {
-  const hiddenColumns = dataTable.querySelectorAll('.hidden-mobile');
+  const hiddenColumns = myDataTable.querySelectorAll('.hidden-mobile');
   hiddenColumns.forEach(column => {
     if (isExpanded) {
       column.style.display = 'none';
@@ -223,7 +260,71 @@ document.addEventListener('DOMContentLoaded', function () {
   numberInput.setAttribute('inputmode', 'numeric');
 });
 
+
+let options = {
+    searchable: true,
+    sortable: true,
+    paging: false,
+    perPage: 10,
+    perPageSelect: [5, 10, 25, 50, ["All", -1]],
+    columns: [
+
+      { select: [0], sortable: false }
+
+
+    ]
+};
+
+let myTable = document.querySelector("#data");
+let dataTable = new simpleDatatables.DataTable(myTable, options);
+
+
+$("body").on("click", "#number-form", function (event) {
+// $('#number-form').submit(function(event) {
+	event.preventDefault();
+	//console.log($(this)[0]);
+
+  brickpartpart_num = $(this)[0][1].value;
+  brickcolorname = $(this)[0][5].value;
+  index = $(this)[0][3].value;
+  numberInput = $(this)[0][6].value;
+  is_spare = $(this)[0][4].value;
+
+  // console.log('ID: ' + brickpartpart_num);
+  // console.log('Color Name: ' + brickcolorname);
+  // console.log('Index: ' + index);
+  // console.log('Number Input: ' + numberInput);
+  // console.log('is_spare: ' + is_spare);
+
+  $.ajax({
+    url: '/'+$(this)[0][0].value,
+    type: 'POST',
+    data: {
+      'brickpartpart_num': brickpartpart_num,
+      'brickcolorname': brickcolorname,
+      'index': index,
+      'numberInput': numberInput,
+      'is_spare': is_spare
+    }
+
+  });
+
+
+
+  // part_num = request.form.get('brickpartpart_num')
+  // color = request.form.get('brickcolorname')
+  // index = request.form.get('index')
+  // number = request.form.get('numberInput')
+  // is_spare = request.form.get('is_spare')
+
+});
+
+
+
+
+
 </script>
+
 
 {% endblock %}
 
