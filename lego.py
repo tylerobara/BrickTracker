@@ -22,8 +22,11 @@ else:
 
 #online_set_num=set_num+"-1"
 
+print ("Adding set: " + set_num)
+
 set_path="./static/sets/" + set_num + "/"
 Path('./static/parts').mkdir(parents=True, exist_ok=True)
+Path('./static/figs').mkdir(parents=True, exist_ok=True)
 Path('./info').mkdir(parents=True, exist_ok=True)
 
 with open('api','r') as f:
@@ -33,10 +36,11 @@ rb = rebrick.init(api_key)
 
 
 
-if Path(set_path).is_dir():
-    print('Set exists, exitting')
-    logging.error('Set exists!')
-    #exit()
+
+# if Path(set_path).is_dir():
+#     print('Set exists, exitting')
+#     logging.error('Set exists!')
+#     #exit()
 
 Path(set_path).mkdir(parents=True, exist_ok=True)
 
@@ -64,21 +68,27 @@ with open(set_path+'info.json', 'w', encoding='utf-8') as f:
 # save set image to folder
 set_img_url = response["set_img_url"]
 
+print('Saving set image:',end='')
+
 res = requests.get(set_img_url, stream = True)
 
 if res.status_code == 200:
     with open(set_path+"cover.jpg",'wb') as f:
         shutil.copyfileobj(res.raw, f)
+        print(' OK')
 else:
     print('Image Couldn\'t be retrieved for set ' + set_num)
     logging.error('set_img_url: ' + set_num)
+    print(' ERROR')
 
 # set inventory
+print('Saving set inventory')
 response = json.loads(rebrick.lego.get_set_elements(set_num,page_size=20000).read())
 with open(set_path+'inventory.json', 'w', encoding='utf-8') as f:
     json.dump(response, f, ensure_ascii=False, indent=4)
 
 # get part images if not exists
+print('Saving part images')
 for i in response["results"]:
     try:
         if i['element_id'] == None:
@@ -88,7 +98,7 @@ for i in response["results"]:
                 if res.status_code == 200:
                     with open("./static/parts/p_"+i["part"]["part_id"]+".jpg",'wb') as f:
                         shutil.copyfileobj(res.raw, f)
-                    print('image saved')
+                    print(i["part"]["part_id"])
         else:
             if not Path("./static/parts/"+i["element_id"]+".jpg").is_file():
                 res = requests.get(i["part"]["part_img_url"], stream = True)
@@ -96,14 +106,14 @@ for i in response["results"]:
                 if res.status_code == 200:
                     with open("./static/parts/"+i["element_id"]+".jpg",'wb') as f:
                         shutil.copyfileobj(res.raw, f)
-                    print('image saved')
+                    print(i["part"]["part_id"])
             if not Path("./static/parts/"+i["element_id"]+".jpg").is_file():
                 res = requests.get(i["part"]["part_img_url"], stream = True)
 
                 if res.status_code == 200:
                     with open("./static/parts/"+i["element_id"]+".jpg",'wb') as f:
                         shutil.copyfileobj(res.raw, f)
-                    print('image saved')
+                    print(i["part"]["part_id"])
     except Exception as e:
         print(e)
         logging.error(set_num + ": " + str(e))
@@ -117,3 +127,79 @@ if Path("./info/"+set_num + ".json").is_file():
     print(data)
 else:
     shutil.copy("set_template.json", "./info/"+set_num+".json")
+
+## Minifigs ##
+print('Savings minifigs')
+response = json.loads(rebrick.lego.get_set_minifigs(set_num).read())
+
+figures = {"figs": []}
+
+for x in response["results"]:
+    print("    " + x["set_name"])
+    fig = {
+        "set_num": x["set_num"],
+        "name": x["set_name"],
+        "quantity": x["quantity"],
+        "set_img_url": x["set_img_url"],
+        "parts": []
+    }
+
+    res = requests.get(x["set_img_url"], stream = True)
+
+    if res.status_code == 200:
+        with open("./static/figs/"+x["set_num"]+".jpg",'wb') as f:
+            shutil.copyfileobj(res.raw, f)
+    else:
+        print('Image Couldn\'t be retrieved for set ' + set_num)
+        logging.error('set_img_url: ' + set_num)
+
+
+    response = json.loads(rebrick.lego.get_minifig_elements(x["set_num"]).read())
+
+    for i in response["results"]:
+        part = {
+            "name": i["part"]["name"],
+            "part_num": i["part"]["part_num"],
+            "part_img_url": i["part"]["part_img_url"]
+
+        }
+        fig["parts"].append(part)
+
+
+        try:
+            if i['element_id'] == None:
+                if not Path("./static/figs/p_"+i["part"]["part_num"]+".jpg").is_file():
+                    res = requests.get(i["part"]["part_img_url"], stream = True)
+
+                    if res.status_code == 200:
+                        with open("./static/figs/p_"+i["part"]["part_num"]+".jpg",'wb') as f:
+                            shutil.copyfileobj(res.raw, f)
+                        print('image saved')
+            else:
+                if not Path("./static/figs/"+i["part"]["part_num"]+".jpg").is_file():
+                    res = requests.get(i["part"]["part_img_url"], stream = True)
+
+                    if res.status_code == 200:
+                        with open("./static/figs/"+i["part"]["part_num"]+".jpg",'wb') as f:
+                            shutil.copyfileobj(res.raw, f)
+                        print('image saved')
+                if not Path("./static/figs/"+i["part"]["part_num"]+".jpg").is_file():
+                    res = requests.get(i["part"]["part_img_url"], stream = True)
+
+                    if res.status_code == 200:
+                        with open("./static/figs/"+i["part"]["part_num"]+".jpg",'wb') as f:
+                            shutil.copyfileobj(res.raw, f)
+                        print('image saved')
+        except Exception as e:
+            print(e)
+            logging.error(set_num + ": " + str(e))
+
+    figures["figs"].append(fig)
+    part = {}
+    fig = {}
+
+with open(set_path+'minifigs.json', 'w', encoding='utf-8') as f:
+    json.dump(figures, f, ensure_ascii=False, indent=4)
+####
+
+print('Done!')
