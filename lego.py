@@ -159,6 +159,8 @@ for x in response["results"]:
     for i in response["results"]:
         part = {
             "name": i["part"]["name"],
+            "quantity": i["quantity"],
+            "color_name": i["color"]["name"],
             "part_num": i["part"]["part_num"],
             "part_img_url": i["part"]["part_img_url"]
 

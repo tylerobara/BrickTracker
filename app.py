@@ -24,6 +24,8 @@ def sets(tmp):
    
     with open('./static/sets/'+tmp+'/info.json') as info:
           info_file = json.loads(info.read())
+    with open('./static/sets/'+tmp+'/minifigs.json') as info:
+          minifigs_file = json.loads(info.read())
     with open('./static/sets/'+tmp+'/inventory.json') as inventory:
           inventory_file = json.loads(inventory.read())
     with open('./info/'+tmp+'.json') as info:
@@ -78,7 +80,7 @@ def sets(tmp):
         return ('', 204)
     else:
        return render_template('bootstrap_table.html', tmp=tmp,title=info_file['name'],
-                       info_file=info_file,inventory_file=inventory_file,json_file=json_file)
+                       info_file=info_file,inventory_file=inventory_file,json_file=json_file,minifigs_file=minifigs_file)
 
 
 
