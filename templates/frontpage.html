@@ -115,6 +115,10 @@ body {
 	<button class="button button-outline" id="toggleButton2">Show Checked</button>
 	<button class="button button-outline" id="toggleButton3">Show Complete</button>
       </center>
+      <select id="themeDropdown">
+  <option value="">Select Theme</option>
+</select>
+
       <!-- Add more buttons for other text values if needed -->
     </div>
     <div class="grid-container" id="gridContainer">
@@ -201,7 +205,7 @@ body {
 		<footer class="card-footer" style="">
 		  <p class="card-footer-item">
 		  <span>
-		    <a class="is-size-7 set_theme" style="color: #363636;">{{ i['theme_id'] }} (<span class='set_year'>{{ i['year'] }}</span>)</a>
+			  <a class="is-size-7 set_theme" style="color: #363636;">{{ i['theme_id'] }}</a> <a class="is-size-7" style="color: #363636;"> (<span class='set_year'>{{ i['year'] }}</span>)</a>
 		  </span>
 		  </p>
 
@@ -468,6 +472,49 @@ body {
 	      });
 	    }
 	  });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const themeDropdown = document.getElementById('themeDropdown');
+
+  // Retrieve all unique values from the <a> elements
+  const themes = [];
+  const themeLinks = document.querySelectorAll('.set_theme');
+  themeLinks.forEach(function(link) {
+    const themeId = link.textContent.trim();
+    if (!themes.includes(themeId)) {
+      themes.push(themeId);
+    }
+  });
+
+  // Create options for the dropdown list
+  themes.forEach(function(theme) {
+    const option = document.createElement('option');
+    option.value = theme;
+    option.textContent = theme;
+    themeDropdown.appendChild(option);
+  });
+
+  // Add event listener to filter grid items
+  themeDropdown.addEventListener('change', function() {
+    const selectedTheme = themeDropdown.value;
+    filterGridItems(selectedTheme);
+  });
+
+  function filterGridItems(selectedTheme) {
+    const gridItems = document.querySelectorAll('.grid-item');
+    gridItems.forEach(function(item) {
+      const themeLink = item.querySelector('.set_theme');
+      const themeId = themeLink.textContent.trim();
+      if (!selectedTheme || themeId === selectedTheme) {
+        item.style.display = 'block'; // Show the grid item
+      } else {
+        item.style.display = 'none'; // Hide the grid item
+      }
+    });
+  }
+});
+
 
 	</script>
   </body>
