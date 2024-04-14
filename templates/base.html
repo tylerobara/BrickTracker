@@ -267,7 +267,7 @@ background-color: white;
     <div class="container">
       <center>
 
-      <img style='height: 100px; width: auto; object-fit: contain'  src="/static/sets/{{ tmp }}/cover.jpg" alt="Image">
+      <img class="lightbox-trigger" id="cover" style='height: 100px; width: auto; object-fit: contain'  src="/static/sets/{{ tmp }}/cover.jpg" alt="Image">
       {% block content %}{% endblock %}
     </div>
     {% block scripts %}{% endblock %}
