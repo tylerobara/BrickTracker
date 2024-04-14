@@ -219,10 +219,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   lightboxTrigger.forEach(function (element) {
     element.addEventListener('click', function () {
-      const imgSrc = element.getAttribute('src');
-      const textContent = element.closest('tr').querySelector('td:nth-child(3)').textContent; // Adjust the index accordingly
-      lightboxImage.setAttribute('src', imgSrc);
+	const imgSrc = element.getAttribute('src');
+	textContent = ''
+try {
+	     textContent  = element.closest('tr').querySelector('td:nth-child(3)').textContent; // Adjust the index accordingly
       lightboxText.textContent = textContent;
+} catch (e) {
+}
+
+      lightboxImage.setAttribute('src', imgSrc);
       lightboxModal.style.display = 'block';
     });
   });
