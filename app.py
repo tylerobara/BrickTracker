@@ -2,22 +2,54 @@ from flask import Flask, request, redirect, jsonify, render_template, Response
 import json
 from pprint import pprint as pp
 from pathlib import Path
+import numpy as np
 import re
 app = Flask(__name__)
 
 #tmp = '71386-10'
 @app.route('/favicon.ico')
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     pathlist = Path('./info/').rglob('*.json')
     set_list = []
-    for path in pathlist:
-        set_num = re.findall(r"\b\d+(?:-\d+)?\b",str(path))[0]
-        with open('./static/sets/'+set_num+'/info.json') as info:
-            info_file = json.loads(info.read())
-        set_list.append(info_file)
-    return render_template('frontpage.html',set_list=set_list)
+    json_file = {}
+    theme_file = np.loadtxt("themes.csv", delimiter=",",dtype="str")
+    if request.method == 'GET':
+        for path in pathlist:
+            set_num = re.findall(r"\b\d+(?:-\d+)?\b",str(path))[0]
+            with open('./static/sets/'+set_num+'/info.json') as info:
+                info_file = json.loads(info.read())
+            try:
+                info_file['theme_id'] = theme_file[theme_file[:, 0] == str(info_file['theme_id'])][0][1]
+            except Exception as e:
+                print(e)
+            
+            with open('./info/'+set_num+'.json') as info:
+                json_file[set_num] = json.loads(info.read())
+            
+            set_list.append(info_file)
+
+        return render_template('frontpage.html',set_list=set_list,themes_list=theme_file,json_file=json_file)
+    
+    if request.method == 'POST':
+        set_num = request.form.get('set_num')
+        minif = request.form.get('minif')
+        scheck = request.form.get('scheck')
+        scol = request.form.get('scol')
+        
+        with open('./info/'+set_num+'.json') as info:
+            json_file = json.loads(info.read())
+        if minif != None:
+            json_file['Minifigs Collected'] = minif
+        if scheck != None:
+            json_file['Set Checked'] = scheck
+        if scol != None:
+            json_file['Set Collected'] = scol
+        
+        with open('./info/'+set_num+'.json', 'w') as dump_file:
+            json.dump(json_file,dump_file)
+        return ('', 204)
 
 @app.route('/<tmp>', methods=['GET', 'POST'])
 def sets(tmp):

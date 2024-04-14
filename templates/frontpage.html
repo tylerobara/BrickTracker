@@ -7,14 +7,22 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 
 <!-- CSS Reset -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"> --->
 
 <!-- Milligram CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+
+
+<!--- 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-/>
+  /> 
+
+--->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
 <style>
   body {
@@ -98,7 +106,11 @@
   <button class="button button-outline" onclick="dynamicSort('set_year')">Sort by Year</button>
   <button class="button button-outline" onclick="dynamicSort('set_parts')">Sort by Parts</button>
   <button class="button button-outline" onclick="dynamicSort('set_name')">Sort by Name</button>
+  <button class="button button-outline" onclick="dynamicSort('s_col')">Sort by Collected</button>
+  <button class="button button-outline" onclick="dynamicSort('s_check')">Sort by Checked</button>
   </center>
+
+<button id="toggleButton">Toggle Visibility</button>
 
   <!-- Add more buttons for other text values if needed -->
 	</div>
@@ -107,8 +119,9 @@
 
 {% for i in set_list %}
 
+
 <div class="grid-item">
-<div class="card">
+<div class="card" style="display: flex;flex-direction: column;">
 	<div class="card-image">
     	  <figure class="image is-4by3">
 	    <a href="/{{ i['set_num'] }}">
@@ -116,36 +129,76 @@
 	    </a>
 	  </figure>
 	</div>
- 	<div class="wrapper" style="min-height: 120px;display:flex;flex-direction:column;"> 
-	<div class="card-content" style="display: flex;flex-direction: column;flex: 1;">
-	  <p class="title">
-	  <span class="set_id">{{ i['set_num'] }}</span> <span class="set_name">{{ i['name'] }}</span>
-	  </p>
-
-	  <p class="subtitle"style="margin-bottom:auto;">
-	    Theme - <span class='set_year'>{{ i['year'] }}</span>
-	  </p>
-	  <div style="margin:auto auto 0 0;">
-            <b>Parts:</b> 
-	    <span class='set_parts'>{{ i['num_parts'] }}</span>
-	  </div>
-	</div>
+	<div class="card-content" style="padding:0;margin: 0 auto;height:100%; max-height:inherit;display: flex;flex-direction: column;">
 	
-	<footer class="card-footer">
+		<div style="">
+		  <b class="is-size-5" style="width: 100%;">
+		  <span class="set_id">{{ i['set_num'] }}</span> <span class="set_name">{{ i['name'] }}</span>
+		  </b>
+
+		  <p class="is-size-7">
+		  {{ i['theme_id'] }} (<span class='set_year'>{{ i['year'] }}</span>)
+		  </p>
+   		</div>
+
+		
+
+		  <span style="display:block; height: 10px;"></span>
+		<div style="display: flex;flex-direction: column;margin-top:auto;">
+		  <div class="is-size-6" style="margin:auto auto 0 0;">
+		    <b>Parts:</b> 
+		    <span class='set_parts'>{{ i['num_parts'] }}</span>
+		  </div>
+		  <span style="display:block; height: 10px;"></span>
+		  <div class="is-size-7" >
+			  <label class="checkbox" >
+				<input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+				{% if json_file[i['set_num']]['Minifigs Collected'] == 'true' %}
+					<input class="s_fig" id="s_fig" type="checkbox" checked />
+				{% else %}
+					<input id="s_fig" type="checkbox" />
+				{% endif %}
+				Minifigs Collected
+			  </label>
+			  <label class="checkbox" >
+				<input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+				{% if json_file[i['set_num']]['Set Checked'] == 'true' %}
+					<input class="s_check" id="s_check" type="checkbox" checked />
+				{% else %}
+					<input class="s_check" id="s_check" type="checkbox" />
+				{% endif %}
+				Set is checked
+			  </label>
+			  <label class="checkbox" >
+				<input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+				{% if json_file[i['set_num']]['Set Collected'] == 'true' %}
+					<input class="s_col" id="s_col" type="checkbox" checked />
+				{% else %}
+					<input class="s_col" id="s_col" type="checkbox" />
+				{% endif %}
+				Set is collected
+			  </label>
+		  </div>
+		</div>
+
+	</div>
+
+
+
+	<footer class="card-footer" style="">
 	  <p class="card-footer-item">
 	    <span>
-	      <a style="color: #363636;" href="/{{ i['set_num'] }}">Inventory</a>
+	      <a class="is-size-7" style="color: #363636;" href="/{{ i['set_num'] }}">Inventory</a>
 	    </span>
 	  </p>
 
 	  <p class="card-footer-item">
 	    <span>
-	      <a style="color: #363636;" href="/{{ i['set_num'] }}">Instructions</a>
+	      <a class="is-size-7" style="color: #363636;" href="/{{ i['set_num'] }}">Instructions</a>
 	    </span>
 	  </p>
 	</footer>
 	</div>
-</div>
 </div>
 
 {% endfor %}
@@ -211,7 +264,15 @@ function dynamicSort(className) {
   sortedItems.sort(function(a, b) {
     var textA = a.getElementsByClassName(className)[0].textContent.trim();
     var textB = b.getElementsByClassName(className)[0].textContent.trim();
-    
+// Check if the className corresponds to a checkbox
+    if (className == 's_col' || className == 's_check') {
+      var checkedA = a.getElementsByClassName(className)[0].checked;
+      var checkedB = b.getElementsByClassName(className)[0].checked;
+      // Sort by checked checkboxes (true first, false last)
+      return (checkedA === checkedB) ? 0 : checkedA ? -1 : 1;
+    }
+
+
        // Remove digits after hyphen if present
     textA = textA.replace(/-\d+$/, '').trim();
     textB = textB.replace(/-\d+$/, '').trim(); 
@@ -244,6 +305,77 @@ function dynamicSort(className) {
     gridContainer.appendChild(sortedItems[i]);
   }
 }
+
+$("body").on("change", "#s_fig", function (event) {
+  minif = $(this).prop('checked');
+  set_num = $(this).siblings().val()
+
+$.ajax({
+    url: '/',
+    type: 'POST',
+    data: {
+      'set_num': set_num,
+	'minif': minif
+   }
+  });
+});
+
+$("body").on("change", "#s_check", function (event) {
+  scheck = $(this).prop('checked');
+  set_num = $(this).siblings().val()
+
+$.ajax({
+    url: '/',
+    type: 'POST',
+    data: {
+      'set_num': set_num,
+	'scheck': scheck
+   }
+  });
+});
+
+$("body").on("change", "#s_col", function (event) {
+  scol = $(this).prop('checked');
+  set_num = $(this).siblings().val()
+
+$.ajax({
+    url: '/',
+    type: 'POST',
+    data: {
+      'set_num': set_num,
+	'scol': scol
+   }
+  });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const toggleButton = document.getElementById('toggleButton');
+  let isHidden = true; // Initially, only show checked grid items
+
+  toggleButton.addEventListener('click', function() {
+    // Get all grid items
+    const gridItems = document.querySelectorAll('.grid-item');
+
+    // Iterate over each grid item
+    gridItems.forEach(function(item) {
+      // Check if the corresponding checkbox is checked
+      const checkbox = item.querySelector('.s_col');
+      if (isHidden || (checkbox && checkbox.checked)) {
+        // Show the grid item if it's hidden or the checkbox is checked
+        item.style.display = 'block';
+      } else {
+        // Hide the grid item if the checkbox is not checked
+        item.style.display = 'none';
+      }
+    });
+
+    // Invert the visibility state for the next click
+    isHidden = !isHidden;
+  });
+});
+
+
 </script>
 </body>
 </html>
