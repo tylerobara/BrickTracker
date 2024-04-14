@@ -34,6 +34,7 @@ def index():
     
     if request.method == 'POST':
         set_num = request.form.get('set_num')
+        index = request.form.get('index')
         minif = request.form.get('minif')
         scheck = request.form.get('scheck')
         scol = request.form.get('scol')
@@ -41,12 +42,12 @@ def index():
         with open('./info/'+set_num+'.json') as info:
             json_file = json.loads(info.read())
         if minif != None:
-            json_file['Minifigs Collected'] = minif
+            json_file['unit'][int(index)]['Minifigs Collected'] = minif
         if scheck != None:
-            json_file['Set Checked'] = scheck
+            json_file['unit'][int(index)]['Set Checked'] = scheck
         if scol != None:
-            json_file['Set Collected'] = scol
-        
+            json_file['unit'][int(index)]['Set Collected'] = scol
+       
         with open('./info/'+set_num+'.json', 'w') as dump_file:
             json.dump(json_file,dump_file)
         return ('', 204)

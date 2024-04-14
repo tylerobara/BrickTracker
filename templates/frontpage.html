@@ -33,15 +33,14 @@ body {
 
   .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(20%, 32%)); /* Between 33% and 50% width */
+    grid-template-columns: repeat(auto-fit, minmax(10%, 48%)); /* Between 33% and 50% width */
     /* grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); */
     gap: 10px;
     padding: 10px;
   }
 
   .grid-item {
-    height: 300px;
-    display: flex;
+ 	height:auto; 
   }
 
   .card {
@@ -49,7 +48,7 @@ body {
     border: 1px solid #ccc;
     padding: 10px;
     box-sizing: border-box;
-    padding-bottom:40px;   /* Height of the footer */
+    padding-bottom:30px;   /* Height of the footer */
   }
 
   /* Adjust height for smaller screens */
@@ -68,7 +67,6 @@ body {
 
   .grid-item img { 
     max-width: 100%; 
-    height: auto; 
     display: block;
 
   }
@@ -79,7 +77,7 @@ body {
     position:absolute;
     bottom:0;
     width:90%;
-    height:40px;   /* Height of the footer */
+    height:30px;   /* Height of the footer */
   }
 
   .button {
@@ -107,6 +105,7 @@ body {
 	<button class="button button-outline" onclick="dynamicSort('set_id')">Sort by ID</button>
 	<button class="button button-outline" onclick="dynamicSort('set_year')">Sort by Year</button>
 	<button class="button button-outline" onclick="dynamicSort('set_parts')">Sort by Parts</button>
+	<button class="button button-outline" onclick="dynamicSort('set_theme')">Sort by Theme</button>
 	<button class="button button-outline" onclick="dynamicSort('set_name')">Sort by Name</button>
 	<button class="button button-outline" onclick="dynamicSort('s_col')">Sort by Collected</button>
 	<button class="button button-outline" onclick="dynamicSort('s_check')">Sort by Checked</button>
@@ -114,49 +113,50 @@ body {
       <center>
 	<button class="button button-outline" id="toggleButton">Show Collected</button>
 	<button class="button button-outline" id="toggleButton2">Show Checked</button>
+	<button class="button button-outline" id="toggleButton3">Show Complete</button>
       </center>
       <!-- Add more buttons for other text values if needed -->
     </div>
-    <center>
-      <div class="grid-container" id="gridContainer">
+    <div class="grid-container" id="gridContainer">
 
-	{% for i in set_list %}
+      {% for i in set_list %}
+      {% if json_file[i['set_num']]['count'] == 1 %}
+      <div class="grid-item" style="">
+	<div class="card" style="">
+	  {% else %}
+	  <div class="grid-item" style="">
+	    <div class="card" style="">
+	      {% endif %}
 
-	<div class="grid-item" style="">
-	  <div class="card" style="">
-	    <div class="columns" style="">
-	      <div class="column is-two-thirds" style="text-align: left;">
-		<b class="is-size-5">
-		  <span class="set_id">{{ i['set_num'] }}</span> <span class="set_name">{{ i['name'] }}</span>
-		</b>
-	      </div>
-	      <div class="column" style="text-align: left;">
-		<div class="is-size-5">
-		  <b>Parts:</b> 
-		  <span class='set_parts'>{{ i['num_parts'] }}</span>
+	      <div class="columns" style="">
+		<div class="column is-two-thirds" style="text-align: left;">
+		  <b class="is-size-5">
+		    <span class="set_id">{{ i['set_num'] }}</span> <span class="set_name">{{ i['name'] }}</span>
+		  </b>
+		</div>
+		<div class="column" style="text-align: left;">
+		  <div class="is-size-5">
+		    <b>Parts:</b> 
+		    <span class='set_parts'>{{ i['num_parts'] }}</span>
+		  </div>
 		</div>
 	      </div>
-	    </div>
-	    <div class="columns" style="">
-	      <div class="column is-one-third">
-		<figure class="image is-4by3">
-		  <a href="/{{ i['set_num'] }}">
-		    <img style='height: 100%; width: 100%; object-fit: contain'  src="/static/sets/{{ i['set_num'] }}/cover.jpg" alt="Image">
-		  </a>
-		</figure>
-		<p class="is-size-7">
-		  {{ i['theme_id'] }} (<span class='set_year'>{{ i['year'] }}</span>)
-		</p>
-	      </div>
+	      <div class="columns" style="">
+		<div class="column is-one-third" style="">
+		  <figure class="image is-4by3">
+		    <a href="/{{ i['set_num'] }}">
+		      <img style='height: 100%; width: 100%; object-fit: contain'  src="/static/sets/{{ i['set_num'] }}/cover.jpg" alt="Image">
+		    </a>
+		  </figure>
+		</div>
 
-	      {% for j in json_file[i['set_num']]['unit']  %}
-	      <div class="column is-one-thid" style="border: 1px blue dashed;">
-		<p>
-		{{ j }}
-		</p>
-		  <div class="is-size-7" >
+		{% for j in json_file[i['set_num']]['unit']  %}
+		<div class="column is-one-thid" style="margin:0;padding:0;">
+		  <p>Set #{{ loop.index }}</p>
+		  <div class="is-size-7">
 		    <label class="checkbox" >
 		      <input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+		      <input type="hidden" id="index" value="{{ loop.index0 }}">
 		      {% if json_file[i['set_num']]['Minifigs Collected'] == 'true' %}
 		      <input class="s_fig" id="s_fig" type="checkbox" checked />
 		      {% else %}
@@ -164,30 +164,47 @@ body {
 		      {% endif %}
 		      Minifigs Collected
 		    </label>
-		    <label class="checkbox" >
-		      <input type="hidden" id="set_num" value="{{ i['set_num'] }}">
-		      {% if json_file[i['set_num']]['Set Checked'] == 'true' %}
-		      <input class="s_check" id="s_check" type="checkbox" checked />
-		      {% else %}
-		      <input class="s_check" id="s_check" type="checkbox" />
-		      {% endif %}
-		      Set is checked
-		    </label>
-		    <label class="checkbox" >
-		      <input type="hidden" id="set_num" value="{{ i['set_num'] }}">
-		      {% if json_file[i['set_num']]['Set Collected'] == 'true' %}
-		      <input class="s_col" id="s_col" type="checkbox" checked />
-		      {% else %}
-		      <input class="s_col" id="s_col" type="checkbox" />
-		      {% endif %}
-		      Set is collected
-		    </label>
+		      <br>
+		      <label class="checkbox" >
+			<input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+			<input type="hidden" id="index" value="{{ loop.index0 }}">
+			{% if json_file[i['set_num']]['Set Checked'] == 'true' %}
+			<input class="s_check" id="s_check" type="checkbox" checked />
+			{% else %}
+			<input class="s_check" id="s_check" type="checkbox" />
+			{% endif %}
+			Set is checked
+		      </label>
+			<br>
+			<label class="checkbox" >
+			  <input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+			  <input type="hidden" id="index" value="{{ loop.index0 }}">
+			  {% if json_file[i['set_num']]['Set Collected'] == 'true' %}
+			  <input class="s_col" id="s_col" type="checkbox" checked />
+			  {% else %}
+			  <input class="s_col" id="s_col" type="checkbox" />
+			  {% endif %}
+			  Set is collected and boxed
+			</label>
+			  <br>
+			  <label class="checkbox" >
+			    {% if json_file[i['set_num']]['unit'][loop.index0]['bricks']['missing'] |length > 0 %}
+			    <input type="checkbox" class="s_com" onclick="return false;"/> Set is missing pieces
+			    {% else %}
+			    <input type="checkbox" class="s_com" onclick="return false;" checked /> Set is Complete
+			    {% endif %}
+			  </label>
 		  </div>
-	      </div>
-
+		</div>
 		{% endfor %}
-
+	      </div>
 		<footer class="card-footer" style="">
+		  <p class="card-footer-item">
+		  <span>
+		    <a class="is-size-7 set_theme" style="color: #363636;">{{ i['theme_id'] }} (<span class='set_year'>{{ i['year'] }}</span>)</a>
+		  </span>
+		  </p>
+
 		  <p class="card-footer-item">
 		  <span>
 		    <a class="is-size-7" style="color: #363636;" href="/{{ i['set_num'] }}">Inventory</a>
@@ -201,222 +218,257 @@ body {
 		  </p>
 		</footer>
 	      </div>
-	    </div>
 	  </div>
 
 	  {% endfor %}
 	</div>
-    </center>
-    <script>
-      function searchFunction() {
-	var input, filter, gridContainer, gridItems, i, txtValue;
-	input = document.getElementById('searchInput');
-	filter = input.value.toUpperCase();
-	gridContainer = document.getElementById('gridContainer');
-	gridItems = gridContainer.getElementsByClassName('grid-item');
+	<script>
+	  function searchFunction() {
+	    var input, filter, gridContainer, gridItems, i, txtValue;
+	    input = document.getElementById('searchInput');
+	    filter = input.value.toUpperCase();
+	    gridContainer = document.getElementById('gridContainer');
+	    gridItems = gridContainer.getElementsByClassName('grid-item');
 
-	for (i = 0; i < gridItems.length; i++) {
-	  txtValue = gridItems[i].textContent || gridItems[i].innerText;
-	  if (txtValue.toUpperCase().indexOf(filter) > -1) {
-	    gridItems[i].style.display = "";
-	  } else {
-	    gridItems[i].style.display = "none";
+	    for (i = 0; i < gridItems.length; i++) {
+	      txtValue = gridItems[i].textContent || gridItems[i].innerText;
+	      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+		gridItems[i].style.display = "";
+	      } else {
+		gridItems[i].style.display = "none";
+	      }
+	    }
 	  }
-	}
-      }
-      function sortFunction() {
-	var sortSelect, sortValue, gridContainer, gridItems, sortedItems, i;
-	sortSelect = document.getElementById('sortSelect');
-	sortValue = sortSelect.value;
-	gridContainer = document.getElementById('gridContainer');
-	gridItems = gridContainer.getElementsByClassName('grid-item');
-	sortedItems = Array.from(gridItems);
+	  function sortFunction() {
+	    var sortSelect, sortValue, gridContainer, gridItems, sortedItems, i;
+	    sortSelect = document.getElementById('sortSelect');
+	    sortValue = sortSelect.value;
+	    gridContainer = document.getElementById('gridContainer');
+	    gridItems = gridContainer.getElementsByClassName('grid-item');
+	    sortedItems = Array.from(gridItems);
 
-	if (sortValue === 'alphabetical') {
-	  sortedItems.sort(function(a, b) {
-	    var textA = a.textContent.trim().toUpperCase();
-	    var textB = b.textContent.trim().toUpperCase();
-	    if (textA < textB) {
-	      return -1;
+	    if (sortValue === 'alphabetical') {
+	      sortedItems.sort(function(a, b) {
+		var textA = a.textContent.trim().toUpperCase();
+		var textB = b.textContent.trim().toUpperCase();
+		if (textA < textB) {
+		  return -1;
+		}
+		if (textA > textB) {
+		  return 1;
+		}
+		return 0;
+	      });
 	    }
-	    if (textA > textB) {
-	      return 1;
+
+	    // Remove existing items
+	    while (gridContainer.firstChild) {
+	      gridContainer.removeChild(gridContainer.firstChild);
 	    }
-	    return 0;
+
+	    // Append sorted items
+	    for (i = 0; i < sortedItems.length; i++) {
+	      gridContainer.appendChild(sortedItems[i]);
+	    }
+	  }
+	  var sortOrder = 'asc';
+
+	  function dynamicSort(className) {
+	    console.log(className);
+	    var gridContainer, gridItems, sortedItems, i;
+	    gridContainer = document.getElementById('gridContainer');
+	    gridItems = gridContainer.getElementsByClassName('grid-item');
+	    sortedItems = Array.from(gridItems);
+
+	    sortedItems.sort(function(a, b) {
+	      var textA = a.getElementsByClassName(className)[0].textContent.trim();
+	      var textB = b.getElementsByClassName(className)[0].textContent.trim();
+	      // Check if the className corresponds to a checkbox
+	      if (className == 's_col' || className == 's_check') {
+		var checkedA = a.getElementsByClassName(className)[0].checked;
+		var checkedB = b.getElementsByClassName(className)[0].checked;
+		// Sort by checked checkboxes (true first, false last)
+		return (checkedA === checkedB) ? 0 : checkedA ? -1 : 1;
+	      }
+
+
+	      // Remove digits after hyphen if present
+	      textA = textA.replace(/-\d+$/, '').trim();
+	      textB = textB.replace(/-\d+$/, '').trim(); 
+	      // If text1 is an integer, parse it as a number
+	      if (!isNaN(textA) && !isNaN(textB)) {
+		var result = parseInt(textA) - parseInt(textB);
+		// Toggle result based on current sort order
+		return sortOrder === 'asc' ? result : -result;
+	      }
+	      // If text1 is not an integer, treat it as a string
+	      else {
+		textA = textA.toUpperCase();
+		textB = textB.toUpperCase();
+		var result = textA.localeCompare(textB);
+		// Toggle result based on current sort order
+		return sortOrder === 'asc' ? result : -result;
+	      }
+	    });
+
+	    // Reverse sort order for next click
+	    sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+
+	    // Remove existing items
+	    while (gridContainer.firstChild) {
+	      gridContainer.removeChild(gridContainer.firstChild);
+	    }
+
+	    // Append sorted items
+	    for (i = 0; i < sortedItems.length; i++) {
+	      gridContainer.appendChild(sortedItems[i]);
+	    }
+	  }
+
+	  $("body").on("change", "#s_fig", function (event) {
+	    minif = $(this).prop('checked');
+	    set_num = $(this).siblings('#set_num').val();
+	    index = $(this).siblings('#index').val();
+
+	    $.ajax({
+	      url: '/',
+	      type: 'POST',
+	      data: {
+		'set_num': set_num,
+		'minif': minif,
+		'index': index
+	      }
+	    });
 	  });
-	}
 
-	// Remove existing items
-	while (gridContainer.firstChild) {
-	  gridContainer.removeChild(gridContainer.firstChild);
-	}
+	  $("body").on("change", "#s_check", function (event) {
+	    scheck = $(this).prop('checked');
+	    set_num = $(this).siblings('#set_num').val();
+	    index = $(this).siblings('#index').val();
 
-	// Append sorted items
-	for (i = 0; i < sortedItems.length; i++) {
-	  gridContainer.appendChild(sortedItems[i]);
-	}
-      }
-      var sortOrder = 'asc';
-
-      function dynamicSort(className) {
-	console.log(className);
-	var gridContainer, gridItems, sortedItems, i;
-	gridContainer = document.getElementById('gridContainer');
-	gridItems = gridContainer.getElementsByClassName('grid-item');
-	sortedItems = Array.from(gridItems);
-
-	sortedItems.sort(function(a, b) {
-	  var textA = a.getElementsByClassName(className)[0].textContent.trim();
-	  var textB = b.getElementsByClassName(className)[0].textContent.trim();
-	  // Check if the className corresponds to a checkbox
-	  if (className == 's_col' || className == 's_check') {
-	    var checkedA = a.getElementsByClassName(className)[0].checked;
-	    var checkedB = b.getElementsByClassName(className)[0].checked;
-	    // Sort by checked checkboxes (true first, false last)
-	    return (checkedA === checkedB) ? 0 : checkedA ? -1 : 1;
-	  }
-
-
-	  // Remove digits after hyphen if present
-	  textA = textA.replace(/-\d+$/, '').trim();
-	  textB = textB.replace(/-\d+$/, '').trim(); 
-	  // If text1 is an integer, parse it as a number
-	  if (!isNaN(textA) && !isNaN(textB)) {
-	    var result = parseInt(textA) - parseInt(textB);
-	    // Toggle result based on current sort order
-	    return sortOrder === 'asc' ? result : -result;
-	  }
-	  // If text1 is not an integer, treat it as a string
-	  else {
-	    textA = textA.toUpperCase();
-	    textB = textB.toUpperCase();
-	    var result = textA.localeCompare(textB);
-	    // Toggle result based on current sort order
-	    return sortOrder === 'asc' ? result : -result;
-	  }
-	});
-
-	// Reverse sort order for next click
-	sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-
-	// Remove existing items
-	while (gridContainer.firstChild) {
-	  gridContainer.removeChild(gridContainer.firstChild);
-	}
-
-	// Append sorted items
-	for (i = 0; i < sortedItems.length; i++) {
-	  gridContainer.appendChild(sortedItems[i]);
-	}
-      }
-
-      $("body").on("change", "#s_fig", function (event) {
-	minif = $(this).prop('checked');
-	set_num = $(this).siblings().val()
-
-	$.ajax({
-	  url: '/',
-	  type: 'POST',
-	  data: {
-	    'set_num': set_num,
-	    'minif': minif
-	  }
-	});
-      });
-
-      $("body").on("change", "#s_check", function (event) {
-	scheck = $(this).prop('checked');
-	set_num = $(this).siblings().val()
-
-	$.ajax({
-	  url: '/',
-	  type: 'POST',
-	  data: {
-	    'set_num': set_num,
-	    'scheck': scheck
-	  }
-	});
-      });
-
-      $("body").on("change", "#s_col", function (event) {
-	scol = $(this).prop('checked');
-	set_num = $(this).siblings().val()
-
-	$.ajax({
-	  url: '/',
-	  type: 'POST',
-	  data: {
-	    'set_num': set_num,
-	    'scol': scol
-	  }
-	});
-      });
-
-      document.addEventListener('DOMContentLoaded', function () {
-	const toggleButton = document.getElementById('toggleButton');
-	let isHidden = true; // Initially, only show checked grid items
-
-	// Initialize visibility based on isHidden
-	updateVisibility();
-
-	toggleButton.addEventListener('click', function() {
-	  // Toggle visibility and update grid items
-	  isHidden = !isHidden;
-	  updateVisibility();
-	});
-
-	function updateVisibility() {
-	  // Get all grid items
-	  const gridItems = document.querySelectorAll('.grid-item');
-
-	  // Iterate over each grid item
-	  gridItems.forEach(function(item) {
-	    // Check if the corresponding checkbox is checked
-	    const checkbox = item.querySelector('.s_col');
-	    if (isHidden || (checkbox && checkbox.checked)) {
-	      // Show the grid item if it's hidden or the checkbox is checked
-	      item.style.display = 'block';
-	    } else {
-	      // Hide the grid item if the checkbox is not checked
-	      item.style.display = 'none';
-	    }
+	    $.ajax({
+	      url: '/',
+	      type: 'POST',
+	      data: {
+		'set_num': set_num,
+		'scheck': scheck,
+		'index': index
+	      }
+	    });
 	  });
-	}
-      });
 
-      document.addEventListener('DOMContentLoaded', function () {
-	const toggleButton = document.getElementById('toggleButton2');
-	let isHidden = true; // Initially, only show checked grid items
+	  $("body").on("change", "#s_col", function (event) {
+	    scol = $(this).prop('checked');
+	    set_num = $(this).siblings('#set_num').val();
+	    index = $(this).siblings('#index').val();
 
-	// Initialize visibility based on isHidden
-	updateVisibility();
+	    $.ajax({
+	      url: '/',
+	      type: 'POST',
+	      data: {
+		'set_num': set_num,
+		'scol': scol,
+		'index': index
+	      }
+	    });
+	  });
 
-	toggleButton.addEventListener('click', function() {
-	  // Toggle visibility and update grid items
-	  isHidden = !isHidden;
-	  updateVisibility();
-	});
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const toggleButton = document.getElementById('toggleButton');
+	    let isHidden = true; // Initially, only show checked grid items
 
-	function updateVisibility() {
-	  // Get all grid items
-	  const gridItems = document.querySelectorAll('.grid-item');
+	    // Initialize visibility based on isHidden
+	    updateVisibility();
 
-	  // Iterate over each grid item
-	  gridItems.forEach(function(item) {
-	    // Check if the corresponding checkbox is checked
-	    const checkbox = item.querySelector('.s_check');
-	    if (isHidden || (checkbox && checkbox.checked)) {
-	      // Show the grid item if it's hidden or the checkbox is checked
-	      item.style.display = 'block';
-	    } else {
-	      // Hide the grid item if the checkbox is not checked
-	      item.style.display = 'none';
+	    toggleButton.addEventListener('click', function() {
+	      // Toggle visibility and update grid items
+	      isHidden = !isHidden;
+	      updateVisibility();
+	    });
+
+	    function updateVisibility() {
+	      // Get all grid items
+	      const gridItems = document.querySelectorAll('.grid-item');
+
+	      // Iterate over each grid item
+	      gridItems.forEach(function(item) {
+		// Check if the corresponding checkbox is checked
+		const checkbox = item.querySelector('.s_col');
+		if (isHidden || (checkbox && checkbox.checked)) {
+		  // Show the grid item if it's hidden or the checkbox is checked
+		  item.style.display = 'block';
+		} else {
+		  // Hide the grid item if the checkbox is not checked
+		  item.style.display = 'none';
+		}
+	      });
 	    }
 	  });
-	}
-      });
 
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const toggleButton = document.getElementById('toggleButton2');
+	    let isHidden = true; // Initially, only show checked grid items
 
-    </script>
+	    // Initialize visibility based on isHidden
+	    updateVisibility();
+
+	    toggleButton.addEventListener('click', function() {
+	      // Toggle visibility and update grid items
+	      isHidden = !isHidden;
+	      updateVisibility();
+	    });
+
+	    function updateVisibility() {
+	      // Get all grid items
+	      const gridItems = document.querySelectorAll('.grid-item');
+
+	      // Iterate over each grid item
+	      gridItems.forEach(function(item) {
+		// Check if the corresponding checkbox is checked
+		const checkbox = item.querySelector('.s_check');
+		if (isHidden || (checkbox && checkbox.checked)) {
+		  // Show the grid item if it's hidden or the checkbox is checked
+		  item.style.display = 'block';
+		} else {
+		  // Hide the grid item if the checkbox is not checked
+		  item.style.display = 'none';
+		}
+	      });
+	    }
+	  });
+
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const toggleButton = document.getElementById('toggleButton3');
+	    let isHidden = true; // Initially, only show checked grid items
+
+	    // Initialize visibility based on isHidden
+	    updateVisibility();
+
+	    toggleButton.addEventListener('click', function() {
+	      // Toggle visibility and update grid items
+	      isHidden = !isHidden;
+	      updateVisibility();
+	    });
+
+	    function updateVisibility() {
+	      // Get all grid items
+	      const gridItems = document.querySelectorAll('.grid-item');
+
+	      // Iterate over each grid item
+	      gridItems.forEach(function(item) {
+		// Check if the corresponding checkbox is checked
+		const checkbox = item.querySelector('.s_com');
+		if (isHidden || (checkbox && checkbox.checked)) {
+		  // Show the grid item if it's hidden or the checkbox is checked
+		  item.style.display = 'block';
+		} else {
+		  // Hide the grid item if the checkbox is not checked
+		  item.style.display = 'none';
+		}
+	      });
+	    }
+	  });
+
+	</script>
   </body>
 </html>
