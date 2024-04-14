@@ -353,7 +353,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const toggleButton = document.getElementById('toggleButton');
   let isHidden = true; // Initially, only show checked grid items
 
+  // Initialize visibility based on isHidden
+  updateVisibility();
+
   toggleButton.addEventListener('click', function() {
+    // Toggle visibility and update grid items
+    isHidden = !isHidden;
+    updateVisibility();
+  });
+
+  function updateVisibility() {
     // Get all grid items
     const gridItems = document.querySelectorAll('.grid-item');
 
@@ -369,10 +378,7 @@ document.addEventListener('DOMContentLoaded', function () {
         item.style.display = 'none';
       }
     });
-
-    // Invert the visibility state for the next click
-    isHidden = !isHidden;
-  });
+  }
 });
 
 
