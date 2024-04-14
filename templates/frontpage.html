@@ -1,68 +1,70 @@
 <!DOCTYPE html>
 <html data-theme="light">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Set Overview</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Overview</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 
-<!-- CSS Reset -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"> --->
+    <!-- CSS Reset -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"> --->
 
-<!-- Milligram CSS -->
-
-
-<!--- 
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-  /> 
-
---->
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Milligram CSS -->
 
 
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-  }
-  
+    <!--- 
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+      <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+      /> 
+
+      --->
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+      <style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
   .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(20%, 32%)); /* Between 33% and 50% width */
+    /* grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); */
     gap: 10px;
     padding: 10px;
   }
 
   .grid-item {
-  	display: flex;
-	flex-direction: column; /* Arrange content vertically */
+    height: 300px;
+    display: flex;
   }
 
   .card {
     height: 100%;
-    overflow: hidden;
     border: 1px solid #ccc;
     padding: 10px;
     box-sizing: border-box;
     padding-bottom:40px;   /* Height of the footer */
   }
 
-/* Adjust height for smaller screens */
-@media (max-width: 768px) {
-  .card {
-    height: auto; /* Let the height adjust dynamically */
+  /* Adjust height for smaller screens */
+  @media (max-width: 768px) {
+    .card {
+      height: auto; /* Let the height adjust dynamically */
+    }
+    .grid-container {
+      grid-template-columns: 100%; /* On mobile, set width to 100% */
+    } 
+    .grid-item {
+      height: auto; /* Let the height adjust dynamically */
+      overflow: visible; /* Allow content to overflow if necessary */
+    }
   }
-  
-  .grid-item {
-    height: auto; /* Let the height adjust dynamically */
-    overflow: visible; /* Allow content to overflow if necessary */
-  }
-}
 
   .grid-item img { 
     max-width: 100%; 
@@ -74,314 +76,347 @@
     margin: 0; /* Remove default margin */
   }
   .card-footer {
-	  position:absolute;
-   bottom:0;
-   width:90%;
-   height:40px;   /* Height of the footer */
+    position:absolute;
+    bottom:0;
+    width:90%;
+    height:40px;   /* Height of the footer */
   }
-  
+
   .button {
-  background-color: black;
-  border-color: black;
-}
-.button.button-clear,
-.button.button-outline {
-  background-color: transparent;
-  color: black;
-}
-.button.button-clear {
-  border-color: transparent;
-}
-.search-container {
-  padding: 10px;
-}
-</style>
-</head>
-<body>
-	<div class="search-container">
-		<input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search...">
-  </select>
-  <center>
-  <button class="button button-outline" onclick="dynamicSort('set_id')">Sort by ID</button>
-  <button class="button button-outline" onclick="dynamicSort('set_year')">Sort by Year</button>
-  <button class="button button-outline" onclick="dynamicSort('set_parts')">Sort by Parts</button>
-  <button class="button button-outline" onclick="dynamicSort('set_name')">Sort by Name</button>
-  <button class="button button-outline" onclick="dynamicSort('s_col')">Sort by Collected</button>
-  <button class="button button-outline" onclick="dynamicSort('s_check')">Sort by Checked</button>
-  </center>
+    background-color: black;
+    border-color: black;
+  }
+  .button.button-clear,
+  .button.button-outline {
+    background-color: transparent;
+    color: black;
+  }
+  .button.button-clear {
+    border-color: transparent;
+  }
+  .search-container {
+    padding: 10px;
+  }
+      </style>
+  </head>
+  <body>
+    <div class="search-container">
+      <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search...">
+      </select>
+      <center>
+	<button class="button button-outline" onclick="dynamicSort('set_id')">Sort by ID</button>
+	<button class="button button-outline" onclick="dynamicSort('set_year')">Sort by Year</button>
+	<button class="button button-outline" onclick="dynamicSort('set_parts')">Sort by Parts</button>
+	<button class="button button-outline" onclick="dynamicSort('set_name')">Sort by Name</button>
+	<button class="button button-outline" onclick="dynamicSort('s_col')">Sort by Collected</button>
+	<button class="button button-outline" onclick="dynamicSort('s_check')">Sort by Checked</button>
+      </center>
+      <center>
+	<button class="button button-outline" id="toggleButton">Show Collected</button>
+	<button class="button button-outline" id="toggleButton2">Show Checked</button>
+      </center>
+      <!-- Add more buttons for other text values if needed -->
+    </div>
+    <center>
+      <div class="grid-container" id="gridContainer">
 
-<button id="toggleButton">Toggle Visibility</button>
+	{% for i in set_list %}
 
-  <!-- Add more buttons for other text values if needed -->
-	</div>
-
-	<div class="grid-container" id="gridContainer">
-
-{% for i in set_list %}
-
-
-<div class="grid-item">
-<div class="card" style="display: flex;flex-direction: column;">
-	<div class="card-image">
-    	  <figure class="image is-4by3">
-	    <a href="/{{ i['set_num'] }}">
-	      <img style='height: 100%; width: 100%; object-fit: contain'  src="/static/sets/{{ i['set_num'] }}/cover.jpg" alt="Image">
-	    </a>
-	  </figure>
-	</div>
-	<div class="card-content" style="padding:0;margin: 0 auto;height:100%; max-height:inherit;display: flex;flex-direction: column;">
-	
-		<div style="">
-		  <b class="is-size-5" style="width: 100%;">
+	<div class="grid-item" style="">
+	  <div class="card" style="">
+	    <div class="columns" style="">
+	      <div class="column is-two-thirds" style="text-align: left;">
+		<b class="is-size-5">
 		  <span class="set_id">{{ i['set_num'] }}</span> <span class="set_name">{{ i['name'] }}</span>
-		  </b>
-
-		  <p class="is-size-7">
-		  {{ i['theme_id'] }} (<span class='set_year'>{{ i['year'] }}</span>)
-		  </p>
-   		</div>
-
-		
-
-		  <span style="display:block; height: 10px;"></span>
-		<div style="display: flex;flex-direction: column;margin-top:auto;">
-		  <div class="is-size-6" style="margin:auto auto 0 0;">
-		    <b>Parts:</b> 
-		    <span class='set_parts'>{{ i['num_parts'] }}</span>
-		  </div>
-		  <span style="display:block; height: 10px;"></span>
-		  <div class="is-size-7" >
-			  <label class="checkbox" >
-				<input type="hidden" id="set_num" value="{{ i['set_num'] }}">
-				{% if json_file[i['set_num']]['Minifigs Collected'] == 'true' %}
-					<input class="s_fig" id="s_fig" type="checkbox" checked />
-				{% else %}
-					<input id="s_fig" type="checkbox" />
-				{% endif %}
-				Minifigs Collected
-			  </label>
-			  <label class="checkbox" >
-				<input type="hidden" id="set_num" value="{{ i['set_num'] }}">
-				{% if json_file[i['set_num']]['Set Checked'] == 'true' %}
-					<input class="s_check" id="s_check" type="checkbox" checked />
-				{% else %}
-					<input class="s_check" id="s_check" type="checkbox" />
-				{% endif %}
-				Set is checked
-			  </label>
-			  <label class="checkbox" >
-				<input type="hidden" id="set_num" value="{{ i['set_num'] }}">
-				{% if json_file[i['set_num']]['Set Collected'] == 'true' %}
-					<input class="s_col" id="s_col" type="checkbox" checked />
-				{% else %}
-					<input class="s_col" id="s_col" type="checkbox" />
-				{% endif %}
-				Set is collected
-			  </label>
-		  </div>
+		</b>
+	      </div>
+	      <div class="column" style="text-align: left;">
+		<div class="is-size-5">
+		  <b>Parts:</b> 
+		  <span class='set_parts'>{{ i['num_parts'] }}</span>
 		</div>
+	      </div>
+	    </div>
+	    <div class="columns" style="">
+	      <div class="column is-one-third">
+		<figure class="image is-4by3">
+		  <a href="/{{ i['set_num'] }}">
+		    <img style='height: 100%; width: 100%; object-fit: contain'  src="/static/sets/{{ i['set_num'] }}/cover.jpg" alt="Image">
+		  </a>
+		</figure>
+		<p class="is-size-7">
+		  {{ i['theme_id'] }} (<span class='set_year'>{{ i['year'] }}</span>)
+		</p>
+	      </div>
 
+	      {% for j in json_file[i['set_num']]['unit']  %}
+	      <div class="column is-one-thid" style="border: 1px blue dashed;">
+		<p>
+		{{ j }}
+		</p>
+		  <div class="is-size-7" >
+		    <label class="checkbox" >
+		      <input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+		      {% if json_file[i['set_num']]['Minifigs Collected'] == 'true' %}
+		      <input class="s_fig" id="s_fig" type="checkbox" checked />
+		      {% else %}
+		      <input id="s_fig" type="checkbox" />
+		      {% endif %}
+		      Minifigs Collected
+		    </label>
+		    <label class="checkbox" >
+		      <input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+		      {% if json_file[i['set_num']]['Set Checked'] == 'true' %}
+		      <input class="s_check" id="s_check" type="checkbox" checked />
+		      {% else %}
+		      <input class="s_check" id="s_check" type="checkbox" />
+		      {% endif %}
+		      Set is checked
+		    </label>
+		    <label class="checkbox" >
+		      <input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+		      {% if json_file[i['set_num']]['Set Collected'] == 'true' %}
+		      <input class="s_col" id="s_col" type="checkbox" checked />
+		      {% else %}
+		      <input class="s_col" id="s_col" type="checkbox" />
+		      {% endif %}
+		      Set is collected
+		    </label>
+		  </div>
+	      </div>
+
+		{% endfor %}
+
+		<footer class="card-footer" style="">
+		  <p class="card-footer-item">
+		  <span>
+		    <a class="is-size-7" style="color: #363636;" href="/{{ i['set_num'] }}">Inventory</a>
+		  </span>
+		  </p>
+
+		  <p class="card-footer-item">
+		  <span>
+		    <a class="is-size-7" style="color: #363636;" href="/{{ i['set_num'] }}">Instructions</a>
+		  </span>
+		  </p>
+		</footer>
+	      </div>
+	    </div>
+	  </div>
+
+	  {% endfor %}
 	</div>
+    </center>
+    <script>
+      function searchFunction() {
+	var input, filter, gridContainer, gridItems, i, txtValue;
+	input = document.getElementById('searchInput');
+	filter = input.value.toUpperCase();
+	gridContainer = document.getElementById('gridContainer');
+	gridItems = gridContainer.getElementsByClassName('grid-item');
 
-
-
-	<footer class="card-footer" style="">
-	  <p class="card-footer-item">
-	    <span>
-	      <a class="is-size-7" style="color: #363636;" href="/{{ i['set_num'] }}">Inventory</a>
-	    </span>
-	  </p>
-
-	  <p class="card-footer-item">
-	    <span>
-	      <a class="is-size-7" style="color: #363636;" href="/{{ i['set_num'] }}">Instructions</a>
-	    </span>
-	  </p>
-	</footer>
-	</div>
-</div>
-
-{% endfor %}
-
-	</div>
-<script>
-function searchFunction() {
-  var input, filter, gridContainer, gridItems, i, txtValue;
-  input = document.getElementById('searchInput');
-  filter = input.value.toUpperCase();
-  gridContainer = document.getElementById('gridContainer');
-  gridItems = gridContainer.getElementsByClassName('grid-item');
-
-  for (i = 0; i < gridItems.length; i++) {
-    txtValue = gridItems[i].textContent || gridItems[i].innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      gridItems[i].style.display = "";
-    } else {
-      gridItems[i].style.display = "none";
-    }
-  }
-}
-function sortFunction() {
-  var sortSelect, sortValue, gridContainer, gridItems, sortedItems, i;
-  sortSelect = document.getElementById('sortSelect');
-  sortValue = sortSelect.value;
-  gridContainer = document.getElementById('gridContainer');
-  gridItems = gridContainer.getElementsByClassName('grid-item');
-  sortedItems = Array.from(gridItems);
-
-  if (sortValue === 'alphabetical') {
-    sortedItems.sort(function(a, b) {
-      var textA = a.textContent.trim().toUpperCase();
-      var textB = b.textContent.trim().toUpperCase();
-      if (textA < textB) {
-        return -1;
+	for (i = 0; i < gridItems.length; i++) {
+	  txtValue = gridItems[i].textContent || gridItems[i].innerText;
+	  if (txtValue.toUpperCase().indexOf(filter) > -1) {
+	    gridItems[i].style.display = "";
+	  } else {
+	    gridItems[i].style.display = "none";
+	  }
+	}
       }
-      if (textA > textB) {
-        return 1;
+      function sortFunction() {
+	var sortSelect, sortValue, gridContainer, gridItems, sortedItems, i;
+	sortSelect = document.getElementById('sortSelect');
+	sortValue = sortSelect.value;
+	gridContainer = document.getElementById('gridContainer');
+	gridItems = gridContainer.getElementsByClassName('grid-item');
+	sortedItems = Array.from(gridItems);
+
+	if (sortValue === 'alphabetical') {
+	  sortedItems.sort(function(a, b) {
+	    var textA = a.textContent.trim().toUpperCase();
+	    var textB = b.textContent.trim().toUpperCase();
+	    if (textA < textB) {
+	      return -1;
+	    }
+	    if (textA > textB) {
+	      return 1;
+	    }
+	    return 0;
+	  });
+	}
+
+	// Remove existing items
+	while (gridContainer.firstChild) {
+	  gridContainer.removeChild(gridContainer.firstChild);
+	}
+
+	// Append sorted items
+	for (i = 0; i < sortedItems.length; i++) {
+	  gridContainer.appendChild(sortedItems[i]);
+	}
       }
-      return 0;
-    });
-  }
+      var sortOrder = 'asc';
 
-  // Remove existing items
-  while (gridContainer.firstChild) {
-    gridContainer.removeChild(gridContainer.firstChild);
-  }
+      function dynamicSort(className) {
+	console.log(className);
+	var gridContainer, gridItems, sortedItems, i;
+	gridContainer = document.getElementById('gridContainer');
+	gridItems = gridContainer.getElementsByClassName('grid-item');
+	sortedItems = Array.from(gridItems);
 
-  // Append sorted items
-  for (i = 0; i < sortedItems.length; i++) {
-    gridContainer.appendChild(sortedItems[i]);
-  }
-}
-var sortOrder = 'asc';
-
-function dynamicSort(className) {
-  var gridContainer, gridItems, sortedItems, i;
-  gridContainer = document.getElementById('gridContainer');
-  gridItems = gridContainer.getElementsByClassName('grid-item');
-  sortedItems = Array.from(gridItems);
-
-  sortedItems.sort(function(a, b) {
-    var textA = a.getElementsByClassName(className)[0].textContent.trim();
-    var textB = b.getElementsByClassName(className)[0].textContent.trim();
-// Check if the className corresponds to a checkbox
-    if (className == 's_col' || className == 's_check') {
-      var checkedA = a.getElementsByClassName(className)[0].checked;
-      var checkedB = b.getElementsByClassName(className)[0].checked;
-      // Sort by checked checkboxes (true first, false last)
-      return (checkedA === checkedB) ? 0 : checkedA ? -1 : 1;
-    }
+	sortedItems.sort(function(a, b) {
+	  var textA = a.getElementsByClassName(className)[0].textContent.trim();
+	  var textB = b.getElementsByClassName(className)[0].textContent.trim();
+	  // Check if the className corresponds to a checkbox
+	  if (className == 's_col' || className == 's_check') {
+	    var checkedA = a.getElementsByClassName(className)[0].checked;
+	    var checkedB = b.getElementsByClassName(className)[0].checked;
+	    // Sort by checked checkboxes (true first, false last)
+	    return (checkedA === checkedB) ? 0 : checkedA ? -1 : 1;
+	  }
 
 
-       // Remove digits after hyphen if present
-    textA = textA.replace(/-\d+$/, '').trim();
-    textB = textB.replace(/-\d+$/, '').trim(); 
-    // If text1 is an integer, parse it as a number
-    if (!isNaN(textA) && !isNaN(textB)) {
-      var result = parseInt(textA) - parseInt(textB);
-      // Toggle result based on current sort order
-      return sortOrder === 'asc' ? result : -result;
-    }
-    // If text1 is not an integer, treat it as a string
-    else {
-      textA = textA.toUpperCase();
-      textB = textB.toUpperCase();
-      var result = textA.localeCompare(textB);
-      // Toggle result based on current sort order
-      return sortOrder === 'asc' ? result : -result;
-    }
-  });
+	  // Remove digits after hyphen if present
+	  textA = textA.replace(/-\d+$/, '').trim();
+	  textB = textB.replace(/-\d+$/, '').trim(); 
+	  // If text1 is an integer, parse it as a number
+	  if (!isNaN(textA) && !isNaN(textB)) {
+	    var result = parseInt(textA) - parseInt(textB);
+	    // Toggle result based on current sort order
+	    return sortOrder === 'asc' ? result : -result;
+	  }
+	  // If text1 is not an integer, treat it as a string
+	  else {
+	    textA = textA.toUpperCase();
+	    textB = textB.toUpperCase();
+	    var result = textA.localeCompare(textB);
+	    // Toggle result based on current sort order
+	    return sortOrder === 'asc' ? result : -result;
+	  }
+	});
 
-  // Reverse sort order for next click
-  sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+	// Reverse sort order for next click
+	sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
 
-  // Remove existing items
-  while (gridContainer.firstChild) {
-    gridContainer.removeChild(gridContainer.firstChild);
-  }
+	// Remove existing items
+	while (gridContainer.firstChild) {
+	  gridContainer.removeChild(gridContainer.firstChild);
+	}
 
-  // Append sorted items
-  for (i = 0; i < sortedItems.length; i++) {
-    gridContainer.appendChild(sortedItems[i]);
-  }
-}
-
-$("body").on("change", "#s_fig", function (event) {
-  minif = $(this).prop('checked');
-  set_num = $(this).siblings().val()
-
-$.ajax({
-    url: '/',
-    type: 'POST',
-    data: {
-      'set_num': set_num,
-	'minif': minif
-   }
-  });
-});
-
-$("body").on("change", "#s_check", function (event) {
-  scheck = $(this).prop('checked');
-  set_num = $(this).siblings().val()
-
-$.ajax({
-    url: '/',
-    type: 'POST',
-    data: {
-      'set_num': set_num,
-	'scheck': scheck
-   }
-  });
-});
-
-$("body").on("change", "#s_col", function (event) {
-  scol = $(this).prop('checked');
-  set_num = $(this).siblings().val()
-
-$.ajax({
-    url: '/',
-    type: 'POST',
-    data: {
-      'set_num': set_num,
-	'scol': scol
-   }
-  });
-});
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  const toggleButton = document.getElementById('toggleButton');
-  let isHidden = true; // Initially, only show checked grid items
-
-  // Initialize visibility based on isHidden
-  updateVisibility();
-
-  toggleButton.addEventListener('click', function() {
-    // Toggle visibility and update grid items
-    isHidden = !isHidden;
-    updateVisibility();
-  });
-
-  function updateVisibility() {
-    // Get all grid items
-    const gridItems = document.querySelectorAll('.grid-item');
-
-    // Iterate over each grid item
-    gridItems.forEach(function(item) {
-      // Check if the corresponding checkbox is checked
-      const checkbox = item.querySelector('.s_col');
-      if (isHidden || (checkbox && checkbox.checked)) {
-        // Show the grid item if it's hidden or the checkbox is checked
-        item.style.display = 'block';
-      } else {
-        // Hide the grid item if the checkbox is not checked
-        item.style.display = 'none';
+	// Append sorted items
+	for (i = 0; i < sortedItems.length; i++) {
+	  gridContainer.appendChild(sortedItems[i]);
+	}
       }
-    });
-  }
-});
+
+      $("body").on("change", "#s_fig", function (event) {
+	minif = $(this).prop('checked');
+	set_num = $(this).siblings().val()
+
+	$.ajax({
+	  url: '/',
+	  type: 'POST',
+	  data: {
+	    'set_num': set_num,
+	    'minif': minif
+	  }
+	});
+      });
+
+      $("body").on("change", "#s_check", function (event) {
+	scheck = $(this).prop('checked');
+	set_num = $(this).siblings().val()
+
+	$.ajax({
+	  url: '/',
+	  type: 'POST',
+	  data: {
+	    'set_num': set_num,
+	    'scheck': scheck
+	  }
+	});
+      });
+
+      $("body").on("change", "#s_col", function (event) {
+	scol = $(this).prop('checked');
+	set_num = $(this).siblings().val()
+
+	$.ajax({
+	  url: '/',
+	  type: 'POST',
+	  data: {
+	    'set_num': set_num,
+	    'scol': scol
+	  }
+	});
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+	const toggleButton = document.getElementById('toggleButton');
+	let isHidden = true; // Initially, only show checked grid items
+
+	// Initialize visibility based on isHidden
+	updateVisibility();
+
+	toggleButton.addEventListener('click', function() {
+	  // Toggle visibility and update grid items
+	  isHidden = !isHidden;
+	  updateVisibility();
+	});
+
+	function updateVisibility() {
+	  // Get all grid items
+	  const gridItems = document.querySelectorAll('.grid-item');
+
+	  // Iterate over each grid item
+	  gridItems.forEach(function(item) {
+	    // Check if the corresponding checkbox is checked
+	    const checkbox = item.querySelector('.s_col');
+	    if (isHidden || (checkbox && checkbox.checked)) {
+	      // Show the grid item if it's hidden or the checkbox is checked
+	      item.style.display = 'block';
+	    } else {
+	      // Hide the grid item if the checkbox is not checked
+	      item.style.display = 'none';
+	    }
+	  });
+	}
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+	const toggleButton = document.getElementById('toggleButton2');
+	let isHidden = true; // Initially, only show checked grid items
+
+	// Initialize visibility based on isHidden
+	updateVisibility();
+
+	toggleButton.addEventListener('click', function() {
+	  // Toggle visibility and update grid items
+	  isHidden = !isHidden;
+	  updateVisibility();
+	});
+
+	function updateVisibility() {
+	  // Get all grid items
+	  const gridItems = document.querySelectorAll('.grid-item');
+
+	  // Iterate over each grid item
+	  gridItems.forEach(function(item) {
+	    // Check if the corresponding checkbox is checked
+	    const checkbox = item.querySelector('.s_check');
+	    if (isHidden || (checkbox && checkbox.checked)) {
+	      // Show the grid item if it's hidden or the checkbox is checked
+	      item.style.display = 'block';
+	    } else {
+	      // Hide the grid item if the checkbox is not checked
+	      item.style.display = 'none';
+	    }
+	  });
+	}
+      });
 
 
-</script>
-</body>
+    </script>
+  </body>
 </html>
