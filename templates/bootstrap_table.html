@@ -70,8 +70,9 @@
   </table>
 </div>
 
-  <h1>Minifigs</h1>
+{% if minifigs_file.figs | length > 0 %}
 
+  <h1>Minifigs</h1>
 {% for fig in minifigs_file.figs %}
 
 <h2>{{ fig.name}}</h2>
@@ -135,7 +136,7 @@
 
 
 {% endfor %} 
-
+{% endif %}
 
 
 
