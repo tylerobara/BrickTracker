@@ -206,9 +206,17 @@ def index():
         conn = sqlite3.connect('app.db')
         cursor = conn.cursor()
         cursor.execute('SELECT * from sets;')
-        set_list = cursor.fetchall()
+
+        results = cursor.fetchall()
+        set_list = [list(i) for i in results]
 
         print(set_list)
+        for i in set_list:
+            try:
+                i[3] = theme_file[theme_file[:, 0] == str(i[3])][0][1]
+            except Exception as e:
+                print(e)
+
 
         cursor.close()
         conn.close()
@@ -257,7 +265,7 @@ def inventory(tmp,u_id):
         cursor = conn.cursor()
 
         # If quantity is not empty
-        if missing is not '' and missing is not '0':
+        if missing != '' and missing != '0':
             #Check if there's an existing entry
             cursor.execute('''SELECT quantity FROM missing 
                 WHERE   set_num = ? AND 

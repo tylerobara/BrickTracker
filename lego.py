@@ -34,9 +34,6 @@ with open('api','r') as f:
 
 rb = rebrick.init(api_key)
 
-
-
-
 # if Path(set_path).is_dir():
 #     print('Set exists, exitting')
 #     logging.error('Set exists!')
@@ -94,11 +91,9 @@ for i in response["results"]:
         if i['element_id'] == None:
             if not Path("./static/parts/p_"+i["part"]["part_id"]+".jpg").is_file():
                 res = requests.get(i["part"]["part_img_url"], stream = True)
-
                 if res.status_code == 200:
                     with open("./static/parts/p_"+i["part"]["part_id"]+".jpg",'wb') as f:
                         shutil.copyfileobj(res.raw, f)
-                    print(i["part"]["part_id"])
         else:
             if not Path("./static/parts/"+i["element_id"]+".jpg").is_file():
                 res = requests.get(i["part"]["part_img_url"], stream = True)
@@ -106,25 +101,21 @@ for i in response["results"]:
                 if res.status_code == 200:
                     with open("./static/parts/"+i["element_id"]+".jpg",'wb') as f:
                         shutil.copyfileobj(res.raw, f)
-                    print(i["part"]["part_id"])
             if not Path("./static/parts/"+i["element_id"]+".jpg").is_file():
                 res = requests.get(i["part"]["part_img_url"], stream = True)
 
                 if res.status_code == 200:
                     with open("./static/parts/"+i["element_id"]+".jpg",'wb') as f:
                         shutil.copyfileobj(res.raw, f)
-                    print(i["part"]["part_id"])
     except Exception as e:
         print(e)
         logging.error(set_num + ": " + str(e))
 
 # read info file with missing pieces
 
-
 if Path("./info/"+set_num + ".json").is_file():
     with open("./info/" + set_num + ".json") as f:
         data = json.load(f)
-    print(data)
 else:
     shutil.copy("set_template.json", "./info/"+set_num+".json")
 
@@ -153,7 +144,6 @@ for x in response["results"]:
         print('Image Couldn\'t be retrieved for set ' + set_num)
         logging.error('set_img_url: ' + set_num)
 
-
     response = json.loads(rebrick.lego.get_minifig_elements(x["set_num"]).read())
 
     for i in response["results"]:
@@ -167,7 +157,6 @@ for x in response["results"]:
         }
         fig["parts"].append(part)
 
-
         try:
             if i['element_id'] == None:
                 if not Path("./static/figs/p_"+i["part"]["part_num"]+".jpg").is_file():
@@ -176,7 +165,6 @@ for x in response["results"]:
                     if res.status_code == 200:
                         with open("./static/figs/p_"+i["part"]["part_num"]+".jpg",'wb') as f:
                             shutil.copyfileobj(res.raw, f)
-                        print('image saved')
             else:
                 if not Path("./static/figs/"+i["part"]["part_num"]+".jpg").is_file():
                     res = requests.get(i["part"]["part_img_url"], stream = True)
@@ -184,14 +172,12 @@ for x in response["results"]:
                     if res.status_code == 200:
                         with open("./static/figs/"+i["part"]["part_num"]+".jpg",'wb') as f:
                             shutil.copyfileobj(res.raw, f)
-                        print('image saved')
                 if not Path("./static/figs/"+i["part"]["part_num"]+".jpg").is_file():
                     res = requests.get(i["part"]["part_img_url"], stream = True)
 
                     if res.status_code == 200:
                         with open("./static/figs/"+i["part"]["part_num"]+".jpg",'wb') as f:
                             shutil.copyfileobj(res.raw, f)
-                        print('image saved')
         except Exception as e:
             print(e)
             logging.error(set_num + ": " + str(e))
