@@ -1,17 +1,479 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html data-theme="light">
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask App - Insert Number</title>
-</head>
-<body>
-    <h1>Insert Number</h1>
-    <form action="/saveNumber" method="post">
-        <label for="numberInput">Number:</label>
-        <input type="number" id="numberInput" name="numberInput">
-        <button type="submit">Save Number</button>
-    </form>
-</body>
-</html>
+    <title>Set Overview</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+      <style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+  .grid-container {
+    display: grid;
+    /* grid-template-columns: repeat(auto-fit, minmax(10%, 23%)); /* Between 33% and 50% width */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .grid-item {
+ 	height:auto; 
+  }
+
+  .card {
+    height: 100%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    padding-bottom:30px;   /* Height of the footer */
+  }
+
+  /* Adjust height for smaller screens */
+  @media (max-width: 768px) {
+    .card {
+      height: auto; /* Let the height adjust dynamically */
+    }
+    .grid-container {
+      grid-template-columns: 100%; /* On mobile, set width to 100% */
+    } 
+    .grid-item {
+      height: auto; /* Let the height adjust dynamically */
+      overflow: visible; /* Allow content to overflow if necessary */
+    }
+  }
+
+  .grid-item img { 
+    max-width: 100%; 
+    display: block;
+
+  }
+  .card p {
+    margin: 0; /* Remove default margin */
+  }
+  .card-footer {
+    position:absolute;
+    bottom:0;
+    width:90%;
+    height:30px;   /* Height of the footer */
+  }
+
+  .button {
+    background-color: black;
+    border-color: black;
+  }
+  .button.button-clear,
+  .button.button-outline {
+    background-color: transparent;
+    color: black;
+  }
+  .button.button-clear {
+    border-color: transparent;
+  }
+  .search-container {
+    padding: 10px;
+  }
+      </style>
+  </head>
+  <body>
+    <div class="search-container">
+      <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search...">
+      </select>
+      <center>
+	<button class="button button-outline" onclick="dynamicSort('set_id')">Sort by ID</button>
+	<button class="button button-outline" onclick="dynamicSort('set_year')">Sort by Year</button>
+	<button class="button button-outline" onclick="dynamicSort('set_parts')">Sort by Parts</button>
+	<button class="button button-outline" onclick="dynamicSort('set_theme')">Sort by Theme</button>
+	<button class="button button-outline" onclick="dynamicSort('set_name')">Sort by Name</button>
+	<button class="button button-outline" onclick="dynamicSort('s_col')">Sort by Collected</button>
+	<button class="button button-outline" onclick="dynamicSort('s_check')">Sort by Checked</button>
+      </center>
+      <center>
+	<button class="button button-outline" id="toggleButton">Show Collected</button>
+	<button class="button button-outline" id="toggleButton2">Show Checked</button>
+	<button class="button button-outline" id="toggleButton3">Show Complete</button>
+      </center>
+      <select id="themeDropdown">
+  <option value="">Select Theme</option>
+</select>
+
+      <!-- Add more buttons for other text values if needed -->
+    </div>
+    <div class="grid-container" id="gridContainer">
+
+      {% for i in set_list %}
+      <div class="grid-item">
+	      <div class="card">
+	      <div class="columns" style="">
+		<div class="column is-two-thirds" style="text-align: left;">
+		  <p class="is-size-5">
+		    <span style="font-weight: bold;" class="set_id">{{ i[0] }}</span> <span style="font-weight: bold;" class="set_name">{{ i[1] }}</span>
+		   <span class="is-size-7">{{ i[8] }}</span>
+		  </p>
+		</div>
+		<div class="column" style="text-align: left;">
+		  <div class="is-size-5">
+		    <b>Parts:</b> 
+		    <span class='set_parts'>{{ i[4] }}</span>
+		  </div>
+		</div>
+	      </div>
+	      <div class="columns" style="">
+		<div class="column is-half" style="">
+		  <figure class="image is-4by3">
+			  <a href="/{{ i[0] }}/{{ i[8] }}">
+		      <img style='height: 100%; width: 100%; object-fit: contain'  src="/static/sets/{{ i[0] }}.jpg" alt="Image">
+		    </a>
+		  </figure>
+		</div>
+
+		<div class="column is-half" style="margin:0;padding:0;">
+		  <div class="is-size-7">
+		    <label class="checkbox" >
+		      <input type="hidden" id="set_num" value="{{ i[0] }}">
+		      <input class="s_fig" id="s_fig" type="checkbox" checked />
+		      Minifigs Collected
+		    </label>
+		      <br>
+		      <label class="checkbox" >
+			<input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+			<input class="s_check" id="s_check" type="checkbox" checked />
+			Set is checked
+		      </label>
+			<br>
+			<label class="checkbox" >
+			  <input type="hidden" id="set_num" value="{{ i['set_num'] }}">
+			  <input class="s_col" id="s_col" type="checkbox" checked />
+			  Set is collected and boxed
+			</label>
+			  <br>
+			  <label class="checkbox" >
+			    <input type="checkbox" class="s_com" onclick="return false;"/> Set is missing pieces
+			  </label>
+		  </div>
+		</div>
+	      </div>
+		<footer class="card-footer" style="">
+		  <p class="card-footer-item">
+		  <span>
+			  <a class="is-size-7 set_theme" style="color: #363636;">{{ i[3] }}</a> <a class="is-size-7" style="color: #363636;"> (<span class='set_year'>{{ i[2] }}</span>)</a>
+		  </span>
+		  </p>
+
+		  <p class="card-footer-item">
+		  <span>
+		    <a class="is-size-6" style="color: #363636;" href="/{{ i['set_num'] }}">Inventory</a>
+		  </span>
+		  </p>
+
+		  <p class="card-footer-item">
+		  <span>
+		    <a class="is-size-6" style="color: #363636;" href="/{{ i['set_num'] }}">Instructions</a>
+		  </span>
+		  </p>
+		</footer>
+	      </div>
+	  </div>
+
+	  {% endfor %}
+	</div>
+	<script>
+	  function searchFunction() {
+	    var input, filter, gridContainer, gridItems, i, txtValue;
+	    input = document.getElementById('searchInput');
+	    filter = input.value.toUpperCase();
+	    gridContainer = document.getElementById('gridContainer');
+	    gridItems = gridContainer.getElementsByClassName('grid-item');
+
+	    for (i = 0; i < gridItems.length; i++) {
+	      txtValue = gridItems[i].textContent || gridItems[i].innerText;
+	      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+		gridItems[i].style.display = "";
+	      } else {
+		gridItems[i].style.display = "none";
+	      }
+	    }
+	  }
+	  function sortFunction() {
+	    var sortSelect, sortValue, gridContainer, gridItems, sortedItems, i;
+	    sortSelect = document.getElementById('sortSelect');
+	    sortValue = sortSelect.value;
+	    gridContainer = document.getElementById('gridContainer');
+	    gridItems = gridContainer.getElementsByClassName('grid-item');
+	    sortedItems = Array.from(gridItems);
+
+	    if (sortValue === 'alphabetical') {
+	      sortedItems.sort(function(a, b) {
+		var textA = a.textContent.trim().toUpperCase();
+		var textB = b.textContent.trim().toUpperCase();
+		if (textA < textB) {
+		  return -1;
+		}
+		if (textA > textB) {
+		  return 1;
+		}
+		return 0;
+	      });
+	    }
+
+	    // Remove existing items
+	    while (gridContainer.firstChild) {
+	      gridContainer.removeChild(gridContainer.firstChild);
+	    }
+
+	    // Append sorted items
+	    for (i = 0; i < sortedItems.length; i++) {
+	      gridContainer.appendChild(sortedItems[i]);
+	    }
+	  }
+	  var sortOrder = 'asc';
+
+	  function dynamicSort(className) {
+	    console.log(className);
+	    var gridContainer, gridItems, sortedItems, i;
+	    gridContainer = document.getElementById('gridContainer');
+	    gridItems = gridContainer.getElementsByClassName('grid-item');
+	    sortedItems = Array.from(gridItems);
+
+	    sortedItems.sort(function(a, b) {
+	      var textA = a.getElementsByClassName(className)[0].textContent.trim();
+	      var textB = b.getElementsByClassName(className)[0].textContent.trim();
+	      // Check if the className corresponds to a checkbox
+	      if (className == 's_col' || className == 's_check') {
+		var checkedA = a.getElementsByClassName(className)[0].checked;
+		var checkedB = b.getElementsByClassName(className)[0].checked;
+		// Sort by checked checkboxes (true first, false last)
+		return (checkedA === checkedB) ? 0 : checkedA ? -1 : 1;
+	      }
+
+
+	      // Remove digits after hyphen if present
+	      textA = textA.replace(/-\d+$/, '').trim();
+	      textB = textB.replace(/-\d+$/, '').trim(); 
+	      // If text1 is an integer, parse it as a number
+	      if (!isNaN(textA) && !isNaN(textB)) {
+		var result = parseInt(textA) - parseInt(textB);
+		// Toggle result based on current sort order
+		return sortOrder === 'asc' ? result : -result;
+	      }
+	      // If text1 is not an integer, treat it as a string
+	      else {
+		textA = textA.toUpperCase();
+		textB = textB.toUpperCase();
+		var result = textA.localeCompare(textB);
+		// Toggle result based on current sort order
+		return sortOrder === 'asc' ? result : -result;
+	      }
+	    });
+
+	    // Reverse sort order for next click
+	    sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+
+	    // Remove existing items
+	    while (gridContainer.firstChild) {
+	      gridContainer.removeChild(gridContainer.firstChild);
+	    }
+
+	    // Append sorted items
+	    for (i = 0; i < sortedItems.length; i++) {
+	      gridContainer.appendChild(sortedItems[i]);
+	    }
+	  }
+
+	  $("body").on("change", "#s_fig", function (event) {
+	    minif = $(this).prop('checked');
+	    set_num = $(this).siblings('#set_num').val();
+	    index = $(this).siblings('#index').val();
+
+	    $.ajax({
+	      url: '/',
+	      type: 'POST',
+	      data: {
+		'set_num': set_num,
+		'minif': minif,
+		'index': index
+	      }
+	    });
+	  });
+
+	  $("body").on("change", "#s_check", function (event) {
+	    scheck = $(this).prop('checked');
+	    set_num = $(this).siblings('#set_num').val();
+	    index = $(this).siblings('#index').val();
+
+	    $.ajax({
+	      url: '/',
+	      type: 'POST',
+	      data: {
+		'set_num': set_num,
+		'scheck': scheck,
+		'index': index
+	      }
+	    });
+	  });
+
+	  $("body").on("change", "#s_col", function (event) {
+	    scol = $(this).prop('checked');
+	    set_num = $(this).siblings('#set_num').val();
+	    index = $(this).siblings('#index').val();
+
+	    $.ajax({
+	      url: '/',
+	      type: 'POST',
+	      data: {
+		'set_num': set_num,
+		'scol': scol,
+		'index': index
+	      }
+	    });
+	  });
+
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const toggleButton = document.getElementById('toggleButton');
+	    let isHidden = true; // Initially, only show checked grid items
+
+	    // Initialize visibility based on isHidden
+	    updateVisibility();
+
+	    toggleButton.addEventListener('click', function() {
+	      // Toggle visibility and update grid items
+	      isHidden = !isHidden;
+	      updateVisibility();
+	    });
+
+	    function updateVisibility() {
+	      // Get all grid items
+	      const gridItems = document.querySelectorAll('.grid-item');
+
+	      // Iterate over each grid item
+	      gridItems.forEach(function(item) {
+		// Check if the corresponding checkbox is checked
+		const checkbox = item.querySelector('.s_col');
+		if (isHidden || (checkbox && checkbox.checked)) {
+		  // Show the grid item if it's hidden or the checkbox is checked
+		  item.style.display = 'block';
+		} else {
+		  // Hide the grid item if the checkbox is not checked
+		  item.style.display = 'none';
+		}
+	      });
+	    }
+	  });
+
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const toggleButton = document.getElementById('toggleButton2');
+	    let isHidden = true; // Initially, only show checked grid items
+
+	    // Initialize visibility based on isHidden
+	    updateVisibility();
+
+	    toggleButton.addEventListener('click', function() {
+	      // Toggle visibility and update grid items
+	      isHidden = !isHidden;
+	      updateVisibility();
+	    });
+
+	    function updateVisibility() {
+	      // Get all grid items
+	      const gridItems = document.querySelectorAll('.grid-item');
+
+	      // Iterate over each grid item
+	      gridItems.forEach(function(item) {
+		// Check if the corresponding checkbox is checked
+		const checkbox = item.querySelector('.s_check');
+		if (isHidden || (checkbox && checkbox.checked)) {
+		  // Show the grid item if it's hidden or the checkbox is checked
+		  item.style.display = 'block';
+		} else {
+		  // Hide the grid item if the checkbox is not checked
+		  item.style.display = 'none';
+		}
+	      });
+	    }
+	  });
+
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const toggleButton = document.getElementById('toggleButton3');
+	    let isHidden = true; // Initially, only show checked grid items
+
+	    // Initialize visibility based on isHidden
+	    updateVisibility();
+
+	    toggleButton.addEventListener('click', function() {
+	      // Toggle visibility and update grid items
+	      isHidden = !isHidden;
+	      updateVisibility();
+	    });
+
+	    function updateVisibility() {
+	      // Get all grid items
+	      const gridItems = document.querySelectorAll('.grid-item');
+
+	      // Iterate over each grid item
+	      gridItems.forEach(function(item) {
+		// Check if the corresponding checkbox is checked
+		const checkbox = item.querySelector('.s_com');
+		if (isHidden || (checkbox && checkbox.checked)) {
+		  // Show the grid item if it's hidden or the checkbox is checked
+		  item.style.display = 'block';
+		} else {
+		  // Hide the grid item if the checkbox is not checked
+		  item.style.display = 'none';
+		}
+	      });
+	    }
+	  });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const themeDropdown = document.getElementById('themeDropdown');
+
+  // Retrieve all unique values from the <a> elements
+  const themes = [];
+  const themeLinks = document.querySelectorAll('.set_theme');
+  themeLinks.forEach(function(link) {
+    const themeId = link.textContent.trim();
+    if (!themes.includes(themeId)) {
+      themes.push(themeId);
+    }
+  });
+
+  // Create options for the dropdown list
+  themes.forEach(function(theme) {
+    const option = document.createElement('option');
+    option.value = theme;
+    option.textContent = theme;
+    themeDropdown.appendChild(option);
+  });
+
+  // Add event listener to filter grid items
+  themeDropdown.addEventListener('change', function() {
+    const selectedTheme = themeDropdown.value;
+    filterGridItems(selectedTheme);
+  });
+
+  function filterGridItems(selectedTheme) {
+    const gridItems = document.querySelectorAll('.grid-item');
+    gridItems.forEach(function(item) {
+      const themeLink = item.querySelector('.set_theme');
+      const themeId = themeLink.textContent.trim();
+      if (!selectedTheme || themeId === selectedTheme) {
+        item.style.display = 'block'; // Show the grid item
+      } else {
+        item.style.display = 'none'; // Hide the grid item
+      }
+    });
+  }
+});
+
+
+	</script>
+  </body>
+</html>

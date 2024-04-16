@@ -5,19 +5,7 @@
   <head>
       <title>{{ title }}</title>
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">    <!-- CSS Reset -->
-<link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
-
-
-<!-- Milligram CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-/>
-
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <style>
@@ -261,13 +249,13 @@ background-color: white;
 	  <div class="header" id='myHeader'>
 		  <span><h2>{{ tmp }} - {{ title }} </h2></span>
 
-	<span><button style="background-color: white;color: black;border: 1px dotted black;width: 98%;margin: 1%;" onclick="goToPage('/')">Home</button></span>
+	<span><button class="button is-link" style="width: 98%;margin: 1%;" onclick="goToPage('/')">Home</button></span>
 </div>
 
     <div class="container">
       <center>
 
-      <img class="lightbox-trigger" id="cover" style='height: 100px; width: auto; object-fit: contain'  src="/static/sets/{{ tmp }}/cover.jpg" alt="Image">
+      <img class="lightbox-trigger" id="cover" style='height: 100px; width: auto; object-fit: contain'  src="/static/sets/{{ tmp }}.jpg" alt="Image">
       {% block content %}{% endblock %}
     </div>
     {% block scripts %}{% endblock %}

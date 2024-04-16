@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block content %}
+<center><button class="hidden-desktop button is-primary" id="expand-button">Expand Columns</button></center>
+
+
+{{ inventory_list[0][5] }} 
+
+
+<div class="center-table">
+<table id="data" class="table">
+    <thead>
+      <tr>
+        <th class="fixed-width" style="width:50px;"></th>
+        <th style="text-align:left;margin:0px;" class="fixed-width hidden-mobile">Name</th>
+        <th class="hidden-mobile">Color</th>
+        <th style="text-align: center;">Qty</th>
+        <th style="text-align: center;">Missing</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for brick in inventory_list %}
+        <tr>
+          <td class="fixed-width" style="width:50px;"><img src="{{ '/static/parts/' + brick[5] + '.jpg' }}" class="lightbox-trigger" class="fixed-width" style="height: 50px; width: 50px;"></td>
+          <td style="text-align:left;margin:0px;" class="hidden-mobile">{{ brick[3] }}</td>
+          <td class="hidden-mobile">{{ brick[7] }}</td>
+          <td>{{ brick[8] }}</td>
+          <td class="centered-cell">
+            <div class="inputContainer">
+              {% set ns = namespace(count='') %}
+              <form id="number-form">
+                <input type="hidden" id="set_num" value="{{ brick[0] }}"> 
+                <input type="hidden" id="id" value="{{ brick[1] }}"> 
+                <input type="hidden" id="part_num" value="{{ brick[2] }}"> 
+                <input type="hidden" id="color_id" value="{{ brick[6] }}"> 
+                <input type="hidden" id="element_id" value="{{ brick[10] }}"> 
+                <input type="hidden" id="u_id" value="{{ brick[11] }}"> 
+                
+
+                <div class='inputField'>
+                  {% for missing in missing_list %}
+                    {% if missing[1] == brick[1] and missing[2] == brick[2] and missing[3] == brick[6] and missing[5] == brick[10] %}
+                      {% set ns.count = missing[4] %}
+                    {% endif %}
+                  {% endfor %}
+                  <input type="tel" style="text-align:center;font-size: 16px;" id="missing" value="{{ ns.count }}" pattern="\d+">
+                  <button class="square-button" id="bnumber-form" type="submit">
+                    <img src="/static/save.svg" alt="Save Icon">
+                  </button>
+                </div>
+              </form>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div id="lightbox-modal">
+  <div class="lightbox-wrapper">
+    <span class="close">&times;</span>
+    <img class="lightbox-content" id="lightbox-image">
+    <div class="text-container" id="lightbox-text"></div>
+  </div>
+</div>
+
+
+  {% endblock %}
+
+
+
+{% block scripts %}
+
+<script>
+// $(document).ready( function () {
+//     $('#data').DataTable();
+// } );
+
+
+
+
+
+// document.addEventListener('DOMContentLoaded', function () {
+//   const myDataTable = document.getElementById('data');
+
+//   myDataTable.addEventListener('click', function (event) {
+//     const clickedRow = event.target.closest('td');
+//     if (clickedRow) {
+//       // Remove highlighting from all rows
+//       const rows = myDataTable.querySelectorAll('tr');
+//       rows.forEach(row => row.classList.remove('highlighted'));
+
+//       // Add highlighting to the clicked row
+// 	if (clickedRow.classList.contains('highlighted')) {
+		
+//       clickedRow.classList.remove('highlighted');
+// 	} else {
+//       clickedRow.classList.add('highlighted');
+// 	}
+//     }
+//   });
+// });
+
+	function goToPage(url) {
+		window.location.href = url;
+	}
+
+	const expandButton = document.getElementById('expand-button');
+const myDataTable = document.getElementById('data');
+let isExpanded = false;
+
+expandButton.addEventListener('click', () => {
+  const hiddenColumns = myDataTable.querySelectorAll('.hidden-mobile');
+  hiddenColumns.forEach(column => {
+    if (isExpanded) {
+      column.style.display = 'none';
+      expandButton.textContent = 'Expand Columns';
+    } else {
+      column.style.display = 'table-cell';
+      expandButton.textContent = 'Hide Columns';
+    }
+  });
+  isExpanded = !isExpanded;
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const lightboxTrigger = document.querySelectorAll('.lightbox-trigger');
+  const lightboxModal = document.getElementById('lightbox-modal');
+  const lightboxImage = document.getElementById('lightbox-image');
+  const lightboxText = document.getElementById('lightbox-text');
+  const closeModal = document.querySelector('.close');
+
+  lightboxTrigger.forEach(function (element) {
+    element.addEventListener('click', function () {
+	const imgSrc = element.getAttribute('src');
+	textContent = '';
+try {
+	     textContent  = element.closest('tr').querySelector('td:nth-child(2)').textContent; // Adjust the index accordingly
+      lightboxText.textContent = textContent;
+} catch (e) {
+	textContent = '';
+}
+
+      lightboxImage.setAttribute('src', imgSrc);
+      lightboxModal.style.display = 'block';
+    });
+  });
+
+  closeModal.addEventListener('click', function () {
+    lightboxModal.style.display = 'none';
+  });
+
+  lightboxModal.addEventListener('click', function (event) {
+    if (event.target === lightboxModal || event.target === lightboxImage || event.target === lightboxText) {
+      // Dismiss only if the clicked element is part of the content area
+      lightboxModal.style.display = 'none';
+    }
+  });
+
+  // Dismiss the lightbox when clicking outside the content area (i.e., the background)
+  lightboxModal.addEventListener('click', function (event) {
+    if (event.target != lightboxModal) {
+      lightboxModal.style.display = 'none';
+    }
+  });
+});
+
+	document.addEventListener('DOMContentLoaded', function () {
+  const numberInput = document.getElementById('missing');
+
+  // Add event listener to input to prevent non-numeric input
+  numberInput.addEventListener('input', function () {
+    // Remove non-numeric characters
+    this.value = this.value.replace(/\D/g, '');
+  });
+
+  // Force numeric keyboard on mobile devices
+  numberInput.setAttribute('inputmode', 'numeric');
+});
+
+
+$("body").on("submit", "#number-form", function (event) {
+// $('#number-form').submit(function(event) {
+	event.preventDefault();
+	console.log($(this)[0]);
+
+  set_num = $(this)[0][0].value;
+  id = $(this)[0][1].value;
+  part_num = $(this)[0][2].value;
+  color_id = $(this)[0][3].value;
+  element_id = $(this)[0][4].value;
+  u_id = $(this)[0][5].value;
+  missing = $(this)[0][6].value
+
+  // console.log('set_num: ' + set_num);
+  // console.log('id: ' + id);
+  // console.log('part_num: ' + part_num);
+  // console.log('color_id: ' + color_id);
+  // console.log('element_id: ' + element_id);
+  // console.log('u_id: ' + u_id);
+  // console.log('missing: ' + missing);
+
+  $.ajax({
+    url: '/'+set_num+'/'+u_id,
+    type: 'POST',
+    data: {
+      'set_num': set_num,
+      'id': id,
+      'part_num': part_num,
+      'color_id': color_id,
+      'element_id': element_id,
+      'u_id': u_id,
+      'missing': missing
+    }
+
+  });
+
+
+
+  // part_num = request.form.get('brickpartpart_num')
+  // color = request.form.get('brickcolorname')
+  // index = request.form.get('index')
+  // number = request.form.get('numberInput')
+  // is_spare = request.form.get('is_spare')
+
+});
+
+
+
+
+
+</script>
+
+
+{% endblock %}
+
