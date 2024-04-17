@@ -131,6 +131,7 @@ def create():
 
         # Get minifigs
         print('Savings minifigs')
+        tmp_set_num = set_num
         response = json.loads(rebrick.lego.get_set_minifigs(set_num).read())
         count+=1
         print(response)
@@ -142,25 +143,28 @@ def create():
             set_num = i['set_num']
 
             print('Saving set image:',end='')
-
-            res = requests.get(set_img_url, stream = True)
-            count+=1
-            if res.status_code == 200:
-                with open("./static/minifigs/"+set_num+".jpg",'wb') as f:
-                    shutil.copyfileobj(res.raw, f)
-                    print(' OK')
-            else:
-                print('Image Couldn\'t be retrieved for set ' + set_num)
-                logging.error('set_img_url: ' + set_num)
-                print(' ERROR')
+            if not Path("./static/minifigs/"+set_num+".jpg").is_file():
+                res = requests.get(set_img_url, stream = True)
+                count+=1
+                if res.status_code == 200:
+                    with open("./static/minifigs/"+set_num+".jpg",'wb') as f:
+                        shutil.copyfileobj(res.raw, f)
+                        print(' OK')
+                else:
+                    print('Image Couldn\'t be retrieved for set ' + set_num)
+                    logging.error('set_img_url: ' + set_num)
+                    print(' ERROR')
+            else: 
+                print(set_img_url + '.jpg exists!')         
 
             cursor.execute('''INSERT INTO minifigures (
+                fig_num,
                 set_num,
                 name,
                 quantity,
                 set_img_url,
                 u_id
-            ) VALUES (?, ?, ?, ?, ?) ''', (i['set_num'], i['set_name'], i['quantity'],i['set_img_url'],unique_set_id))
+            ) VALUES (?, ?, ?, ?, ?, ?) ''', (i['set_num'],tmp_set_num, i['set_name'], i['quantity'],i['set_img_url'],unique_set_id))
 
             conn.commit()
         
@@ -169,21 +173,56 @@ def create():
             count+=1
 
             for i in response_minifigs['results']:
+
+                # Get part image. Saved under ./static/parts/xxxx.jpg
+                part_img_url = i['part']['part_img_url']
+                part_img_url_id = 'nil'
+                try:
+                    pattern = r'/([^/]+)\.(?:png|jpg)$'
+                    match = re.search(pattern, part_img_url)
+
+                    if match:
+                        part_img_url_id = match.group(1)
+                        print("Part number:", part_img_url_id)
+                        if not Path("./static/parts/"+part_img_url_id+".jpg").is_file():
+                            print('Saving part image:',end='')
+
+                            res = requests.get(part_img_url, stream = True)
+                            count+=1
+                            if res.status_code == 200:
+                                with open("./static/parts/"+part_img_url_id+".jpg",'wb') as f:
+                                    shutil.copyfileobj(res.raw, f)
+                                    print(' OK')
+                            else:
+                                print('Image Couldn\'t be retrieved for set ' + part_img_url_id)
+                                logging.error('part_img_url: ' + part_img_url_id)
+                                print(' ERROR')
+                        else: 
+                            print(part_img_url_id + '.jpg exists!')
+                except Exception as e:
+                        print("Part number not found in the URL.")
+                        print(">>> " + str(part_img_url))
+                        print(str(e))
+
                 cursor.execute('''INSERT INTO inventory (
                     set_num,
                     id,
                     part_num,
                     name,
                     part_img_url,
+                    part_img_url_id,
                     color_id,
                     color_name,
                     quantity,
                     is_spare,
                     element_id,
                     u_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (i['set_num'], i['id'], i['part']['part_num'],i['part']['name'],i['part']['part_img_url'],i['color']['id'],i['color']['name'],i['quantity'],i['is_spare'],i['element_id'],unique_set_id))
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (i['set_num'], i['id'], i['part']['part_num'],i['part']['name'],i['part']['part_img_url'],part_img_url_id,i['color']['id'],i['color']['name'],i['quantity'],i['is_spare'],i['element_id'],unique_set_id))
+                
+                
+            
             conn.commit()
-
+    
     conn.close()
 
     print('Count: ' + str(count))
@@ -232,24 +271,37 @@ def inventory(tmp,u_id):
         cursor = conn.cursor()
 
         # Get set info
-        cursor.execute("SELECT * from sets where set_num == '" + tmp + "' and u_id == '" + u_id + "';")
+        cursor.execute("SELECT * from sets where set_num = '" + tmp + "' and u_id = '" + u_id + "';")
         results = cursor.fetchall()
         set_list = [list(i) for i in results]
 
         # Get inventory
-        cursor.execute("SELECT * from inventory where set_num == '" + tmp + "' and u_id == '" + u_id + "';")
+        cursor.execute("SELECT * from inventory where set_num = '" + tmp + "' and u_id = '" + u_id + "';")
         results = cursor.fetchall()
         inventory_list =  [list(i) for i in results]
 
         # Get missing parts
-        cursor.execute("SELECT * from missing where set_num == '" + tmp + "' and u_id == '" + u_id + "';")
+        cursor.execute("SELECT * from missing where u_id = '" + u_id + "';")
         results = cursor.fetchall()
         missing_list =  [list(i) for i in results]
+
+        # Get minifigures
+        cursor.execute("SELECT * from minifigures where set_num = '" + tmp + "' and u_id = '" + u_id + "';")
+        results = cursor.fetchall()
+        minifig_list =  [list(i) for i in results]
+
+        minifig_inventory_list = []
+
+        for i in minifig_list:
+            cursor.execute("SELECT * from inventory where set_num = '" + i[0] + "' and u_id = '" + u_id + "';")
+            results = cursor.fetchall()
+            tmp_inv = [list(i) for i in results]
+            minifig_inventory_list.append(tmp_inv)
 
         cursor.close()
         conn.close()
 
-        return render_template('table.html', tmp=tmp,title=set_list[0][1],set_list=set_list,inventory_list=inventory_list,missing_list=missing_list)
+        return render_template('table.html', tmp=tmp,title=set_list[0][1],set_list=set_list,inventory_list=inventory_list,missing_list=missing_list,minifig_list=minifig_list,minifig_inventory_list=minifig_inventory_list)
 
 
     if request.method == 'POST':
