@@ -52,6 +52,82 @@
   </table>
 </div>
 
+{% if minifig_list | length > 0 %}
+
+<h1 class="title">Minifigs</h1>
+{% for fig in minifig_list %}
+<h2 class="subtitle">{{ fig[2] }} ({{ fig[0] }})</h2>
+
+<div style="display: flex; justify-content: center;">
+  <div style="display: flex; align-items: center;">
+    <img src="{{ '/static/minifigs/' + fig[0] + '.jpg' }}" class="lightbox-trigger" style="height: 100px; width: auto;" alt="{{ fig[2] }}">
+    <span style="font-size: 50px; margin-left: 10px;">X {{ fig[3] }}</span>
+  </div>
+</div>
+
+<div class="center-table" >
+  <table id="data" class="table">
+      <thead>
+        <tr>
+          <th class="fixed-width"></th>
+          <th style="text-align:left;margin:0px;" class="fixed-width hidden-mobile name-class">Name</th>
+          <th class="fixed-width hidden-mobile">Color</th>
+          <th class="fixed-width" style="text-align: center;">Qty</th>
+          <th class="fixed-width" style="text-align: center;">Missing</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        {% for parts in minifig_inventory_list %}
+        {% for part in parts %}
+        
+        {% if part[0] == fig[0] %}
+          {{ part[5] }}
+        <tr>
+            {% if part[5] == 'nil' %}
+            <td><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" alt="{{ part[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;"></td>
+            {% else %}
+            <td><img src="{{ '/static/parts/' + part[5] + '.jpg' }}" class="lightbox-trigger" alt="{{ part[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;"></td>
+            {% endif %}
+            <td style="text-align:left;margin:0px;" class="hidden-mobile name-class">{{ part[3] }}</td>
+            <td class="hidden-mobile">{{ part[7] }}</td>
+            <td style="text-align: center;">{{ part[8] }}</td>
+            <td class="centered-cell">
+              <div class="inputContainer">
+                {% set ns = namespace(count='') %}
+                <form id="number-form">
+                  <input type="hidden" id="set_num" value="{{ part[0] }}"> 
+                  <input type="hidden" id="id" value="{{ part[1] }}"> 
+                  <input type="hidden" id="part_num" value="{{ part[2] }}"> 
+                  <input type="hidden" id="color_id" value="{{ part[6] }}"> 
+                  <input type="hidden" id="element_id" value="{{ part[10] }}"> 
+                  <input type="hidden" id="u_id" value="{{ part[11] }}"> 
+                  
+  
+                  <div class='inputField'>
+                    {% for missing in missing_list %}
+                      {% if missing[1] == part[1] and missing[2] == part[2] and missing[3] == part[6] and (missing[5] == part[10] or missing[5] == 'part[10]') %}
+                        {% set ns.count = missing[4] %}
+                      {% endif %}
+                    {% endfor %}
+                    <input type="tel" style="text-align:center;font-size: 16px;" id="missing" value="{{ ns.count }}" pattern="\d+">
+                    <button class="square-button" id="bnumber-form" type="submit">
+                      <img src="/static/save.svg" alt="Save Icon">
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
+{% endif %}
+
 <div id="lightbox-modal">
   <div class="lightbox-wrapper">
     <span class="close">&times;</span>
