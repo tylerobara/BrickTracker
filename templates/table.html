@@ -1,30 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<center><button class="hidden-desktop button is-primary" id="expand-button">Expand Columns</button></center>
 
-
-{{ inventory_list[0][5] }} 
-
-
-<div class="center-table">
+<div class="center-table" >
 <table id="data" class="table">
     <thead>
       <tr>
-        <th class="fixed-width" style="width:50px;"></th>
-        <th style="text-align:left;margin:0px;" class="fixed-width hidden-mobile">Name</th>
-        <th class="hidden-mobile">Color</th>
-        <th style="text-align: center;">Qty</th>
-        <th style="text-align: center;">Missing</th>
+        <th class="fixed-width"></th>
+        <th style="text-align:left;margin:0px;" class="fixed-width hidden-mobile name-class">Name</th>
+        <th class="fixed-width hidden-mobile">Color</th>
+        <th class="fixed-width" style="text-align: center;">Qty</th>
+        <th class="fixed-width" style="text-align: center;">Missing</th>
       </tr>
     </thead>
     <tbody>
       {% for brick in inventory_list %}
         <tr>
-          <td class="fixed-width" style="width:50px;"><img src="{{ '/static/parts/' + brick[5] + '.jpg' }}" class="lightbox-trigger" class="fixed-width" style="height: 50px; width: 50px;"></td>
-          <td style="text-align:left;margin:0px;" class="hidden-mobile">{{ brick[3] }}</td>
+          <td><img src="{{ '/static/parts/' + brick[5] + '.jpg' }}" class="lightbox-trigger" alt="{{ brick[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;"></td>
+          <td style="text-align:left;margin:0px;" class="hidden-mobile name-class">{{ brick[3] }}</td>
           <td class="hidden-mobile">{{ brick[7] }}</td>
-          <td>{{ brick[8] }}</td>
+          <td style="text-align: center;">{{ brick[8] }}</td>
           <td class="centered-cell">
             <div class="inputContainer">
               {% set ns = namespace(count='') %}
@@ -78,30 +73,6 @@
 // } );
 
 
-
-
-
-// document.addEventListener('DOMContentLoaded', function () {
-//   const myDataTable = document.getElementById('data');
-
-//   myDataTable.addEventListener('click', function (event) {
-//     const clickedRow = event.target.closest('td');
-//     if (clickedRow) {
-//       // Remove highlighting from all rows
-//       const rows = myDataTable.querySelectorAll('tr');
-//       rows.forEach(row => row.classList.remove('highlighted'));
-
-//       // Add highlighting to the clicked row
-// 	if (clickedRow.classList.contains('highlighted')) {
-		
-//       clickedRow.classList.remove('highlighted');
-// 	} else {
-//       clickedRow.classList.add('highlighted');
-// 	}
-//     }
-//   });
-// });
-
 	function goToPage(url) {
 		window.location.href = url;
 	}
@@ -135,12 +106,11 @@ document.addEventListener('DOMContentLoaded', function () {
     element.addEventListener('click', function () {
 	const imgSrc = element.getAttribute('src');
 	textContent = '';
-try {
-	     textContent  = element.closest('tr').querySelector('td:nth-child(2)').textContent; // Adjust the index accordingly
+      console.log(element.getAttribute('alt'));
+      textContent = element.getAttribute('alt');
+	    //  textContent  = element.closest('tr').querySelector('td:nth-child(2)').textContent; // Adjust the index accordingly
       lightboxText.textContent = textContent;
-} catch (e) {
-	textContent = '';
-}
+
 
       lightboxImage.setAttribute('src', imgSrc);
       lightboxModal.style.display = 'block';

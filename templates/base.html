@@ -1,14 +1,15 @@
 <!doctype html>
-<html data-theme="light">
+<html data-theme="light" class="has-navbar-fixed-top">
 
 
   <head>
-      <title>{{ title }}</title>
+      <title>{{ tmp }} - {{ title }}</title>
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">    <!-- CSS Reset -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <style>
+
 th {
 	text-align: left;
 	margin: 0px;
@@ -16,7 +17,8 @@ th {
 }
 
 table {
-  
+  width: 100%; /* Ensure the table takes full width of its container */
+    border-collapse: collapse; /* Collapse the borders of the table */
 }
 
 #data {
@@ -24,23 +26,23 @@ table {
   border-collapse: collapse;
 }
 
+.name-class {
+  max-width: 300px; 
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/*
 #data th:nth-child(3),
 #data td:nth-child(3) {
-  max-width: 300px; /* Adjust as needed */
+  max-width: 100px; 
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-#data th:nth-child(4),
-#data td:nth-child(4) {
-  max-width: 100px; /* Adjust as needed */
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+} */
 
 .center-table {
+  overflow-x: auto;
 }
 
 td {
@@ -76,10 +78,16 @@ td {
 }
 @media only screen and (max-width: 600px) {
   table {
-    width: 100%; /* Expand table to full width on mobile */
+    width: auto; /* Expand table to full width on mobile */
     table-layout: fixed;
   }
-
+  /* #data th:nth-child(2),
+  #data td:nth-child(2) {
+    width: auto; /* Allow "Name" column to adjust width based on content 
+  } */
+  .center-table {
+    overflow-x: auto; /* Enable horizontal scrolling */
+  }
   
   .fixed-width {
     width: 100%;
@@ -101,6 +109,48 @@ td {
 
 .centered-cell {
   text-align: center; /* Center the content horizontally within the cell */
+}
+
+
+
+.highlighted {
+	  background-color: yellow; /* Adjust as needed */
+}
+
+
+
+
+
+
+      /* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.header {
+width:100%;
+    text-align:center;
+z-index: 99;
+background-color: white;
+}
+
+.content {
+	padding: 16px;
+}
+
+/* Table */
+td img{
+    display: block;
+    margin-left: auto;
+    margin-right: 5px;
+
 }
 
 .inputContainer {
@@ -136,20 +186,9 @@ td {
   border: 1px solid #d1d1d1;
 }
 
-.highlighted {
-	  background-color: yellow; /* Adjust as needed */
-}
-
-td img{
-    display: block;
-    margin-left: auto;
-    margin-right: 5px;
-
-}
-
 
       /* Modal Styles */
-#lightbox-modal {
+      #lightbox-modal {
   display: none;
   position: fixed;
   z-index: 1000;
@@ -204,79 +243,42 @@ td img{
   max-width: 90%;
   max-height: 90%;
 }
-
-      /* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-.header {
-width:100%;
-    text-align:center;
-z-index: 99;
-background-color: white;
-}
-
-.content {
-	padding: 16px;
-}
-      /* The sticky class is added to the header with JS when it reaches its scroll position */
-.sticky {
-  position: fixed;
-  top: 0;
-  width: 100%
-}
-
-
-/* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
-.sticky + .content {
-  padding-top: 102px;
-}
-
 </style>
 
   </head>
   <body>
-
-
-	  <div class="header" id='myHeader'>
-		  <span><h2>{{ tmp }} - {{ title }} </h2></span>
-
-	<span><button class="button is-link" style="width: 98%;margin: 1%;" onclick="goToPage('/')">Home</button></span>
-</div>
+    <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          Home
+        </a>
+    
+        <a class="navbar-item" href="/create">
+          Add Set
+        </a>
+        <a class="navbar-item hidden-desktop" id="expand-button">
+          Expand Columns
+        </a> 
+      </div>
+      
+      <div id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+    
+        </div>
+    
+        <div class="navbar-end">
+              
+        </div>
+      </div>
+    </nav>
 
     <div class="container">
       <center>
-
-      <img class="lightbox-trigger" id="cover" style='height: 100px; width: auto; object-fit: contain'  src="/static/sets/{{ tmp }}.jpg" alt="Image">
+        <h1 class="title">{{ tmp }} - {{ title }}</h1>
+      <img class="lightbox-trigger" id="cover" style='height: 150px; width: auto; object-fit: contain'  src="/static/sets/{{ tmp }}.jpg" alt="{{ tmp }} - {{ title }}">
       {% block content %}{% endblock %}
     </div>
     {% block scripts %}{% endblock %}
   </body>
-  <script>
-// When the user scrolls the page, execute myFunction
-window.onscroll = function() {myFunction()};
-
-// Get the header
-var header = document.getElementById("myHeader");
-
-// Get the offset position of the navbar
-var sticky = header.offsetTop;
-
-// Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
-function myFunction() {
-  if (window.pageYOffset > sticky) {
-    header.classList.add("sticky");
-  } else {
-    header.classList.remove("sticky");
-  }
-} 
-</script>
+  
 </html>
