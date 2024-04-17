@@ -1,25 +1,22 @@
 <!DOCTYPE html>
-<html data-theme="light">
+<html data-theme="light" class="has-navbar-fixed-top">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Set Overview</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
       <style>
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
 
   .grid-container {
     display: grid;
     /* grid-template-columns: repeat(auto-fit, minmax(10%, 23%)); /* Between 33% and 50% width */
-    grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(4, 1fr);
+
     gap: 10px;
     padding: 10px;
   }
@@ -48,6 +45,18 @@ body {
       height: auto; /* Let the height adjust dynamically */
       overflow: visible; /* Allow content to overflow if necessary */
     }
+	.navbar-item {
+		&.has-dropdown {
+			.navbar-dropdown {
+			display: none;
+			}
+			&.is-hoverable:hover {
+			.navbar-dropdown {
+				display: block;
+			}
+			}
+		}
+	}
   }
 
   .grid-item img { 
@@ -59,34 +68,104 @@ body {
     margin: 0; /* Remove default margin */
   }
   .card-footer {
+	
     position:absolute;
     bottom:0;
     width:90%;
     height:30px;   /* Height of the footer */
   }
 
-  .button {
-    background-color: black;
-    border-color: black;
-  }
-  .button.button-clear,
-  .button.button-outline {
-    background-color: transparent;
-    color: black;
-  }
-  .button.button-clear {
-    border-color: transparent;
-  }
+
   .search-container {
     padding: 10px;
   }
       </style>
   </head>
   <body>
+
+	<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+		<div class="navbar-brand">
+			<a class="navbar-item" href="/">
+				Home
+			</a>
+	
+			<a class="navbar-item" href="/create">
+				Add Set
+			</a>
+			<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+			</a>
+		</div>
+		<div id="navMenu" class="navbar-menu">
+			<div class="navbar-start">
+	
+			</div>
+	
+			<div class="navbar-end">
+				<div class="navbar-item has-dropdown is-hoverable">
+					<a class="navbar-link">
+						Select Theme
+					</a>
+					<div class="navbar-dropdown" id="themeDropdown">
+	
+					</div>
+				</div>
+				<div class="navbar-item has-dropdown is-hoverable">
+					<a class="navbar-link">
+						Show
+					</a>
+					<div class="navbar-dropdown">
+						<a class="navbar-item" id="toggleButton">
+							Collected
+						</a>
+						<a class="navbar-item" id="toggleButton2">
+							Checked
+						</a>
+						<a class="navbar-item" id="toggleButton3">
+							Complete
+						</a>
+					</div>
+				</div>
+				<div class="navbar-item has-dropdown is-hoverable">
+					<a class="navbar-link">
+						Sort by
+					</a>
+	
+					<div class="navbar-dropdown">
+						<a class="navbar-item" onclick="dynamicSort('set_id')">
+							ID
+						</a>
+						<a class="navbar-item" onclick="dynamicSort('set_year')">
+							Year
+						</a>
+						<a class="navbar-item" onclick="dynamicSort('set_parts')">
+							Parts
+						</a>
+						<a class="navbar-item" onclick="dynamicSort('set_theme')">
+							Theme
+						</a>
+						<a class="navbar-item" onclick="dynamicSort('set_name')">
+							Name
+						</a>
+						<a class="navbar-item" onclick="dynamicSort('s_col')">
+							Collected
+						</a>
+						<a class="navbar-item" onclick="dynamicSort('s_check')">
+							Checked
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+
     <div class="search-container">
-      <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search...">
-      </select>
-      <center>
+      <input class="input"type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search...">
+      <!-- <center hidden="true">
 	<button class="button button-outline" onclick="dynamicSort('set_id')">Sort by ID</button>
 	<button class="button button-outline" onclick="dynamicSort('set_year')">Sort by Year</button>
 	<button class="button button-outline" onclick="dynamicSort('set_parts')">Sort by Parts</button>
@@ -94,16 +173,13 @@ body {
 	<button class="button button-outline" onclick="dynamicSort('set_name')">Sort by Name</button>
 	<button class="button button-outline" onclick="dynamicSort('s_col')">Sort by Collected</button>
 	<button class="button button-outline" onclick="dynamicSort('s_check')">Sort by Checked</button>
-      </center>
-      <center>
+      </center> -->
+      <!-- <center>
 	<button class="button button-outline" id="toggleButton">Show Collected</button>
 	<button class="button button-outline" id="toggleButton2">Show Checked</button>
 	<button class="button button-outline" id="toggleButton3">Show Complete</button>
-      </center>
-      <select id="themeDropdown">
-  <option value="">Select Theme</option>
-</select>
-
+      </center> -->
+      
       <!-- Add more buttons for other text values if needed -->
     </div>
     <div class="grid-container" id="gridContainer">
@@ -169,7 +245,7 @@ body {
 
 		  <p class="card-footer-item">
 		  <span>
-		    <a class="is-size-6" style="color: #363636;" href="/{{ i['set_num'] }}">Inventory</a>
+		    <a class="is-size-6" style="color: #363636;" href="/{{ i[0] }}/{{ i[8] }}">Inventory</a>
 		  </span>
 		  </p>
 
@@ -436,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const themeDropdown = document.getElementById('themeDropdown');
 
   // Retrieve all unique values from the <a> elements
-  const themes = [];
+  const themes = ['Show all'];
   const themeLinks = document.querySelectorAll('.set_theme');
   themeLinks.forEach(function(link) {
     const themeId = link.textContent.trim();
@@ -447,24 +523,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Create options for the dropdown list
   themes.forEach(function(theme) {
-    const option = document.createElement('option');
+    const option = document.createElement('a');
+	option.className = "navbar-item";
     option.value = theme;
     option.textContent = theme;
     themeDropdown.appendChild(option);
+	option.addEventListener('click', function() {
+		filterGridItems(theme);
+	});
   });
 
   // Add event listener to filter grid items
-  themeDropdown.addEventListener('change', function() {
-    const selectedTheme = themeDropdown.value;
-    filterGridItems(selectedTheme);
-  });
+//   themeDropdown.addEventListener('click', function() {
+// 	console.log($(this));
+//     const selectedTheme = themeDropdown.value;
+//     filterGridItems(selectedTheme);
+//   });
 
   function filterGridItems(selectedTheme) {
     const gridItems = document.querySelectorAll('.grid-item');
     gridItems.forEach(function(item) {
       const themeLink = item.querySelector('.set_theme');
       const themeId = themeLink.textContent.trim();
-      if (!selectedTheme || themeId === selectedTheme) {
+      if (!selectedTheme || themeId === selectedTheme || selectedTheme == "Show all") {
         item.style.display = 'block'; // Show the grid item
       } else {
         item.style.display = 'none'; // Hide the grid item
@@ -473,7 +554,17 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
+$(document).ready(function() {
 
+// Check for click events on the navbar burger icon
+$(".navbar-burger").click(function() {
+
+	// Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+	$(".navbar-burger").toggleClass("is-active");
+	$(".navbar-menu").toggleClass("is-active");
+
+});
+});
 	</script>
   </body>
 </html>
