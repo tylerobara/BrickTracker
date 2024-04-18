@@ -253,26 +253,50 @@ td img{
           Home
         </a>
     
-        <a class="navbar-item" href="/create">
-          Add Set
-        </a>
         <a class="navbar-item hidden-desktop" id="expand-button">
           Expand Columns
         </a> 
-	<a class="navbar-item" href="{{ '/delete/' + u_id }}" class="navbar-item">
-			Delete
-		</a>
+        
+        <a class="navbar-item hidden-desktop js-modal-trigger" data-target="modal-delete-set" >
+            Delete
+          </a>
+        
       </div>
       
-      <div id="navMenu" class="navbar-menu">
-        <div class="navbar-start">
-    
-        </div>
-    
-        <div class="navbar-end">
+      <div id="navMenu" class="navbar-menu"> 
+        <div class="navbar-end"> 
+          <!-- <a class="navbar-item" onclick="delete_set('{{ u_id }}','{{ tmp }}', '{{ title }}')">
+            Delete
+          </a> -->
+          <a class="navbar-item js-modal-trigger" data-target="modal-delete-set">
+            Delete
+          </a>
         </div>
       </div>
     </nav>
+
+    <div class="modal" id="modal-delete-set">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Delete set?</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          Are you sure you want to delete:
+          <br>
+          <b>{{ tmp }} - {{ title }}</b>
+          <br><br>
+          With unique ID: <br><b>{{ u_id }}</b>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <a href="{{ '/delete/' + u_id }}" class="button is-danger">Delete</a>
+            <button class="button">Cancel</button>
+          </div>
+        </footer>
+      </div>
+    </div>
 
     <div class="container">
       <center>
@@ -282,5 +306,57 @@ td img{
     </div>
     {% block scripts %}{% endblock %}
   </body>
-  
+  <script>
+    function delete_set(u_id,tmp,title) {
+      let text = "";
+      if (confirm(text) == true) {
+        text = "You pressed OK!";
+      } else {
+        text = "You canceled!";
+      }
+      document.getElementById("demo").innerHTML = text;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+  // Functions to open and close a modal
+  function openModal($el) {
+    $el.classList.add('is-active');
+  }
+
+  function closeModal($el) {
+    $el.classList.remove('is-active');
+  }
+
+  function closeAllModals() {
+    (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+      closeModal($modal);
+    });
+  }
+
+  // Add a click event on buttons to open a specific modal
+  (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+    const modal = $trigger.dataset.target;
+    const $target = document.getElementById(modal);
+
+    $trigger.addEventListener('click', () => {
+      openModal($target);
+    });
+  });
+
+  // Add a click event on various child elements to close the parent modal
+  (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+    const $target = $close.closest('.modal');
+
+    $close.addEventListener('click', () => {
+      closeModal($target);
+    });
+  });
+
+  // Add a keyboard event to close all modals
+  document.addEventListener('keydown', (event) => {
+    if(event.key === "Escape") {
+      closeAllModals();
+    }
+  });
+});
+  </script>
 </html>
