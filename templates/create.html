@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html data-theme="light" class="has-navbar-fixed-top">
+  <head 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
@@ -9,9 +9,26 @@
       href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
   </head>
   <body>
+<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          Home
+        </a>
     
+      </div>
+      
+      <div id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+    
+        </div>
+    
+        <div class="navbar-end">
+              
+        </div>
+      </div>
+    </nav>    
     <section class="section">
-      <div class="container">
+	          <div class="container">
         <form id="createForm" action="/create" method="post">
           <div class="field">
             <label class="label" for="inputField">Input:</label>
@@ -21,19 +38,11 @@
           </div>
           <div class="field">
             <div class="control">
-              <label class="checkbox">
-                <input type="checkbox" name="addDuplicate" value="true">
-                Add duplicate
-              </label>
-            </div>
-          </div>
-          <div class="field">
-            <div class="control">
               <button class="button is-primary" type="submit">Submit</button>
             </div>
           </div>
         </form>
-      </div>
+		  </div>
     </section>
 
   </body>

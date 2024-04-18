@@ -222,11 +222,12 @@ def create():
                 
             
             conn.commit()
+        conn.close()
+        return redirect('/')
     
     conn.close()
 
     print('Count: ' + str(count))
-
 
     return render_template('create.html')
 
@@ -513,4 +514,4 @@ def save_number(tmp):
     return Response(status=204)
 
 if __name__ == '__main__':
-    app.run(host='192.168.10.109', debug=True, port=3333)
+    app.run(host='0.0.0.0', debug=True, port=3333)
