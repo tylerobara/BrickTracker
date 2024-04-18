@@ -45,6 +45,88 @@
 		  </div>
     </section>
 
+    {% if error is defined %}
+    <button class="js-modal-trigger" data-target="modal-js-example" id="modal-js">
+    </button> 
+    {% else %}
+    <button id="modal-js">
+    </button> 
+    {% endif %}
+
+
+    <div class="modal" id="modal-js-example">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Cannot add set!</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          Set number does not exists: 
+          <br>
+          <b>{{ error }}</b>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <button class="button is-primary">OK</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+
   </body>
+
+<script>
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+
+    window.onload = function () {
+document.getElementById("modal-js").click(); };
+
+    // Functions to open and close a modal
+    function openModal($el) {
+      $el.classList.add('is-active');
+    }
+  
+    function closeModal($el) {
+      $el.classList.remove('is-active');
+    }
+  
+    function closeAllModals() {
+      (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+        closeModal($modal);
+      });
+    }
+  
+    // Add a click event on buttons to open a specific modal
+    (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+      const modal = $trigger.dataset.target;
+      const $target = document.getElementById(modal);
+  
+      $trigger.addEventListener('click', () => {
+        openModal($target);
+      });
+    });
+  
+    // Add a click event on various child elements to close the parent modal
+    (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+      const $target = $close.closest('.modal');
+  
+      $close.addEventListener('click', () => {
+        closeModal($target);
+      });
+    });
+  
+    // Add a keyboard event to close all modals
+    document.addEventListener('keydown', (event) => {
+      if(event.key === "Escape") {
+        closeAllModals();
+      }
+    });
+  });
+    </script>
+
 </html>
 

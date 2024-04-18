@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, jsonify, render_template, Response
+from flask import Flask, request, redirect, jsonify, render_template, Response,url_for
 import json
 from pprint import pprint as pp
 from pathlib import Path
@@ -42,10 +42,10 @@ def create():
 
     if request.method == 'POST':
         set_num = request.form['inputField']
-        add_duplicate = request.form.get('addDuplicate', False) == 'true'
+        # add_duplicate = request.form.get('addDuplicate', False) == 'true'
         # Do something with the input value and the checkbox value
-        print("Input value:", set_num)
-        print("Add duplicate:", add_duplicate)
+        # print("Input value:", set_num)
+        # print("Add duplicate:", add_duplicate)
         # You can perform any further processing or redirect to another page
 
         if '-' not in set_num:
@@ -59,10 +59,16 @@ def create():
         unique_set_id = generate_unique_set_unique()
 
         # Get Set info and add to SQL
-        response = json.loads(rebrick.lego.get_set(set_num).read())
-        count+=1
-        print(response)
+        response = ''
+        try:
+            response = json.loads(rebrick.lego.get_set(set_num).read()) 
+        except Exception as e:
+            print(e.code)
+            if e.code == 404:
+                return render_template('create.html',error=set_num)
 
+        count+=1
+        
         cursor.execute('''INSERT INTO sets (
             set_num,
             name,
@@ -242,6 +248,7 @@ def create():
             
             conn.commit()
         conn.close()
+        print(count)
         return redirect('/')
     
     conn.close()
