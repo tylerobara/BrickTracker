@@ -210,7 +210,7 @@
 		  </figure>
 		</div>
 
-		<div class="column is-half" style="margin:0;padding:0;">
+		<div class="column is-half">
 		  <div class="is-size-7">
 		    <label class="checkbox" >
 				<input type="hidden" id="set_num" value="{{ i[0] }}">
@@ -268,13 +268,13 @@
 
 		  <p class="card-footer-item">
 		  <span>
-		    <a class="is-size-6" style="color: #363636;" href="/{{ i[0] }}/{{ i[8] }}">Inventory</a>
+		    <a class="is-size-6" style="color: #363636;" href="/{{ i[0] }}/{{ i[8] }}">Inv.</a>
 		  </span>
 		  </p>
 
 		  <p class="card-footer-item">
 		  <span>
-		    <a class="is-size-6" style="color: #363636;" href="/{{ i['set_num'] }}">Instructions</a>
+		    <a class="is-size-6" style="color: #363636;" href="/{{ i['set_num'] }}">Inst.</a>
 		  </span>
 		  </p>
 		</footer>
@@ -531,6 +531,20 @@
 	  });
 
 
+	  function customSort(a, b) {
+    // Function to remove leading articles
+    function removeArticle(theme) {
+        return theme.replace(/^(a |the )/i, '');
+    }
+
+    // Get the themes without leading articles
+    const themeA = removeArticle(a);
+    const themeB = removeArticle(b);
+
+    // Compare the themes without leading articles
+    return themeA.localeCompare(themeB);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   const themeDropdown = document.getElementById('themeDropdown');
 
@@ -543,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function () {
       themes.push(themeId);
     }
   });
-
+  themes.sort(customSort);
   // Create options for the dropdown list
   themes.forEach(function(theme) {
     const option = document.createElement('a');

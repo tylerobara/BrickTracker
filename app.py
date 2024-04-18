@@ -61,7 +61,7 @@ def new_set(set_num):
     # 1 for set
     # 1 for set image
 
-    total_parts = 2
+    total_parts = 4
 
     set_num = set_num
     # add_duplicate = request.form.get('addDuplicate', False) == 'true'
@@ -203,7 +203,6 @@ def new_set(set_num):
     count+=1
     socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
     #print(response)
-
     for i in response['results']:
 
         # Get set image. Saved under ./static/minifigs/xxx-x.jpg
@@ -292,6 +291,8 @@ def new_set(set_num):
         
         conn.commit()
     conn.close()
+    print('End Count: ' + str(count))
+    print('End Total: ' + str(total_parts))
     count = total_parts
     socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
     
