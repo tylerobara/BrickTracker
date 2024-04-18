@@ -204,7 +204,7 @@
 	      <div class="columns" style="">
 		<div class="column is-half" style="">
 		  <figure class="image is-4by3">
-			  <a href="/{{ i[0] }}/{{ i[12] }}">
+			  <a href="/{{ i[0] }}/{{ i[11] }}">
 		      <img style='height: 100%; width: 100%; object-fit: contain'  src="/static/sets/{{ i[0] }}.jpg" alt="Image">
 		    </a>
 		  </figure>
@@ -213,33 +213,55 @@
 		<div class="column is-half" style="margin:0;padding:0;">
 		  <div class="is-size-7">
 		    <label class="checkbox" >
-		      <input type="hidden" id="set_num" value="{{ i[0] }}">
-		      <input class="s_fig" id="s_fig" type="checkbox" checked />
+				<input type="hidden" id="set_num" value="{{ i[0] }}">
+				<input type="hidden" id="u_id" value="{{ i[11] }}">
+				{% if i[8] == 0 %}
+				<input class="s_fig" id="s_fig" type="checkbox"  />
+				{% else %}
+				<input class="s_fig" id="s_fig" type="checkbox" checked />
+				{% endif %}
+			  <!-- {{ i[8] }}<br>
+			  {{ i[9] }}<br>
+			  {{ i[10] }}<br> -->
+
+		      
 		      Minifigs Collected
 		    </label>
 		      <br>
 		      <label class="checkbox" >
-			<input type="hidden" id="set_num" value="{{ i['set_num'] }}">
-			<input class="s_check" id="s_check" type="checkbox" checked />
+				<input type="hidden" id="set_num" value="{{ i[0] }}">
+				<input type="hidden" id="u_id" value="{{ i[11] }}">
+				{% if i[9] == 0 %}
+				<input class="s_check" id="s_check" type="checkbox"  />
+				{% else %}
+				<input class="s_check" id="s_check" type="checkbox" checked />
+				{% endif %}
 			Set is checked
 		      </label>
 			<br>
 			<label class="checkbox" >
-			  <input type="hidden" id="set_num" value="{{ i['set_num'] }}">
-			  <input class="s_col" id="s_col" type="checkbox" checked />
+				<input type="hidden" id="set_num" value="{{ i[0] }}">
+				<input type="hidden" id="u_id" value="{{ i[11] }}">
+				{% if i[10] == 0 %}
+				<input class="s_col" id="s_col" type="checkbox"  />
+				{% else %}
+				<input class="s_col" id="s_col" type="checkbox" checked />
+				{% endif %}
 			  Set is collected and boxed
 			</label>
 			  <br>
+			  <fieldset disabled>
 			  <label class="checkbox" >
 			    <input type="checkbox" class="s_com" onclick="return false;"/> Set is missing pieces
 			  </label>
+			</fieldset>
 		  </div>
 		</div>
 	      </div>
 		<footer class="card-footer" style="">
 		  <p class="card-footer-item">
 		  <span>
-			<span class="is-size-7">{{ i[12] }}</span>
+			<span class="is-size-7">{{ i[11] }}</span>
 			  
 		  </span>
 		  </p>
@@ -367,7 +389,7 @@
 	  $("body").on("change", "#s_fig", function (event) {
 	    minif = $(this).prop('checked');
 	    set_num = $(this).siblings('#set_num').val();
-	    index = $(this).siblings('#index').val();
+	    u_id = $(this).siblings('#u_id').val();
 
 	    $.ajax({
 	      url: '/',
@@ -375,7 +397,7 @@
 	      data: {
 		'set_num': set_num,
 		'minif': minif,
-		'index': index
+		'u_id': u_id
 	      }
 	    });
 	  });
@@ -383,7 +405,7 @@
 	  $("body").on("change", "#s_check", function (event) {
 	    scheck = $(this).prop('checked');
 	    set_num = $(this).siblings('#set_num').val();
-	    index = $(this).siblings('#index').val();
+	    u_id = $(this).siblings('#u_id').val();
 
 	    $.ajax({
 	      url: '/',
@@ -391,7 +413,7 @@
 	      data: {
 		'set_num': set_num,
 		'scheck': scheck,
-		'index': index
+		'u_id': u_id
 	      }
 	    });
 	  });
@@ -399,7 +421,7 @@
 	  $("body").on("change", "#s_col", function (event) {
 	    scol = $(this).prop('checked');
 	    set_num = $(this).siblings('#set_num').val();
-	    index = $(this).siblings('#index').val();
+	    u_id = $(this).siblings('#u_id').val();
 
 	    $.ajax({
 	      url: '/',
@@ -407,7 +429,7 @@
 	      data: {
 		'set_num': set_num,
 		'scol': scol,
-		'index': index
+		'u_id': u_id
 	      }
 	    });
 	  });

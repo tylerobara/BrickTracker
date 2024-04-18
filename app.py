@@ -1,5 +1,7 @@
 from flask import Flask, request, redirect, jsonify, render_template, Response,url_for
 import json
+from flask_socketio import SocketIO
+from threading import Thread
 from pprint import pprint as pp
 from pathlib import Path
 import time,random,string,sqlite3
@@ -10,8 +12,29 @@ import requests # request img from web
 import shutil # save img locally
 
 app = Flask(__name__)
+socketio = SocketIO(app)
+count = 0
 
 @app.route('/favicon.ico')
+
+# SocketIO event handler for client connection
+@socketio.on('connect', namespace='/progress')
+def test_connect():
+    print('Client connected')
+
+# SocketIO event handler for client disconnection
+@socketio.on('disconnect', namespace='/progress')
+def test_disconnect():
+    print('Client disconnected')
+
+# SocketIO event handler for starting the task
+@socketio.on('start_task', namespace='/progress')
+def start_task(data):
+    input_value = data.get('inputField')
+    print(input_value)
+    # Start the task in a separate thread to avoid blocking the server
+    thread = Thread(target=new_set, args=(input_value,))
+    thread.start()
 
 @app.route('/delete/<tmp>',methods=['POST', 'GET'])
 def delete(tmp):
@@ -32,107 +55,223 @@ def delete(tmp):
         conn.close()
     return redirect('/')
 
-@app.route('/create',methods=['GET', 'POST'])
-def create():
+def new_set(set_num):
+    global count
+    ###### total count ####
+    # 1 for set
+    # 1 for set image
+
+    total_parts = 2
+
+    set_num = set_num
+    # add_duplicate = request.form.get('addDuplicate', False) == 'true'
+    # Do something with the input value and the checkbox value
+    # print("Input value:", set_num)
+    # print("Add duplicate:", add_duplicate)
+    # You can perform any further processing or redirect to another page
     conn = sqlite3.connect('app.db')
     cursor = conn.cursor()
-    count = 0
-    if request.method == 'GET':
-        print('get')
+    if '-' not in set_num:
+        set_num = set_num + '-1'
 
-    if request.method == 'POST':
-        set_num = request.form['inputField']
-        # add_duplicate = request.form.get('addDuplicate', False) == 'true'
-        # Do something with the input value and the checkbox value
-        # print("Input value:", set_num)
-        # print("Add duplicate:", add_duplicate)
-        # You can perform any further processing or redirect to another page
+    print ("Adding set: " + set_num)
+    with open('api','r') as f:
+        api_key = f.read().replace('\n','')
+    rb = rebrick.init(api_key)
 
-        if '-' not in set_num:
-            set_num = set_num + '-1'
+    unique_set_id = generate_unique_set_unique()
 
-        print ("Adding set: " + set_num)
-        with open('api','r') as f:
-            api_key = f.read().replace('\n','')
-        rb = rebrick.init(api_key)
-
-        unique_set_id = generate_unique_set_unique()
-
-        # Get Set info and add to SQL
-        response = ''
-        try:
-            response = json.loads(rebrick.lego.get_set(set_num).read()) 
-        except Exception as e:
-            print(e.code)
-            if e.code == 404:
-                return render_template('create.html',error=set_num)
-
-        count+=1
+    # Get Set info and add to SQL
+    response = ''
+    try:
+        response = json.loads(rebrick.lego.get_set(set_num).read()) 
         
-        cursor.execute('''INSERT INTO sets (
+    except Exception as e:
+        #print(e.code)
+        if e.code == 404:
+            return render_template('create.html',error=set_num)
+    
+    count+=1
+    cursor.execute('''INSERT INTO sets (
+        set_num,
+        name,
+        year,
+        theme_id,
+        num_parts,
+        set_img_url,
+        set_url,
+        last_modified_dt,
+        mini_col,
+        set_check,
+        set_col,
+        u_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ''', (response['set_num'], response['name'], response['year'], response['theme_id'], response['num_parts'],response['set_img_url'],response['set_url'],response['last_modified_dt'],False,False,False,unique_set_id))
+
+    conn.commit()
+
+
+
+    # Get set image. Saved under ./static/sets/xxx-x.jpg
+    set_img_url = response["set_img_url"]
+
+    #print('Saving set image:',end='')
+
+    res = requests.get(set_img_url, stream = True)
+    count+=1
+    if res.status_code == 200:
+        with open("./static/sets/"+set_num+".jpg",'wb') as f:
+            shutil.copyfileobj(res.raw, f)
+            #print(' OK')
+    else:
+        #print('Image Couldn\'t be retrieved for set ' + set_num)
+        logging.error('set_img_url: ' + set_num)
+        #print(' ERROR')
+
+
+    # Get inventory and add to SQL
+    response = json.loads(rebrick.lego.get_set_elements(set_num,page_size=20000).read())
+    count+=1
+    total_parts += len(response['results'])
+    socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+    for i in response['results']:
+        # Get part image. Saved under ./static/parts/xxxx.jpg
+        part_img_url = i['part']['part_img_url']
+        part_img_url_id = 'nil'
+
+        try:
+            pattern = r'/([^/]+)\.(?:png|jpg)$'
+            match = re.search(pattern, part_img_url)
+
+            if match:
+                part_img_url_id = match.group(1)
+                #print("Part number:", part_img_url_id)
+            else:        
+                #print("Part number not found in the URL.")
+                print(">>> " + part_img_url)
+        except Exception as e:
+                #print("Part number not found in the URL.")
+                #print(">>> " + str(part_img_url))
+                print(str(e))
+
+
+        
+
+        
+
+
+        cursor.execute('''INSERT INTO inventory (
+            set_num,
+            id,
+            part_num,
+            name,
+            part_img_url,
+            part_img_url_id,
+            color_id,
+            color_name,
+            quantity,
+            is_spare,
+            element_id,
+            u_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (set_num, i['id'], i['part']['part_num'],i['part']['name'],i['part']['part_img_url'],part_img_url_id,i['color']['id'],i['color']['name'],i['quantity'],i['is_spare'],i['element_id'],unique_set_id))
+        
+        
+        if not Path("./static/parts/"+part_img_url_id+".jpg").is_file():
+            #print('Saving part image:',end='')
+            if part_img_url is not None:
+                res = requests.get(part_img_url, stream = True)
+                count+=1
+                socketio.emit('update_progress', {'progress': count}, namespace='/progress')
+                if res.status_code == 200:
+                    with open("./static/parts/"+part_img_url_id+".jpg",'wb') as f:
+                        shutil.copyfileobj(res.raw, f)
+                        #print(' OK')
+                else:
+                    #print('Image Couldn\'t be retrieved for set ' + part_img_url_id)
+                    logging.error('part_img_url: ' + part_img_url_id)
+                    #print(' ERROR')
+            else:
+                #print('Part url is None')
+                print(i)
+        
+
+    conn.commit()
+
+    # Get minifigs
+    #print('Savings minifigs')
+    tmp_set_num = set_num
+    response = json.loads(rebrick.lego.get_set_minifigs(set_num).read())
+    count+=1
+    socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+    #print(response)
+
+    for i in response['results']:
+
+        # Get set image. Saved under ./static/minifigs/xxx-x.jpg
+        set_img_url = i["set_img_url"]
+        set_num = i['set_num']
+
+        #print('Saving set image:',end='')
+        if not Path("./static/minifigs/"+set_num+".jpg").is_file():
+            res = requests.get(set_img_url, stream = True)
+            count+=1
+            socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+            if res.status_code == 200:
+                with open("./static/minifigs/"+set_num+".jpg",'wb') as f:
+                    shutil.copyfileobj(res.raw, f)
+                    #print(' OK')
+            else:
+                #print('Image Couldn\'t be retrieved for set ' + set_num)
+                logging.error('set_img_url: ' + set_num)
+                #print(' ERROR')
+                
+
+        cursor.execute('''INSERT INTO minifigures (
+            fig_num,
             set_num,
             name,
-            year,
-            theme_id,
-            num_parts,
+            quantity,
             set_img_url,
-            set_url,
-            last_modified_dt,
-            mini_col,
-            set_check,
-            set_col,
             u_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ''', (response['set_num'], response['name'], response['year'], response['theme_id'], response['num_parts'],response['set_img_url'],response['set_url'],response['last_modified_dt'],False,False,False,unique_set_id))
+        ) VALUES (?, ?, ?, ?, ?, ?) ''', (i['set_num'],tmp_set_num, i['set_name'], i['quantity'],i['set_img_url'],unique_set_id))
 
         conn.commit()
-
-
-
-        # Get set image. Saved under ./static/sets/xxx-x.jpg
-        set_img_url = response["set_img_url"]
-
-        print('Saving set image:',end='')
-
-        res = requests.get(set_img_url, stream = True)
+    
+        # Get minifigs inventory
+        response_minifigs = json.loads(rebrick.lego.get_minifig_elements(i['set_num']).read())
         count+=1
-        if res.status_code == 200:
-            with open("./static/sets/"+set_num+".jpg",'wb') as f:
-                shutil.copyfileobj(res.raw, f)
-                print(' OK')
-        else:
-            print('Image Couldn\'t be retrieved for set ' + set_num)
-            logging.error('set_img_url: ' + set_num)
-            print(' ERROR')
+        socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+        for i in response_minifigs['results']:
 
-
-        # Get inventory and add to SQL
-        response = json.loads(rebrick.lego.get_set_elements(set_num,page_size=20000).read())
-        count+=1
-        for i in response['results']:
             # Get part image. Saved under ./static/parts/xxxx.jpg
             part_img_url = i['part']['part_img_url']
             part_img_url_id = 'nil'
-
             try:
                 pattern = r'/([^/]+)\.(?:png|jpg)$'
                 match = re.search(pattern, part_img_url)
 
                 if match:
                     part_img_url_id = match.group(1)
-                    print("Part number:", part_img_url_id)
-                else:        
-                    print("Part number not found in the URL.")
-                    print(">>> " + part_img_url)
+                    #print("Part number:", part_img_url_id)
+                    if not Path("./static/parts/"+part_img_url_id+".jpg").is_file():
+                        #print('Saving part image:',end='')
+
+                        res = requests.get(part_img_url, stream = True)
+                        count+=1
+                        socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+                        if res.status_code == 200:
+                            with open("./static/parts/"+part_img_url_id+".jpg",'wb') as f:
+                                shutil.copyfileobj(res.raw, f)
+                                #print(' OK')
+                        else:
+                            #print('Image Couldn\'t be retrieved for set ' + part_img_url_id)
+                            logging.error('part_img_url: ' + part_img_url_id)
+                            #print(' ERROR')
+                    else: 
+                        print(part_img_url_id + '.jpg exists!')
             except Exception as e:
-                    print("Part number not found in the URL.")
-                    print(">>> " + str(part_img_url))
+                    #print("Part number not found in the URL.")
+                    #print(">>> " + str(part_img_url))
                     print(str(e))
-
-
-            
-
-            
-
 
             cursor.execute('''INSERT INTO inventory (
                 set_num,
@@ -147,128 +286,26 @@ def create():
                 is_spare,
                 element_id,
                 u_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (set_num, i['id'], i['part']['part_num'],i['part']['name'],i['part']['part_img_url'],part_img_url_id,i['color']['id'],i['color']['name'],i['quantity'],i['is_spare'],i['element_id'],unique_set_id))
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (i['set_num'], i['id'], i['part']['part_num'],i['part']['name'],i['part']['part_img_url'],part_img_url_id,i['color']['id'],i['color']['name'],i['quantity'],i['is_spare'],i['element_id'],unique_set_id))
             
             
-            if not Path("./static/parts/"+part_img_url_id+".jpg").is_file():
-                print('Saving part image:',end='')
-                if part_img_url is not None:
-                    res = requests.get(part_img_url, stream = True)
-                    count+=1
-                    if res.status_code == 200:
-                        with open("./static/parts/"+part_img_url_id+".jpg",'wb') as f:
-                            shutil.copyfileobj(res.raw, f)
-                            print(' OK')
-                    else:
-                        print('Image Couldn\'t be retrieved for set ' + part_img_url_id)
-                        logging.error('part_img_url: ' + part_img_url_id)
-                        print(' ERROR')
-                else:
-                    print('Part url is None')
-                    print(i)
-            else: 
-                print(part_img_url_id + '.jpg exists!')
-
-        conn.commit()
-
-        # Get minifigs
-        print('Savings minifigs')
-        tmp_set_num = set_num
-        response = json.loads(rebrick.lego.get_set_minifigs(set_num).read())
-        count+=1
-        print(response)
-
-        for i in response['results']:
-
-            # Get set image. Saved under ./static/minifigs/xxx-x.jpg
-            set_img_url = i["set_img_url"]
-            set_num = i['set_num']
-
-            print('Saving set image:',end='')
-            if not Path("./static/minifigs/"+set_num+".jpg").is_file():
-                res = requests.get(set_img_url, stream = True)
-                count+=1
-                if res.status_code == 200:
-                    with open("./static/minifigs/"+set_num+".jpg",'wb') as f:
-                        shutil.copyfileobj(res.raw, f)
-                        print(' OK')
-                else:
-                    print('Image Couldn\'t be retrieved for set ' + set_num)
-                    logging.error('set_img_url: ' + set_num)
-                    print(' ERROR')
-            else: 
-                print(set_img_url + '.jpg exists!')         
-
-            cursor.execute('''INSERT INTO minifigures (
-                fig_num,
-                set_num,
-                name,
-                quantity,
-                set_img_url,
-                u_id
-            ) VALUES (?, ?, ?, ?, ?, ?) ''', (i['set_num'],tmp_set_num, i['set_name'], i['quantity'],i['set_img_url'],unique_set_id))
-
-            conn.commit()
         
-            # Get minifigs inventory
-            response_minifigs = json.loads(rebrick.lego.get_minifig_elements(i['set_num']).read())
-            count+=1
-
-            for i in response_minifigs['results']:
-
-                # Get part image. Saved under ./static/parts/xxxx.jpg
-                part_img_url = i['part']['part_img_url']
-                part_img_url_id = 'nil'
-                try:
-                    pattern = r'/([^/]+)\.(?:png|jpg)$'
-                    match = re.search(pattern, part_img_url)
-
-                    if match:
-                        part_img_url_id = match.group(1)
-                        print("Part number:", part_img_url_id)
-                        if not Path("./static/parts/"+part_img_url_id+".jpg").is_file():
-                            print('Saving part image:',end='')
-
-                            res = requests.get(part_img_url, stream = True)
-                            count+=1
-                            if res.status_code == 200:
-                                with open("./static/parts/"+part_img_url_id+".jpg",'wb') as f:
-                                    shutil.copyfileobj(res.raw, f)
-                                    print(' OK')
-                            else:
-                                print('Image Couldn\'t be retrieved for set ' + part_img_url_id)
-                                logging.error('part_img_url: ' + part_img_url_id)
-                                print(' ERROR')
-                        else: 
-                            print(part_img_url_id + '.jpg exists!')
-                except Exception as e:
-                        print("Part number not found in the URL.")
-                        print(">>> " + str(part_img_url))
-                        print(str(e))
-
-                cursor.execute('''INSERT INTO inventory (
-                    set_num,
-                    id,
-                    part_num,
-                    name,
-                    part_img_url,
-                    part_img_url_id,
-                    color_id,
-                    color_name,
-                    quantity,
-                    is_spare,
-                    element_id,
-                    u_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (i['set_num'], i['id'], i['part']['part_num'],i['part']['name'],i['part']['part_img_url'],part_img_url_id,i['color']['id'],i['color']['name'],i['quantity'],i['is_spare'],i['element_id'],unique_set_id))
-                
-                
-            
-            conn.commit()
-        conn.close()
-        print(count)
-        return redirect('/')
-    
+        conn.commit()
     conn.close()
+    count = total_parts
+    socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+    
+    count = 0
+    socketio.emit('task_completed', namespace='/progress')
+
+@app.route('/create',methods=['POST','GET'])
+def create():
+    
+    global count
+
+
+    
+    
 
     print('Count: ' + str(count))
 
@@ -293,7 +330,7 @@ def index():
         results = cursor.fetchall()
         set_list = [list(i) for i in results]
 
-        print(set_list)
+        #print(set_list)
         for i in set_list:
             try:
                 i[3] = theme_file[theme_file[:, 0] == str(i[3])][0][1]
@@ -304,7 +341,58 @@ def index():
         cursor.close()
         conn.close()
         return render_template('index.html',set_list=set_list,themes_list=theme_file)
+    
+    if request.method == 'POST':
+        set_num = request.form.get('set_num')
+        u_id = request.form.get('u_id')
+        minif = request.form.get('minif')
+        scheck = request.form.get('scheck')
+        scol = request.form.get('scol')
 
+        conn = sqlite3.connect('app.db')
+        cursor = conn.cursor()
+
+        if minif != None:
+            if minif == 'true':
+               val = 1
+            else:
+                val = 0 
+            cursor.execute('''UPDATE sets
+                SET mini_col = ?
+                WHERE   set_num = ? AND
+                        u_id = ?''',
+                (val, set_num, u_id))
+            conn.commit()
+        
+        if scheck != None:
+            if scheck == 'true':
+               val = 1
+            else:
+                val = 0 
+            cursor.execute('''UPDATE sets
+                SET set_check = ?
+                WHERE   set_num = ? AND
+                        u_id = ?''',
+                (val, set_num, u_id))
+            conn.commit()
+        if scol != None:
+            if scol == 'true':
+               val = 1
+            else:
+                val = 0 
+            cursor.execute('''UPDATE sets
+                SET set_col = ?
+                WHERE   set_num = ? AND
+                        u_id = ?''',
+                (val, set_num, u_id))
+            conn.commit()
+
+        cursor.close()
+        conn.close()
+        
+        
+        
+        return ('', 204)
 
 @app.route('/<tmp>/<u_id>', methods=['GET', 'POST'])
 def inventory(tmp,u_id):
@@ -557,4 +645,4 @@ def save_number(tmp):
     return Response(status=204)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=3333)
+    socketio.run(app.run(host='0.0.0.0', debug=True, port=3333))

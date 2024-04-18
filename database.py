@@ -44,7 +44,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS sets (
     last_modified_dt TEXT,
     mini_col BOOLEAN,
     set_check BOOLEAN,
-    set_col, BOOLEAN, 
+    set_col BOOLEAN, 
     u_id TEXT
 )''')
 

@@ -7,7 +7,9 @@
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
-  </head>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"  crossorigin="anonymous"></script>
+      </head>
   <body>
 <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
@@ -36,15 +38,17 @@
               <input class="input" type="text" id="inputField" name="inputField">
             </div>
           </div>
+          <progress id="progress-bar" class="progress is-large is-primary" value="0" max="100">
+          </progress>
           <div class="field">
             <div class="control">
-              <button class="button is-primary" type="submit">Submit</button>
+              <button id="submitButton" class="button is-primary" type="submit">Submit</button>
             </div>
           </div>
         </form>
+        
 		  </div>
     </section>
-
     {% if error is defined %}
     <button class="js-modal-trigger" data-target="modal-js-example" id="modal-js">
     </button> 
@@ -73,12 +77,32 @@
         </footer>
       </div>
     </div>
-
-
-  </body>
+    </body>
 
 <script>
 
+
+var socket = io.connect('http://' + document.domain + ':' + location.port + '/progress');
+        // Event listener for receiving progress updates
+        socket.on('update_progress', function(msg) {
+            var progress = msg.progress;
+            // document.getElementById("progress-bar").style.width = progress + "%";
+            document.getElementById("progress-bar").value = progress;
+            document.getElementById("progress-bar").innerText = progress + "%";
+        });
+
+        // Event listener for the form submission
+        document.getElementById("createForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            var inputField = document.getElementById("inputField").value;
+            socket.emit('start_task', { inputField: inputField }); // Emit socket event with inputField value
+        });
+
+    // Event listener for the 'task_completed' event
+    socket.on('task_completed', function() {
+        // Redirect to '/'
+        window.location.href = '/';
+    });
 
   document.addEventListener('DOMContentLoaded', () => {
 
