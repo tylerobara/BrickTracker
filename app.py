@@ -13,6 +13,19 @@ app = Flask(__name__)
 
 @app.route('/favicon.ico')
 
+@app.route('/delete/<tmp>',methods=['POST', 'GET'])
+def delete(tmp):
+
+    conn = sqlite3.connect('app.db')
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        print("POST")
+    if request.method == "GET":
+        print("GET")
+        print(tmp)
+    return redirect('/')
+
 @app.route('/create',methods=['GET', 'POST'])
 def create():
     conn = sqlite3.connect('app.db')
@@ -38,7 +51,7 @@ def create():
         rb = rebrick.init(api_key)
 
         unique_set_id = generate_unique_set_unique()
-        
+
         # Get Set info and add to SQL
         response = json.loads(rebrick.lego.get_set(set_num).read())
         count+=1
@@ -54,10 +67,10 @@ def create():
             set_url,
             last_modified_dt,
             u_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ''', (response['set_num'], response['name'], response['year'], response['theme_id'], response['num_parts'],response['set_img_url'],response['set_url'],response['last_modified_dt'],unique_set_id))
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ''', (response['set_num'], response['name'], response['year'], response['theme_id'], response['num_parts'],response['set_img_url'],response['set_url'],response['last_modified_dt'],unique_set_id))
 
         conn.commit()
-        
+
 
 
         # Get set image. Saved under ./static/sets/xxx-x.jpg
@@ -302,7 +315,7 @@ def inventory(tmp,u_id):
         cursor.close()
         conn.close()
 
-        return render_template('table.html', tmp=tmp,title=set_list[0][1],set_list=set_list,inventory_list=inventory_list,missing_list=missing_list,minifig_list=minifig_list,minifig_inventory_list=minifig_inventory_list)
+        return render_template('table.html', u_id=u_id,tmp=tmp,title=set_list[0][1],set_list=set_list,inventory_list=inventory_list,missing_list=missing_list,minifig_list=minifig_list,minifig_inventory_list=minifig_inventory_list)
 
 
     if request.method == 'POST':
