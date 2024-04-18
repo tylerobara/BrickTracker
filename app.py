@@ -24,6 +24,12 @@ def delete(tmp):
     if request.method == "GET":
         print("GET")
         print(tmp)
+        tables = ['inventory', 'sets', 'minifigures', 'missing']
+        for t in tables:
+            cursor.execute('DELETE FROM ' + t + ' where u_id="' +tmp+ '";')
+            conn.commit()
+        cursor.close()
+        conn.close()
     return redirect('/')
 
 @app.route('/create',methods=['GET', 'POST'])
