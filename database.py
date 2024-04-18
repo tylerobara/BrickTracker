@@ -28,10 +28,10 @@ if len(sys.argv) > 1:
 
 
 
-# cursor.execute('''DROP TABLE sets''')
-# cursor.execute('''DROP TABLE inventory''')
-# cursor.execute('''DROP TABLE minifigures''')
-# cursor.execute('''DROP TABLE missing''')
+cursor.execute('''DROP TABLE sets''')
+cursor.execute('''DROP TABLE inventory''')
+cursor.execute('''DROP TABLE minifigures''')
+cursor.execute('''DROP TABLE missing''')
 
 cursor.execute('''CREATE TABLE IF NOT EXISTS sets (
     set_num TEXT,
@@ -42,6 +42,9 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS sets (
     set_img_url TEXT,
     set_url TEXT,
     last_modified_dt TEXT,
+    mini_col BOOLEAN,
+    set_check BOOLEAN,
+    set_col, BOOLEAN, 
     u_id TEXT
 )''')
 
