@@ -78,8 +78,11 @@ def create():
             set_img_url,
             set_url,
             last_modified_dt,
+            mini_col,
+            set_check,
+            set_col,
             u_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ''', (response['set_num'], response['name'], response['year'], response['theme_id'], response['num_parts'],response['set_img_url'],response['set_url'],response['last_modified_dt'],unique_set_id))
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ''', (response['set_num'], response['name'], response['year'], response['theme_id'], response['num_parts'],response['set_img_url'],response['set_url'],response['last_modified_dt'],False,False,False,unique_set_id))
 
         conn.commit()
 
@@ -108,16 +111,27 @@ def create():
         for i in response['results']:
             # Get part image. Saved under ./static/parts/xxxx.jpg
             part_img_url = i['part']['part_img_url']
+            part_img_url_id = 'nil'
 
-            pattern = r'/([^/]+)\.(?:png|jpg)$'
-            match = re.search(pattern, part_img_url)
+            try:
+                pattern = r'/([^/]+)\.(?:png|jpg)$'
+                match = re.search(pattern, part_img_url)
 
-            if match:
-                part_img_url_id = match.group(1)
-                print("Part number:", part_img_url_id)
-            else:
-                print("Part number not found in the URL.")
-                print(">>> " + part_img_url)
+                if match:
+                    part_img_url_id = match.group(1)
+                    print("Part number:", part_img_url_id)
+                else:        
+                    print("Part number not found in the URL.")
+                    print(">>> " + part_img_url)
+            except Exception as e:
+                    print("Part number not found in the URL.")
+                    print(">>> " + str(part_img_url))
+                    print(str(e))
+
+
+            
+
+            
 
 
             cursor.execute('''INSERT INTO inventory (
@@ -138,17 +152,20 @@ def create():
             
             if not Path("./static/parts/"+part_img_url_id+".jpg").is_file():
                 print('Saving part image:',end='')
-
-                res = requests.get(part_img_url, stream = True)
-                count+=1
-                if res.status_code == 200:
-                    with open("./static/parts/"+part_img_url_id+".jpg",'wb') as f:
-                        shutil.copyfileobj(res.raw, f)
-                        print(' OK')
+                if part_img_url is not None:
+                    res = requests.get(part_img_url, stream = True)
+                    count+=1
+                    if res.status_code == 200:
+                        with open("./static/parts/"+part_img_url_id+".jpg",'wb') as f:
+                            shutil.copyfileobj(res.raw, f)
+                            print(' OK')
+                    else:
+                        print('Image Couldn\'t be retrieved for set ' + part_img_url_id)
+                        logging.error('part_img_url: ' + part_img_url_id)
+                        print(' ERROR')
                 else:
-                    print('Image Couldn\'t be retrieved for set ' + part_img_url_id)
-                    logging.error('part_img_url: ' + part_img_url_id)
-                    print(' ERROR')
+                    print('Part url is None')
+                    print(i)
             else: 
                 print(part_img_url_id + '.jpg exists!')
 

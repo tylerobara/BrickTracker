@@ -16,7 +16,13 @@
     <tbody>
       {% for brick in inventory_list %}
         <tr>
+
+          {% if brick[5] == 'nil' %}
+          <td><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" alt="{{ brick[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;"></td>
+          {% else %}
           <td><img src="{{ '/static/parts/' + brick[5] + '.jpg' }}" class="lightbox-trigger" alt="{{ brick[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;"></td>
+          {% endif %}
+
           <td style="text-align:left;margin:0px;" class="hidden-mobile name-class">{{ brick[3] }}</td>
           <td class="hidden-mobile">{{ brick[7] }}</td>
           <td style="text-align: center;">{{ brick[8] }}</td>
