@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html data-theme="light" class="has-navbar-fixed-top">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Overview</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	  <style>
+		/* Modal Styles */
+		#lightbox-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 50px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.lightbox-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+
+
+.lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#lightbox-text {
+  position: absolute;
+  bottom: 20px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.5); /* Adjust background color and opacity */
+  color: white;
+  text-align: center;
+}
+
+
+#lightbox-modal .close {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  font-size: 50px;
+  color: white;
+  cursor: pointer;
+}
+
+#lightbox-modal img {
+  display: block;
+  margin: 0 auto;
+  max-width: 90%;
+  max-height: 90%;
+}
+	  </style>
+  </head>
+  <body>
+
+	<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+		<div class="navbar-brand">
+			<a class="navbar-item" href="/">
+				Home
+			</a>
+	
+			<a class="navbar-item" href="/create">
+				Add Set
+			</a>
+			<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+			</a>
+		</div>
+		<div id="navMenu" class="navbar-menu">
+			<div class="navbar-start">
+	
+			</div>
+	
+			<div class="navbar-end">
+				
+			</div>
+		</div>
+	</nav>
+	<center>
+		<div class="center-table">
+			<table id="data" class="table">
+				<thead>
+					<tr>
+						<th class="fixed-width"></th>
+						<th>fig_num</th>
+						<th>Name</th>
+						<th>total_quantity</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for brick in missing_list %}
+					<tr>
+						<td><img src="{{ '/static/minifigs/' + brick[0] + '.jpg' }}" class="lightbox-trigger" alt="{{ brick[1] }}" style="height: 150px; width: auto;margin:0;padding: 0;" loading="lazy">
+						</td>
+						<td>{{ brick[0] }}</td>
+						<td>{{ brick[1] }}</td>
+						<td>{{ brick[2] }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</center>
+
+	<div id="lightbox-modal">
+		<div class="lightbox-wrapper">
+		  <span class="close">&times;</span>
+		  <img class="lightbox-content" id="lightbox-image">
+		  <div class="text-container" id="lightbox-text"></div>
+		</div>
+	  </div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+  const lightboxTrigger = document.querySelectorAll('.lightbox-trigger');
+  const lightboxModal = document.getElementById('lightbox-modal');
+  const lightboxImage = document.getElementById('lightbox-image');
+  const lightboxText = document.getElementById('lightbox-text');
+  const closeModal = document.querySelector('.close');
+
+  lightboxTrigger.forEach(function (element) {
+    element.addEventListener('click', function () {
+	const imgSrc = element.getAttribute('src');
+	textContent = '';
+      console.log(element.getAttribute('alt'));
+      textContent = element.getAttribute('alt');
+	    //  textContent  = element.closest('tr').querySelector('td:nth-child(2)').textContent; // Adjust the index accordingly
+      lightboxText.textContent = textContent;
+
+
+      lightboxImage.setAttribute('src', imgSrc);
+      lightboxModal.style.display = 'block';
+    });
+  });
+
+  closeModal.addEventListener('click', function () {
+    lightboxModal.style.display = 'none';
+  });
+
+  lightboxModal.addEventListener('click', function (event) {
+    if (event.target === lightboxModal || event.target === lightboxImage || event.target === lightboxText) {
+      // Dismiss only if the clicked element is part of the content area
+      lightboxModal.style.display = 'none';
+    }
+  });
+
+  // Dismiss the lightbox when clicking outside the content area (i.e., the background)
+  lightboxModal.addEventListener('click', function (event) {
+    if (event.target != lightboxModal) {
+      lightboxModal.style.display = 'none';
+    }
+  });
+});
+	</script>
+  </body>
+</html>

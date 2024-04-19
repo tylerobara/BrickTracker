@@ -312,8 +312,17 @@ def missing():
 
 @app.route('/minifigs',methods=['POST','GET'])
 def minifigs():
+    conn = sqlite3.connect('app.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT fig_num, name, SUM(quantity) AS total_quantity FROM minifigures GROUP BY fig_num, name;') 
 
-    return 0
+    results = cursor.fetchall()
+    missing_list = [list(i) for i in results]
+    cursor.close()
+    conn.close()
+
+
+    return render_template('minifigs.html',missing_list=missing_list)
 
 @app.route('/create',methods=['POST','GET'])
 def create():
