@@ -299,6 +299,25 @@ def new_set(set_num):
     count = 0
     socketio.emit('task_completed', namespace='/progress')
 
+@app.route('/missing',methods=['POST','GET'])
+def missing():
+    conn = sqlite3.connect('app.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, part_num, color_id, element_id, SUM(quantity) AS total_quantity FROM missing GROUP BY id, part_num, color_id, element_id;') 
+
+    results = cursor.fetchall()
+    missing_list = [list(i) for i in results]
+    cursor.close()
+    conn.close()
+
+
+    return render_template('missing.html',missing_list=missing_list)
+
+@app.route('/minifigs',methods=['POST','GET'])
+def minifigs():
+
+    return 0
+
 @app.route('/create',methods=['POST','GET'])
 def create():
     
