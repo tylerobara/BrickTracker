@@ -92,9 +92,9 @@
 			<a class="navbar-item" href="/create">
 				Add Set
 			</a>
-			<a class="navbar-item" href="/missing">
+			<!-- <a class="navbar-item" href="/missing">
 				Missing
-			</a>
+			</a> -->
 			<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
 				<span aria-hidden="true"></span>
 				<span aria-hidden="true"></span>
@@ -110,28 +110,32 @@
 			<div class="navbar-end">
 				<div class="navbar-item has-dropdown is-hoverable">
 					<a class="navbar-link">
+						Show
+					</a>
+					<div class="navbar-dropdown">
+						<a class="navbar-item" id="toggleButton">
+							Collected and boxed 
+						</a>
+						<a class="navbar-item" id="toggleButton2">
+							Checked for missing pieces
+						</a>
+						<a class="navbar-item" id="toggleButton3">
+							Complete set without missing pieces
+						</a>
+						<a class="navbar-item" id="toggleButton4">
+							Sets with missing pieces
+						</a>
+					</div>
+				</div>
+				<div class="navbar-item has-dropdown is-hoverable">
+					<a class="navbar-link">
 						Select Theme
 					</a>
 					<div class="navbar-dropdown" id="themeDropdown">
 	
 					</div>
 				</div>
-				<div class="navbar-item has-dropdown is-hoverable">
-					<a class="navbar-link">
-						Show
-					</a>
-					<div class="navbar-dropdown">
-						<a class="navbar-item" id="toggleButton">
-							Collected
-						</a>
-						<a class="navbar-item" id="toggleButton2">
-							Checked
-						</a>
-						<a class="navbar-item" id="toggleButton3">
-							Complete
-						</a>
-					</div>
-				</div>
+				
 				<div class="navbar-item has-dropdown is-hoverable">
 					<a class="navbar-link">
 						Sort by
@@ -152,12 +156,6 @@
 						</a>
 						<a class="navbar-item" onclick="dynamicSort('set_name')">
 							Name
-						</a>
-						<a class="navbar-item" onclick="dynamicSort('s_col')">
-							Collected
-						</a>
-						<a class="navbar-item" onclick="dynamicSort('s_check')">
-							Checked
 						</a>
 					</div>
 				</div>
@@ -291,6 +289,7 @@
 	  {% endfor %}
 	</div>
 	<script>
+		
 	  function searchFunction() {
 	    var input, filter, gridContainer, gridItems, i, txtValue;
 	    input = document.getElementById('searchInput');
@@ -526,6 +525,38 @@
 	      gridItems.forEach(function(item) {
 		// Check if the corresponding checkbox is checked
 		const checkbox = item.querySelector('.s_com');
+		if (isHidden || (checkbox && !checkbox.checked)) {
+		  // Show the grid item if it's hidden or the checkbox is checked
+		  item.style.display = 'block';
+		} else {
+		  // Hide the grid item if the checkbox is not checked
+		  item.style.display = 'none';
+		}
+	      });
+	    }
+	  });
+
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const toggleButton = document.getElementById('toggleButton4');
+	    let isHidden = true; // Initially, only show checked grid items
+
+	    // Initialize visibility based on isHidden
+	    updateVisibility();
+
+	    toggleButton.addEventListener('click', function() {
+	      // Toggle visibility and update grid items
+	      isHidden = !isHidden;
+	      updateVisibility();
+	    });
+
+	    function updateVisibility() {
+	      // Get all grid items
+	      const gridItems = document.querySelectorAll('.grid-item');
+
+	      // Iterate over each grid item
+	      gridItems.forEach(function(item) {
+		// Check if the corresponding checkbox is checked
+		const checkbox = item.querySelector('.s_com');
 		if (isHidden || (checkbox && checkbox.checked)) {
 		  // Show the grid item if it's hidden or the checkbox is checked
 		  item.style.display = 'block';
@@ -601,15 +632,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
 $(document).ready(function() {
 
+	// Check for click events on the navbar burger icon
+	$(".navbar-burger").click(function() {
+
+		// Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+		$(".navbar-burger").toggleClass("is-active");
+		$(".navbar-menu").toggleClass("is-active");
+
+	});
+});
+
+$(document).ready(function() {
+
 // Check for click events on the navbar burger icon
-$(".navbar-burger").click(function() {
+$(".navbar-item").click(function() {
 
-	// Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-	$(".navbar-burger").toggleClass("is-active");
-	$(".navbar-menu").toggleClass("is-active");
+    // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+    $(".navbar-burger").removeClass("is-active");
+    $(".navbar-menu").removeClass("is-active");
 
 });
+
 });
+
+
 	</script>
   </body>
 </html>
