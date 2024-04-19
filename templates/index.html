@@ -279,7 +279,7 @@
 
 		  <p class="card-footer-item">
 		  <span>
-		    <a class="is-size-6" style="color: #363636;" href="/{{ i['set_num'] }}">Inst.</a>
+		    <a class="inst is-size-6" style="color: #363636;" href="/static/instructions/{{ i[0] }}.pdf">Inst.</a>
 		  </span>
 		  </p>
 		</footer>
@@ -289,6 +289,35 @@
 	  {% endfor %}
 	</div>
 	<script>
+
+window.addEventListener('DOMContentLoaded', function() {
+        var observer = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var link = entry.target;
+                    var pdfUrl = link.getAttribute('href');
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('HEAD', pdfUrl, true);
+
+                    xhr.onload = function() {
+                        if (xhr.status !== 200) {
+                            // If PDF is not found, disable the link
+                            link.style.pointerEvents = 'none';
+                            link.style.color = '#ccc'; // Optionally, change link color to indicate it's disabled
+                        }
+                    };
+
+                    xhr.send();
+                    observer.unobserve(link);
+                }
+            });
+        });
+
+        var links = document.querySelectorAll('.inst');
+        links.forEach(function(link) {
+            observer.observe(link);
+        });
+    });
 		
 	  function searchFunction() {
 	    var input, filter, gridContainer, gridItems, i, txtValue;
