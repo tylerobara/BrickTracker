@@ -162,7 +162,7 @@
 		</div>
 	</nav>
 
-
+	
     <div class="search-container">
       <input class="input"type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search...">
       <!-- <center hidden="true">
@@ -250,11 +250,15 @@
 			  Set is collected and boxed
 			</label>
 			  <br>
-			  <fieldset disabled>
+			  <!-- <fieldset disabled> -->
 			  <label class="checkbox" >
-			    <input type="checkbox" class="s_com" onclick="return false;"/> Set is missing pieces
+				{% if i[11] in missing_list %}
+			    <input type="checkbox" class="s_com" onclick="return false;" checked/> Set is missing pieces
+				{% else %}
+				<input type="checkbox" class="s_com" onclick="return false;"/> Set is missing pieces
+				{% endif %}
 			  </label>
-			</fieldset>
+			<!-- </fieldset> -->
 		  </div>
 		</div>
 	      </div>

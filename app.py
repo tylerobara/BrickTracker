@@ -331,6 +331,10 @@ def index():
         results = cursor.fetchall()
         set_list = [list(i) for i in results]
 
+        cursor.execute('SELECT DISTINCT u_id from missing;')
+        results = cursor.fetchall()
+        missing_list = [list(i)[0] for i in results]
+
         #print(set_list)
         for i in set_list:
             try:
@@ -341,7 +345,7 @@ def index():
 
         cursor.close()
         conn.close()
-        return render_template('index.html',set_list=set_list,themes_list=theme_file)
+        return render_template('index.html',set_list=set_list,themes_list=theme_file,missing_list=missing_list)
     
     if request.method == 'POST':
         set_num = request.form.get('set_num')
