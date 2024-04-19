@@ -134,6 +134,8 @@ def new_set(set_num):
     total_parts += len(response['results'])
     socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
     for i in response['results']:
+        if i['is_spare']:
+            continue
         # Get part image. Saved under ./static/parts/xxxx.jpg
         part_img_url = i['part']['part_img_url']
         part_img_url_id = 'nil'
@@ -152,11 +154,6 @@ def new_set(set_num):
                 #print("Part number not found in the URL.")
                 #print(">>> " + str(part_img_url))
                 print(str(e))
-
-
-        
-
-        
 
 
         cursor.execute('''INSERT INTO inventory (
