@@ -63,7 +63,7 @@ def new_set(set_num):
 
     total_parts = 4
 
-    set_num = set_num
+    set_num = set_num.replace(" ","")
     # add_duplicate = request.form.get('addDuplicate', False) == 'true'
     # Do something with the input value and the checkbox value
     # print("Input value:", set_num)

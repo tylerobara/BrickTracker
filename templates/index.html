@@ -272,7 +272,7 @@
 
 		  <p class="card-footer-item">
 		  <span>
-		    <a class="is-size-6" style="color: #363636;" href="/{{ i[0] }}/{{ i[8] }}">Inv.</a>
+		    <a class="is-size-6" style="color: #363636;" href="/{{ i[0] }}/{{ i[11] }}">Inv.</a>
 		  </span>
 		  </p>
 
@@ -553,7 +553,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const themeDropdown = document.getElementById('themeDropdown');
 
   // Retrieve all unique values from the <a> elements
-  const themes = ['Show all'];
+  const themes = [];
   const themeLinks = document.querySelectorAll('.set_theme');
   themeLinks.forEach(function(link) {
     const themeId = link.textContent.trim();
@@ -562,6 +562,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
   themes.sort(customSort);
+  themes.unshift('> Show all <');
   // Create options for the dropdown list
   themes.forEach(function(theme) {
     const option = document.createElement('a');

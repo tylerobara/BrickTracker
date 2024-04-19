@@ -39,8 +39,10 @@
                 
 
                 <div class='inputField'>
+                  
                   {% for missing in missing_list %}
-                    {% if missing[1] == brick[1] and missing[2] == brick[2] and missing[3] == brick[6] and missing[5] == brick[10] %}
+
+                    {% if missing[1] == brick[1] and missing[2] == brick[2] and missing[3] == brick[6] and (missing[5] == brick[10] or missing[5] == 'brick[10]' or missing[5] == 'None')  %}
                       {% set ns.count = missing[4] %}
                     {% endif %}
                   {% endfor %}
@@ -111,7 +113,7 @@
   
                   <div class='inputField'>
                     {% for missing in missing_list %}
-                      {% if missing[1] == part[1] and missing[2] == part[2] and missing[3] == part[6] and (missing[5] == part[10] or missing[5] == 'part[10]') %}
+                      {% if missing[1] == part[1] and missing[2] == part[2] and missing[3] == part[6] and (missing[5] == part[10] or missing[5] == 'part[10]' or missing[5] == 'None') %}
                         {% set ns.count = missing[4] %}
                       {% endif %}
                     {% endfor %}
