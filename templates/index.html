@@ -92,6 +92,9 @@
 			<a class="navbar-item" href="/create">
 				Add Set
 			</a>
+			<a class="navbar-item" href="/missing">
+				Missing
+			</a>
 			<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
 				<span aria-hidden="true"></span>
 				<span aria-hidden="true"></span>
@@ -587,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function () {
     gridItems.forEach(function(item) {
       const themeLink = item.querySelector('.set_theme');
       const themeId = themeLink.textContent.trim();
-      if (!selectedTheme || themeId === selectedTheme || selectedTheme == "Show all") {
+      if (!selectedTheme || themeId === selectedTheme || selectedTheme == '> Show all <') {
         item.style.display = 'block'; // Show the grid item
       } else {
         item.style.display = 'none'; // Hide the grid item
