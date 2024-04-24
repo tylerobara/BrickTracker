@@ -68,7 +68,11 @@
 
 <div style="display: flex; justify-content: center;">
   <div style="display: flex; align-items: center;">
+    {% if fig[4] == None %}
+    <img src="/static/nil_mf.jpg" class="lightbox-trigger" style="height: 100px; width: auto;" alt="{{ fig[2] }}" loading="lazy">
+    {% else %}
     <img src="{{ '/static/minifigs/' + fig[0] + '.jpg' }}" class="lightbox-trigger" style="height: 100px; width: auto;" alt="{{ fig[2] }}" loading="lazy">
+    {% endif %}
     <span style="font-size: 50px; margin-left: 10px;">X {{ fig[3] }}</span>
   </div>
 </div>

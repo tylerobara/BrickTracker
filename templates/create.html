@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html data-theme="light" class="has-navbar-fixed-top">
-  <head 
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
@@ -49,13 +49,11 @@
         
 		  </div>
     </section>
-    {% if error is defined %}
+    
+
     <button class="js-modal-trigger" data-target="modal-js-example" id="modal-js">
     </button> 
-    {% else %}
-    <button id="modal-js">
-    </button> 
-    {% endif %}
+
 
 
     <div class="modal" id="modal-js-example">
@@ -102,6 +100,13 @@ var socket = io.connect('http://' + document.domain + ':' + location.port + '/pr
     socket.on('task_completed', function() {
         // Redirect to '/'
         window.location.href = '/';
+    });
+
+    socket.on('task_failed', function(data) {
+        // Redirect to '/'
+        const error = data.error;
+        document.getElementById('modal-js').style.display = 'block';
+        // window.location.href = '/create';
     });
 
   document.addEventListener('DOMContentLoaded', () => {

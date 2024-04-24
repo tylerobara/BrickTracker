@@ -32,9 +32,31 @@ def test_disconnect():
 def start_task(data):
     input_value = data.get('inputField')
     print(input_value)
-    # Start the task in a separate thread to avoid blocking the server
+    
+    
+
+    input_value = input_value.replace(" ","")
+    if '-' not in input_value:
+        input_value = input_value + '-1'
+
+
+
+    total_set_file = np.genfromtxt("sets.csv",delimiter=",",dtype="str",usecols=(0))
+    print(total_set_file)
+
+    if input_value not in total_set_file:
+        print('ERROR: ' + input_value)
+        # Reload create.html with error message
+        socketio.emit('task_failed', {'error': 'set_num'}, namespace='/progress')
+        return render_template('create.html',error=input_value)
+
+
+        # Start the task in a separate thread to avoid blocking the serve
+    print('starting servers')
     thread = Thread(target=new_set, args=(input_value,))
     thread.start()
+
+    #return redirect('/')
 
 @app.route('/delete/<tmp>',methods=['POST', 'GET'])
 def delete(tmp):
@@ -63,7 +85,8 @@ def new_set(set_num):
 
     total_parts = 4
 
-    set_num = set_num.replace(" ","")
+
+
     # add_duplicate = request.form.get('addDuplicate', False) == 'true'
     # Do something with the input value and the checkbox value
     # print("Input value:", set_num)
@@ -71,8 +94,7 @@ def new_set(set_num):
     # You can perform any further processing or redirect to another page
     conn = sqlite3.connect('app.db')
     cursor = conn.cursor()
-    if '-' not in set_num:
-        set_num = set_num + '-1'
+
 
     print ("Adding set: " + set_num)
     with open('api','r') as f:
@@ -83,15 +105,16 @@ def new_set(set_num):
 
     # Get Set info and add to SQL
     response = ''
-    try:
-        response = json.loads(rebrick.lego.get_set(set_num).read()) 
+    # try:
+    response = json.loads(rebrick.lego.get_set(set_num).read()) 
         
-    except Exception as e:
-        #print(e.code)
-        if e.code == 404:
-            return render_template('create.html',error=set_num)
+    # except Exception as e:
+    #     #print(e.code)
+    #     if e.code == 404:
+    #         return render_template('create.html',error=set_num)
     
     count+=1
+    socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
     cursor.execute('''INSERT INTO sets (
         set_num,
         name,
@@ -208,18 +231,20 @@ def new_set(set_num):
 
         #print('Saving set image:',end='')
         if not Path("./static/minifigs/"+set_num+".jpg").is_file():
-            res = requests.get(set_img_url, stream = True)
-            count+=1
-            socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
-            if res.status_code == 200:
-                with open("./static/minifigs/"+set_num+".jpg",'wb') as f:
-                    shutil.copyfileobj(res.raw, f)
-                    #print(' OK')
+            if set_img_url is not None:
+                res = requests.get(set_img_url, stream = True) 
+                count+=1
+                socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+                if res.status_code == 200:
+                    with open("./static/minifigs/"+set_num+".jpg",'wb') as f:
+                        shutil.copyfileobj(res.raw, f)
+                        #print(' OK')
+                else:
+                    #print('Image Couldn\'t be retrieved for set ' + set_num)
+                    logging.error('set_img_url: ' + set_num)
+                    #print(' ERROR')
             else:
-                #print('Image Couldn\'t be retrieved for set ' + set_num)
-                logging.error('set_img_url: ' + set_num)
-                #print(' ERROR')
-                
+               print(i) 
 
         cursor.execute('''INSERT INTO minifigures (
             fig_num,
@@ -329,8 +354,6 @@ def create():
     
     global count
 
-
-    
     
 
     print('Count: ' + str(count))
