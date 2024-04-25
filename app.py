@@ -47,14 +47,15 @@ def start_task(data):
     if input_value not in total_set_file:
         print('ERROR: ' + input_value)
         # Reload create.html with error message
-        socketio.emit('task_failed', {'error': 'set_num'}, namespace='/progress')
-        return render_template('create.html',error=input_value)
+        socketio.emit('task_failed', namespace='/progress')
+        #return render_template('create.html',error=input_value)
 
 
         # Start the task in a separate thread to avoid blocking the serve
-    print('starting servers')
-    thread = Thread(target=new_set, args=(input_value,))
-    thread.start()
+    else:
+        print('starting servers')
+        thread = Thread(target=new_set, args=(input_value,))
+        thread.start()
 
     #return redirect('/')
 
@@ -77,13 +78,17 @@ def delete(tmp):
         conn.close()
     return redirect('/')
 
+def progress(count,total_parts,state):
+    print (state)
+    socketio.emit('update_progress', {'progress': int(count/total_parts*100), 'desc': state}, namespace='/progress')
+
 def new_set(set_num):
     global count
     ###### total count ####
     # 1 for set
     # 1 for set image
 
-    total_parts = 4
+    total_parts = 20
 
 
 
@@ -92,20 +97,29 @@ def new_set(set_num):
     # print("Input value:", set_num)
     # print("Add duplicate:", add_duplicate)
     # You can perform any further processing or redirect to another page
+    
+    # >>>>>>>>
+    progress(count, total_parts,'Opening database')
+
     conn = sqlite3.connect('app.db')
     cursor = conn.cursor()
 
+    # >>>>>>>>
+    progress(count, total_parts,'Adding set: ' + set_num)
 
-    print ("Adding set: " + set_num)
     with open('api','r') as f:
         api_key = f.read().replace('\n','')
     rb = rebrick.init(api_key)
 
+    # >>>>>>>>
+    progress(count, total_parts,'Generating Unique ID')
     unique_set_id = generate_unique_set_unique()
 
     # Get Set info and add to SQL
     response = ''
-    # try:
+    
+    # >>>>>>>>
+    progress(count, total_parts,'Get set info')
     response = json.loads(rebrick.lego.get_set(set_num).read()) 
         
     # except Exception as e:
@@ -114,7 +128,10 @@ def new_set(set_num):
     #         return render_template('create.html',error=set_num)
     
     count+=1
-    socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+    
+    # >>>>>>>>
+    progress(count, total_parts,'Adding set to database')
+
     cursor.execute('''INSERT INTO sets (
         set_num,
         name,
@@ -139,9 +156,14 @@ def new_set(set_num):
 
     #print('Saving set image:',end='')
 
+    # >>>>>>>>
+    progress(count, total_parts,'Get set image')
+
     res = requests.get(set_img_url, stream = True)
     count+=1
     if res.status_code == 200:
+        # >>>>>>>>
+        progress(count, total_parts,'Saving set image')
         with open("./static/sets/"+set_num+".jpg",'wb') as f:
             shutil.copyfileobj(res.raw, f)
             #print(' OK')
@@ -152,10 +174,12 @@ def new_set(set_num):
 
 
     # Get inventory and add to SQL
+    # >>>>>>>>
+    progress(count, total_parts,'Get set inventory')
     response = json.loads(rebrick.lego.get_set_elements(set_num,page_size=20000).read())
     count+=1
     total_parts += len(response['results'])
-    socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+    
     for i in response['results']:
         if i['is_spare']:
             continue
@@ -178,7 +202,8 @@ def new_set(set_num):
                 #print(">>> " + str(part_img_url))
                 print(str(e))
 
-
+        # >>>>>>>>
+        progress(count, total_parts,'Adding ' + i['part']['name'] + ' to database')
         cursor.execute('''INSERT INTO inventory (
             set_num,
             id,
@@ -198,10 +223,13 @@ def new_set(set_num):
         if not Path("./static/parts/"+part_img_url_id+".jpg").is_file():
             #print('Saving part image:',end='')
             if part_img_url is not None:
+                # >>>>>>>>
+                progress(count, total_parts,'Get part image')
                 res = requests.get(part_img_url, stream = True)
                 count+=1
-                socketio.emit('update_progress', {'progress': count}, namespace='/progress')
                 if res.status_code == 200:
+                    # >>>>>>>>
+                    progress(count, total_parts,'Saving part image')
                     with open("./static/parts/"+part_img_url_id+".jpg",'wb') as f:
                         shutil.copyfileobj(res.raw, f)
                         #print(' OK')
@@ -219,9 +247,11 @@ def new_set(set_num):
     # Get minifigs
     #print('Savings minifigs')
     tmp_set_num = set_num
+    # >>>>>>>>
+    progress(count, total_parts,'Get set minifigs')
     response = json.loads(rebrick.lego.get_set_minifigs(set_num).read())
     count+=1
-    socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
+    
     #print(response)
     for i in response['results']:
 
@@ -232,10 +262,13 @@ def new_set(set_num):
         #print('Saving set image:',end='')
         if not Path("./static/minifigs/"+set_num+".jpg").is_file():
             if set_img_url is not None:
+                # >>>>>>>>
+                progress(count, total_parts,'Get minifig image')
                 res = requests.get(set_img_url, stream = True) 
                 count+=1
-                socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
                 if res.status_code == 200:
+                    # >>>>>>>>
+                    progress(count, total_parts,'Saving minifig image')
                     with open("./static/minifigs/"+set_num+".jpg",'wb') as f:
                         shutil.copyfileobj(res.raw, f)
                         #print(' OK')
@@ -245,7 +278,8 @@ def new_set(set_num):
                     #print(' ERROR')
             else:
                print(i) 
-
+        # >>>>>>>>
+        progress(count, total_parts,'Adding minifig to database')
         cursor.execute('''INSERT INTO minifigures (
             fig_num,
             set_num,
@@ -258,9 +292,10 @@ def new_set(set_num):
         conn.commit()
     
         # Get minifigs inventory
+        # >>>>>>>>
+        progress(count, total_parts,'Get minifig inventory')
         response_minifigs = json.loads(rebrick.lego.get_minifig_elements(i['set_num']).read())
         count+=1
-        socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
         for i in response_minifigs['results']:
 
             # Get part image. Saved under ./static/parts/xxxx.jpg
@@ -275,11 +310,14 @@ def new_set(set_num):
                     #print("Part number:", part_img_url_id)
                     if not Path("./static/parts/"+part_img_url_id+".jpg").is_file():
                         #print('Saving part image:',end='')
-
+                        
+                        # >>>>>>>>
+                        progress(count, total_parts,'Get minifig image')
                         res = requests.get(part_img_url, stream = True)
                         count+=1
-                        socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
                         if res.status_code == 200:
+                            # >>>>>>>>
+                            progress(count, total_parts,'Saving minifig image')
                             with open("./static/parts/"+part_img_url_id+".jpg",'wb') as f:
                                 shutil.copyfileobj(res.raw, f)
                                 #print(' OK')
@@ -293,7 +331,8 @@ def new_set(set_num):
                     #print("Part number not found in the URL.")
                     #print(">>> " + str(part_img_url))
                     print(str(e))
-
+            # >>>>>>>>
+            progress(count, total_parts,'Adding minifig inventory to database')
             cursor.execute('''INSERT INTO inventory (
                 set_num,
                 id,
@@ -313,11 +352,15 @@ def new_set(set_num):
         
         conn.commit()
     conn.close()
-    print('End Count: ' + str(count))
-    print('End Total: ' + str(total_parts))
+    # >>>>>>>>
+    progress(count, total_parts,'Closing database')
+    #print('End Count: ' + str(count))
+    #print('End Total: ' + str(total_parts))
     count = total_parts
-    socketio.emit('update_progress', {'progress': int(count/total_parts*100)}, namespace='/progress')
-    
+
+    # >>>>>>>>
+    progress(count, total_parts,'Cleaning up')
+
     count = 0
     socketio.emit('task_completed', namespace='/progress')
 
