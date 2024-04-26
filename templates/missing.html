@@ -101,7 +101,6 @@
 			<thead>
 			  <tr>
 				<th ></th>
-				<th >id</th>
 				<th >part_num</th>
 				<th >color_id</th>
 				<th >element_id</th>
@@ -112,15 +111,14 @@
 			  {% for brick in missing_list %}
 				<tr>
 					{% if brick[4] == 'nil' %}
-					<td><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" alt="{{ brick[0] }}" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
+					<td><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" alt="{{ brick[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
 					{% else %}
-					<td><img src="{{ '/static/parts/' + brick[4] + '.jpg' }}" alt="{{ brick[0] }}" class="lightbox-trigger" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
+					<td><img src="{{ '/static/parts/' + brick[3] + '.jpg' }}" alt="{{ brick[3] }}" class="lightbox-trigger" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
 					{% endif %}
 				  <td>{{ brick[0] }}</td>
 				  <td>{{ brick[1] }}</td>
 				  <td>{{ brick[2] }}</td>
-				  <td>{{ brick[3] }}</td>
-				  <td>{{ brick[5] }}</td>			 
+				  <td>{{ brick[4] }}</td>			 
 				</tr>
 			  {% endfor %}
 			</tbody>

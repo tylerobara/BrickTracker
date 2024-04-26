@@ -368,7 +368,7 @@ def new_set(set_num):
 def missing():
     conn = sqlite3.connect('app.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT id, part_num, color_id, element_id, part_img_url_id, SUM(quantity) AS total_quantity FROM missing GROUP BY id, part_num, color_id, element_id;') 
+    cursor.execute('SELECT part_num, color_id, element_id, part_img_url_id, SUM(quantity) AS total_quantity FROM missing GROUP BY part_num, color_id, element_id;') 
 
     results = cursor.fetchall()
     missing_list = [list(i) for i in results]
