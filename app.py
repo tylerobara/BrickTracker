@@ -368,7 +368,7 @@ def new_set(set_num):
 def missing():
     conn = sqlite3.connect('app.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT id, part_num, color_id, element_id, SUM(quantity) AS total_quantity FROM missing GROUP BY id, part_num, color_id, element_id;') 
+    cursor.execute('SELECT id, part_num, color_id, element_id, part_img_url_id, SUM(quantity) AS total_quantity FROM missing GROUP BY id, part_num, color_id, element_id;') 
 
     results = cursor.fetchall()
     missing_list = [list(i) for i in results]
@@ -377,6 +377,20 @@ def missing():
 
 
     return render_template('missing.html',missing_list=missing_list)
+
+@app.route('/parts',methods=['POST','GET'])
+def parts():
+    conn = sqlite3.connect('app.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, part_num, color_id, element_id, part_img_url_id, SUM(quantity) AS total_quantity FROM inventory GROUP BY id, part_num, part_img_url_id, color_id, element_id;') 
+
+    results = cursor.fetchall()
+    missing_list = [list(i) for i in results]
+    cursor.close()
+    conn.close()
+
+
+    return render_template('parts.html',missing_list=missing_list)
 
 @app.route('/minifigs',methods=['POST','GET'])
 def minifigs():
@@ -512,6 +526,7 @@ def inventory(tmp,u_id):
         cursor.execute("SELECT * from missing where u_id = '" + u_id + "';")
         results = cursor.fetchall()
         missing_list =  [list(i) for i in results]
+        print(missing_list)
 
         # Get minifigures
         cursor.execute("SELECT * from minifigures where set_num = '" + tmp + "' and u_id = '" + u_id + "';")
@@ -536,6 +551,7 @@ def inventory(tmp,u_id):
         set_num = request.form.get('set_num')
         id = request.form.get('id')
         part_num = request.form.get('part_num')
+        part_img_url_id = request.form.get('part_img_url_id')
         color_id = request.form.get('color_id')
         element_id = request.form.get('element_id')
         u_id = request.form.get('u_id')
@@ -551,12 +567,14 @@ def inventory(tmp,u_id):
                 WHERE   set_num = ? AND 
                         id = ? AND 
                         part_num = ? AND 
+                        part_img_url_id = ? AND   
                         color_id = ? AND 
                         element_id = ? AND 
                         u_id = ?''',
-                        (set_num, id, part_num, color_id, element_id, u_id))
+                        (set_num, id, part_num, part_img_url_id, color_id, element_id, u_id))
             
             existing_quantity = cursor.fetchone()
+            conn.commit()
 
             #If there's an existing entry or if entry isn't the same as the new value 
             if existing_quantity is None or existing_quantity[0] != missing:
@@ -564,12 +582,13 @@ def inventory(tmp,u_id):
                         set_num,
                         id,
                         part_num,
+                        part_img_url_id, 
                         color_id,
                         quantity,
                         element_id,
                         u_id
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?) ''', 
-                   (set_num, id, part_num, color_id, missing, element_id, u_id))
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', 
+                   (set_num, id, part_num, part_img_url_id, color_id, missing, element_id, u_id))
 
             conn.commit()
         
@@ -579,10 +598,11 @@ def inventory(tmp,u_id):
                 WHERE   set_num = ? AND
                         id = ? AND
                         part_num = ? AND
+                        part_img_url_id = ? AND
                         color_id = ? AND
                         element_id = ? AND
                         u_id = ?''',
-                (set_num, id, part_num, color_id, element_id, u_id))
+                (set_num, id, part_num, part_img_url_id, color_id, element_id, u_id))
 
             conn.commit()
 
