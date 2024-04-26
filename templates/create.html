@@ -51,7 +51,30 @@
         
 		  </div>
     </section>
-    
+    <button class="js-modal-trigger" data-target="modal-js-example" id="modal-js">
+    </button> 
+
+
+
+    <div class="modal" id="modal-js-example">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Cannot add set!</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          Set number does not exists: 
+          <br>
+          <b id="error-code"></b>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <button class="button is-primary">OK</button>
+          </div>
+        </footer>
+      </div>
+    </div>
     </body>
 
 <script>

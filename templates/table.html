@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-
 <div class="center-table" >
 <table id="data" class="table">
     <thead>
@@ -16,7 +15,6 @@
     <tbody>
       {% for brick in inventory_list %}
         <tr>
-
           {% if brick[5] == 'nil' %}
           <td><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" alt="{{ brick[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
           {% else %}
@@ -34,6 +32,7 @@
                 <input type="hidden" id="id" value="{{ brick[1] }}"> 
                 <input type="hidden" id="part_num" value="{{ brick[2] }}"> 
                 <input type="hidden" id="color_id" value="{{ brick[6] }}"> 
+                <input type="hidden" id="part_img_url_id" value="{{ brick[5] }}"> 
                 <input type="hidden" id="element_id" value="{{ brick[10] }}"> 
                 <input type="hidden" id="u_id" value="{{ brick[11] }}"> 
                 
@@ -41,9 +40,8 @@
                 <div class='inputField'>
                   
                   {% for missing in missing_list %}
-
-                    {% if missing[1] == brick[1] and missing[2] == brick[2] and missing[3] == brick[6] and (missing[5] == brick[10] or missing[5] == 'brick[10]' or missing[5] == 'None')  %}
-                      {% set ns.count = missing[4] %}
+                    {% if missing[1] == brick[1] and missing[2] == brick[2] and missing[4] == brick[6] and (missing[6] == brick[10] or missing[6] == 'brick[10]' or missing[6] == 'None')  %}
+                      {% set ns.count = missing[5] %}
                     {% endif %}
                   {% endfor %}
                   <input type="tel" style="text-align:center;font-size: 16px;" id="missing" value="{{ ns.count }}" pattern="\d+">
@@ -111,14 +109,15 @@
                   <input type="hidden" id="id" value="{{ part[1] }}"> 
                   <input type="hidden" id="part_num" value="{{ part[2] }}"> 
                   <input type="hidden" id="color_id" value="{{ part[6] }}"> 
+                  <input type="hidden" id="part_img_url_id" value="{{ part[5] }}"> 
                   <input type="hidden" id="element_id" value="{{ part[10] }}"> 
                   <input type="hidden" id="u_id" value="{{ part[11] }}"> 
                   
-  
+                  
                   <div class='inputField'>
                     {% for missing in missing_list %}
-                      {% if missing[1] == part[1] and missing[2] == part[2] and missing[3] == part[6] and (missing[5] == part[10] or missing[5] == 'part[10]' or missing[5] == 'None') %}
-                        {% set ns.count = missing[4] %}
+                      {% if missing[1] == part[1] and missing[2] == part[2] and missing[4] == part[6] and (missing[6] == part[10] or missing[6] == 'part[10]' or missing[6] == 'None') %}
+                        {% set ns.count = missing[5] %}
                       {% endif %}
                     {% endfor %}
                     <input type="tel" style="text-align:center;font-size: 16px;" id="missing" value="{{ ns.count }}" pattern="\d+">
@@ -246,9 +245,10 @@ $("body").on("submit", "#number-form", function (event) {
   id = $(this)[0][1].value;
   part_num = $(this)[0][2].value;
   color_id = $(this)[0][3].value;
-  element_id = $(this)[0][4].value;
-  u_id = $(this)[0][5].value;
-  missing = $(this)[0][6].value
+  part_img_url_id = $(this)[0][4].value;
+  element_id = $(this)[0][5].value;
+  u_id = $(this)[0][6].value;
+  missing = $(this)[0][7].value
 
   // console.log('set_num: ' + set_num);
   // console.log('id: ' + id);
@@ -265,6 +265,7 @@ $("body").on("submit", "#number-form", function (event) {
       'set_num': set_num,
       'id': id,
       'part_num': part_num,
+      'part_img_url_id': part_img_url_id,
       'color_id': color_id,
       'element_id': element_id,
       'u_id': u_id,
