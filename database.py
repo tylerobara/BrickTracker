@@ -76,6 +76,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS missing (
     set_num TEXT,
     id INTEGER,
     part_num INTEGER,
+    part_img_url_id TEXT,
     color_id INTEGER,
     quantity INTEGER,
     element_id INTEGER,
