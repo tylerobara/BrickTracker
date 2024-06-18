@@ -1,4 +1,5 @@
 from flask import Flask, request, redirect, jsonify, render_template, Response,url_for
+import os
 import json
 from flask_socketio import SocketIO
 from threading import Thread
@@ -107,9 +108,10 @@ def new_set(set_num):
     # >>>>>>>>
     progress(count, total_parts,'Adding set: ' + set_num)
 
-    with open('api','r') as f:
-        api_key = f.read().replace('\n','')
-    rb = rebrick.init(api_key)
+    #with open('api','r') as f:
+    #    api_key = f.read().replace('\n','')
+    # TODO add 401 error on wrong key
+    rb = rebrick.init(os.getenv("REBRICKABLE_API_KEY"))
 
     # >>>>>>>>
     progress(count, total_parts,'Generating Unique ID')
