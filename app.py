@@ -11,6 +11,7 @@ import re #regex
 import rebrick #rebrickable api
 import requests # request img from web
 import shutil # save img locally
+import eventlet
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -763,4 +764,4 @@ def save_number(tmp):
     return Response(status=204)
 
 if __name__ == '__main__':
-    socketio.run(app.run(host='0.0.0.0', debug=True, port=3333))
+    socketio.run(app.run(host='0.0.0.0', debug=False, port=3333))
