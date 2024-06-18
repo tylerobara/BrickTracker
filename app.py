@@ -12,6 +12,7 @@ import rebrick #rebrickable api
 import requests # request img from web
 import shutil # save img locally
 import eventlet
+from downloadRB import download_and_unzip
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -366,6 +367,29 @@ def new_set(set_num):
 
     count = 0
     socketio.emit('task_completed', namespace='/progress')
+
+@app.route('/config',methods=['POST','GET'])
+def config():
+    print(request.method)
+    if request.method == 'POST':
+
+        if request.form.get('CreateDB') == 'createDB':
+            # pass
+            print("Encrypted")
+        elif  request.form.get('Get Rebrickable data') == 'rebrickUpdate':
+            # pass # do something else
+            urls = ["themes","sets","colors"]
+
+            for i in urls:
+                download_and_unzip("https://cdn.rebrickable.com/media/downloads/"+i+".csv.gz") 
+
+        else:
+            # pass # unknown
+            return render_template("config.html")
+    elif request.method == 'GET':
+        # return render_template("index.html")
+        print("No Post Back Call")
+    return render_template("config.html")
 
 @app.route('/missing',methods=['POST','GET'])
 def missing():
@@ -764,4 +788,4 @@ def save_number(tmp):
     return Response(status=204)
 
 if __name__ == '__main__':
-    socketio.run(app.run(host='0.0.0.0', debug=False, port=3333))
+    socketio.run(app.run(host='0.0.0.0', debug=True, port=3333))
