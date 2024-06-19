@@ -590,22 +590,57 @@ def inventory(tmp,u_id):
         # If quantity is not empty
         if missing != '' and missing != '0':
             #Check if there's an existing entry
-            cursor.execute('''SELECT quantity FROM missing 
-                WHERE   set_num = ? AND 
-                        id = ? AND 
-                        part_num = ? AND 
-                        part_img_url_id = ? AND   
-                        color_id = ? AND 
-                        element_id = ? AND 
-                        u_id = ?''',
-                        (set_num, id, part_num, part_img_url_id, color_id, element_id, u_id))
-            
-            existing_quantity = cursor.fetchone()
-            conn.commit()
+            #print('in first')
+            #print(missing)
+            #cursor.execute('''SELECT quantity FROM missing 
+            #    WHERE   set_num = ? AND 
+            #            id = ? AND 
+            #            part_num = ? AND 
+            #            part_img_url_id = ? AND   
+            #            color_id = ? AND 
+            #            element_id = ? AND 
+            #            u_id = ?''',
+            #            (set_num, id, part_num, part_img_url_id, color_id, element_id, u_id))
+            #
+            #existing_quantity = cursor.fetchone()
+            #print("existing" + str(existing_quantity))
+            #conn.commit()
+
 
             #If there's an existing entry or if entry isn't the same as the new value 
-            if existing_quantity is None or existing_quantity[0] != missing:
-                cursor.execute('''INSERT OR REPLACE INTO missing (
+            # First, check if a row with the same values for the other columns exists
+            cursor.execute('''
+                SELECT quantity FROM missing WHERE 
+                set_num = ? AND
+                id = ? AND
+                part_num = ? AND
+                part_img_url_id = ? AND
+                color_id = ? AND
+                element_id = ? AND
+                u_id = ?
+            ''', (set_num, id, part_num, part_img_url_id, color_id, element_id, u_id))
+
+            # Fetch the result
+            row = cursor.fetchone()
+
+            if row:
+                # If a row exists and the missing value is different, update the row
+                if row[0] != missing:
+                    cursor.execute('''
+                        UPDATE missing SET 
+                        quantity = ?
+                        WHERE set_num = ? AND
+                        id = ? AND
+                        part_num = ? AND
+                        part_img_url_id = ? AND
+                        color_id = ? AND
+                        element_id = ? AND
+                        u_id = ?
+                    ''', (missing, set_num, id, part_num, part_img_url_id, color_id, element_id, u_id))
+            else:
+                # If no row exists, insert a new row
+                cursor.execute('''
+                    INSERT INTO missing (
                         set_num,
                         id,
                         part_num,
@@ -614,10 +649,47 @@ def inventory(tmp,u_id):
                         quantity,
                         element_id,
                         u_id
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', 
-                   (set_num, id, part_num, part_img_url_id, color_id, missing, element_id, u_id))
-
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (set_num, id, part_num, part_img_url_id, color_id, missing, element_id, u_id))
             conn.commit()
+
+#            if existing_quantity is None:
+#                print('in second')
+#                print(existing_quantity)
+#                cursor.execute('''INSERT INTO missing (
+#                        set_num,
+#                        id,
+#                        part_num,
+#                        part_img_url_id, 
+#                        color_id,
+#                        quantity,
+#                        element_id,
+#                        u_id
+#                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', 
+#                   (set_num, id, part_num, part_img_url_id, color_id, missing, element_id, u_id))
+#
+#                conn.commit()
+#
+#            else:
+#                try:
+#                    if int(existing_quantity[0]) != int(missing):
+#                        print('in third')
+#                        print(existing_quantity)
+#                        cursor.execute('''update missing set (
+#                                set_num,
+#                                id,
+#                                part_num,
+#                                part_img_url_id, 
+#                                color_id,
+#                                quantity,
+#                                element_id,
+#                                u_id
+#                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', 
+#                           (set_num, id, part_num, part_img_url_id, color_id, missing, element_id, u_id))
+#
+#                        conn.commit()
+#                except:
+#                    pass
         
         # If quantity is empty, delete the entry.
         else:
