@@ -1,0 +1,8 @@
+flask
+flask_socketio
+pathlib
+numpy
+rebrick
+requests
+eventlet
+gunicorn
