@@ -168,7 +168,7 @@
 
 	
     <div class="search-container">
-      <input class="input"type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search...">
+      <input class="input"type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search title or set number...">
       <!-- <center hidden="true">
 	<button class="button button-outline" onclick="dynamicSort('set_id')">Sort by ID</button>
 	<button class="button button-outline" onclick="dynamicSort('set_year')">Sort by Year</button>
@@ -193,7 +193,7 @@
 	      <div class="card">
 	      <div class="columns" style="">
 		<div class="column is-two-thirds" style="text-align: left;">
-		  <p class="is-size-5">
+		  <p class="is-size-5 searchTitle">
 		    <span style="font-weight: bold;" class="set_id">{{ i[0] }}</span> <span style="font-weight: bold;" class="set_name">{{ i[1] }}</span><br>
 			<a class="is-size-7 set_theme" style="color: #363636;">{{ i[3] }}</a> <a class="is-size-7" style="color: #363636;"> (<span class='set_year'>{{ i[2] }}</span>)</a>
 		  </p>
@@ -328,9 +328,9 @@ window.addEventListener('DOMContentLoaded', function() {
 	    filter = input.value.toUpperCase();
 	    gridContainer = document.getElementById('gridContainer');
 	    gridItems = gridContainer.getElementsByClassName('grid-item');
-
-	    for (i = 0; i < gridItems.length; i++) {
-	      txtValue = gridItems[i].textContent || gridItems[i].innerText;
+	    searchTerm = gridContainer.getElementsByClassName('searchTitle');
+	    for (i = 0; i < searchTerm.length; i++) {
+	      txtValue = searchTerm[i].textContent || searchTerm[i].innerText;
 	      if (txtValue.toUpperCase().indexOf(filter) > -1) {
 		gridItems[i].style.display = "";
 	      } else {
