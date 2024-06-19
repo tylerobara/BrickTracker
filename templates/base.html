@@ -10,63 +10,16 @@
 
 <style>
 
-th {
-	text-align: left;
-	margin: 0px;
-	padding: 5px 0px 5px 0px;
-}
 
-table {
-  width: 100%; /* Ensure the table takes full width of its container */
-    border-collapse: collapse; /* Collapse the borders of the table */
-}
+table { 
+    width: 100%; /* Ensure the table takes full width of its container */
 
-#data {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.name-class {
-  max-width: 300px; 
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-/*
-#data th:nth-child(3),
-#data td:nth-child(3) {
-  max-width: 100px; 
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-} */
-
-.center-table {
-  overflow-x: auto;
 }
 
 td {
-	padding: 0px 0px 0px 0px;
-	margin-left: 10px;
-	height: 50px;
-	min-width: 55px;
-  	display: table-cell;
-  	white-space: nowrap; /* Prevent text wrapping */
-  	overflow: hidden; /* Hide overflow content */
-  	text-overflow: ellipsis; /* Display ellipsis for overflow content */
-}
-
-
-.hidden-mobile {
-  display: table-cell;
-}
-
-.table-container {
-  overflow-x: auto; /* Enable horizontal scrolling */
-}
-
-.table-wrapper {
-  overflow-x: auto; /* Enable horizontal scrolling */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
 }
 
 @media only screen and (min-width: 600px) {
@@ -76,42 +29,15 @@ td {
   }
 
 }
-@media only screen and (max-width: 600px) {
-  table {
-    width: auto; /* Expand table to full width on mobile */
-  }
-  .center-table {
-    overflow-x: auto; /* Enable horizontal scrolling */
-  }
-  
-  .fixed-width {
-    width: 100%;
-  }
-
-    td:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    background-color: #fff; /* Make the first column background white */
-  }
 
 
-  .hidden-mobile {
-    display: none;
-  }
+@media only screen and (max-width: 480px) {
+    /* horizontal scrollbar for tables if mobile screen */
+    .hidden-mobile {
+  	display: none;
+    }
+
 }
-
-
-.centered-cell {
-  text-align: center; /* Center the content horizontally within the cell */
-}
-
-
-
-.highlighted {
-	  background-color: yellow; /* Adjust as needed */
-}
-
 
 
 
@@ -140,13 +66,6 @@ background-color: white;
 	padding: 16px;
 }
 
-/* Table */
-td img{
-    display: block;
-    margin-left: auto;
-    margin-right: 5px;
-
-}
 
 .inputContainer {
 	  display: inline-block; /* Display as an inline block */
@@ -248,7 +167,7 @@ td img{
           Home
         </a>
     
-        <a class="navbar-item hidden-desktop" id="expand-button">
+        <a class="navbar-item hidden-1desktop" id="expand-button">
           Expand Columns
         </a> 
         
