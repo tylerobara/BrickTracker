@@ -1,2 +1,5 @@
 api
 .env
+*.csv
+*.db
+*.log
