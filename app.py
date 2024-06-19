@@ -12,7 +12,8 @@ import rebrick #rebrickable api
 import requests # request img from web
 import shutil # save img locally
 import eventlet
-from downloadRB import download_and_unzip
+from downloadRB import download_and_unzip,get_nil_images
+from db import initialize_database,get_rows,delete_tables
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -368,20 +369,47 @@ def new_set(set_num):
     count = 0
     socketio.emit('task_completed', namespace='/progress')
 
+def get_file_creation_dates(file_list):
+    creation_dates = {}
+    for file_name in file_list:
+        file_path = f"{file_name}"
+        if os.path.exists(file_path):
+            creation_time = os.path.getctime(file_path)
+            creation_dates[file_name] = time.ctime(creation_time)
+        else:
+            creation_dates[file_name] = "File not found"
+    return creation_dates
+
 @app.route('/config',methods=['POST','GET'])
 def config():
-    print(request.method)
+
+    file_list = ['themes.csv', 'colors.csv', 'sets.csv','static/nil.png','static/nil_mf.jpg']
+    creation_dates = get_file_creation_dates(file_list)
+    
+    row_counts = [0]
+    db_exists = Path("app.db")
+    if db_exists.is_file(): 
+        db_is_there = True
+        row_counts = get_rows()
+    else:
+        db_is_there = False
+
     if request.method == 'POST':
 
-        if request.form.get('CreateDB') == 'createDB':
-            # pass
-            print("Encrypted")
-        elif  request.form.get('Get Rebrickable data') == 'rebrickUpdate':
-            # pass # do something else
+        if request.form.get('CreateDB') == 'Create Database':
+            initialize_database()
+            row_counts = get_rows() 
+            return redirect(url_for('config'))
+        elif  request.form.get('Update local data') == 'Update local data':
             urls = ["themes","sets","colors"]
-
             for i in urls:
                 download_and_unzip("https://cdn.rebrickable.com/media/downloads/"+i+".csv.gz") 
+            get_nil_images()
+            return redirect(url_for('config'))
+
+        elif  request.form.get('deletedb') == 'Delete Database':
+           delete_tables()
+           initialize_database()
 
         else:
             # pass # unknown
@@ -389,7 +417,7 @@ def config():
     elif request.method == 'GET':
         # return render_template("index.html")
         print("No Post Back Call")
-    return render_template("config.html")
+    return render_template("config.html",db_is_there=db_is_there,creation_dates = creation_dates,row_counts=row_counts)
 
 @app.route('/missing',methods=['POST','GET'])
 def missing():
