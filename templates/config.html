@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html data-theme="light" class="has-navbar-fixed-top">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Overview</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </head>
+  <body>
+
+	<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+		<div class="navbar-brand">
+			<a class="navbar-item" href="/">
+				Home
+			</a>
+	
+			<a class="navbar-item" href="/create">
+				Add Set
+			</a>
+			<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+			</a>
+		</div>
+		<div id="navMenu" class="navbar-menu">
+			<div class="navbar-start">
+	
+			</div>
+	
+			<div class="navbar-end">
+				
+			</div>
+		</div>
+	</nav>
+	<p class="is-size-1">Database</p>
+	{% if not db_is_there %}
+		<p>Database does not exists </p>
+	<form method="POST" action="/config">
+                <input type="submit" class="button is-primary" value="Create Database" name="CreateDB"/>
+	</form>
+	{% else %}
+	<ul>
+	{% for file,data in row_counts.items() %} 
+	<li>{{ file }}: {{ data }}</li>
+	{% endfor %}
+	</ul>
+	{% endif %}
+	<p class="is-size-1">Rebrickable Data</p>
+	
+	<h1>Data is last updated:</h1>
+	    <table border="1">
+		<thead>
+		    <tr>
+			<th>File</th>
+			<th>Last Updated</th>
+		    </tr>
+		</thead>
+		<tbody>
+		    {% for file, date in creation_dates.items() %}
+			<tr>
+			    <td>{{ file }}</td>
+			    <td>{{ date }}</td>
+			</tr>
+		    {% endfor %}
+		</tbody>
+	    </table>
+	<form method="POST" action="/config">
+                <input type="submit" class="button is-primary" value="Update local data" name="Update local data" />
+
+        </form>
+
+
+	<p>-----------</p>
+	
+	<p class="is-size-1">Recreate Database</p>
+	<p>Drop the tables in the database and recreate them. This will delete all your data!</p>
+	<form method="POST" action="/config">
+                <input type="submit" class="button is-warning" value="Delete Database" name="deletedb" />
+
+        </form>
+
+	<script>
+	</script>
+  </body>
+</html>
