@@ -80,7 +80,9 @@
 <script>
 
 
-  var socket = io.connect('http://' + document.domain + ':' + location.port + '/progress');
+  var socket = io.connect(window.location.protocol + '//'  + document.domain + ':' + location.port + '/progress', {
+  transports: ['websocket'],
+});
   // Event listener for receiving progress updates
   socket.on('update_progress', function (msg) {
     var progress = msg.progress;

@@ -3,7 +3,7 @@ services:
     container_name: LEGOOrganizer
     build: .
     ports:
-      - "5111:3333"
+      - "3333:3333"
     volumes:
       - .:/app
     env_file:

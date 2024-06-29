@@ -14,9 +14,12 @@ import shutil # save img locally
 import eventlet
 from downloadRB import download_and_unzip,get_nil_images
 from db import initialize_database,get_rows,delete_tables
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1)
+socketio = SocketIO(app,cors_allowed_origins="https://lego.baerentsen.space")
 count = 0
 
 @app.route('/favicon.ico')
