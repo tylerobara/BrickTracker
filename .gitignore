@@ -5,3 +5,4 @@ api
 *.log
 /static
 /info
+/__pycache__
