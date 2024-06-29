@@ -2,8 +2,10 @@ api
 .env
 *.csv
 *.db
+*.png
+*.pdf
+*.jpg
 *.log
-/static
 /info
 /__pycache__
 *.bk
