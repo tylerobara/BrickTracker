@@ -453,6 +453,15 @@ def parts():
     cursor.close()
     conn.close()
 
+    color_file = np.loadtxt("colors.csv",delimiter=",",dtype="str")
+
+    color_dict = {str(code): name for code, name, _, _ in color_file}
+
+    for item in missing_list:
+        color_code = str(item[2])
+        if color_code in color_dict:
+            item[2] = color_dict[color_code]
+
     return render_template('parts.html',missing_list=missing_list)
 
 @app.route('/minifigs',methods=['POST','GET'])
