@@ -6,3 +6,4 @@ api
 /static
 /info
 /__pycache__
+*.bk
