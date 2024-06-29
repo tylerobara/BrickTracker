@@ -3,3 +3,5 @@ api
 *.csv
 *.db
 *.log
+/static
+/info
