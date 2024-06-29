@@ -25,6 +25,7 @@ count = 0
 @socketio.on('connect', namespace='/progress')
 def test_connect():
     print('Client connected')
+    return ('', 301)
 
 # SocketIO event handler for client disconnection
 @socketio.on('disconnect', namespace='/progress')
