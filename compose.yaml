@@ -1,6 +1,7 @@
 services:
   legoorganizer:
     container_name: LEGOOrganizer
+    restart: unless-stopped
     build: .
     ports:
       - "3333:3333"
