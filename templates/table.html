@@ -5,20 +5,20 @@
 <table id="data" class="table tablemobile sortable">
     <thead>
       <tr>
-        <th style="width:65px;">Image</th>
+        <th class="sorttable_nosort" style="width:65px;">Image</th>
         <th class="hidden-mobile name-class">Name</th>
         <th class="hidden-mobile">Color</th>
         <th >Qty</th>
-        <th style="text-align:center;">Missing</th>
+        <th class="sorttable_nosort" style="text-align:center;">Missing</th>
       </tr>
     </thead>
     <tbody>
       {% for brick in inventory_list %}
         <tr>
           {% if brick[5] == 'nil' %}
-          <td><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" alt="{{ brick[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
+          <td style="background-color: #ffffff;"><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" alt="{{ brick[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
           {% else %}
-          <td style="width:65px;height:55px;"><img src="{{ '/static/parts/' + brick[5] + '.jpg' }}" class="lightbox-trigger" alt="{{ brick[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;"loading="lazy"></td>
+          <td style="background-color: #ffffff;width:65px;height:55px;"><img src="{{ '/static/parts/' + brick[5] + '.jpg' }}" class="lightbox-trigger" alt="{{ brick[3] }}" style="height: 50px; width: 50px;margin:0;padding: 0;"loading="lazy"></td>
           {% endif %}
 
           <td style="text-align:left;" class="hidden-mobile name-class">{{ brick[3] }}</td>
@@ -60,7 +60,7 @@
 
 {% if minifig_list | length > 0 %}
 
-<h1 class="title">Minifigs</h1>
+<h1 id="minifigs" class="title">Minifigs</h1>
 {% for fig in minifig_list %}
 <h2 class="subtitle">{{ fig[2] }} ({{ fig[0] }})</h2>
 

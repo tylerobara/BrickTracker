@@ -11,6 +11,17 @@
 
 <style>
 
+table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
+    content: " \25B4\25BE"
+}
+
+
+table.sortable tbody tr:nth-child(2n) td {
+  background: #ffffff;
+}
+table.sortable tbody tr:nth-child(2n+1) td {
+  background: #ecf0f1;
+}
 
 table { 
     width: 100%; /* Ensure the table takes full width of its container */
@@ -174,7 +185,11 @@ background-color: white;
         <a class="navbar-item" href="/">
           Home
         </a>
-    
+
+	{% if minifig_list | length > 0 %}
+	<a class="navbar-item" href="#minifigs">Jump2Figs</a>
+	{% endif %}    
+
         <a class="navbar-item hidden-desktop" id="expand-button">
           Expand Columns
         </a> 
