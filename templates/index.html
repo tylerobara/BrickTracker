@@ -285,9 +285,9 @@
 		    {% for file in files %}
 			{% if ns.found is sameas false and file.startswith(i[0]) %}
 
-			<div class="card-footer-item dropdown" style="width:100%">
-			  <div class="dropdown-trigger">
-			    <button class="is-size-6" aria-haspopup="true" aria-controls="dropdown-menu3">
+			<div class="card-footer-item dropdown" style="width:100%;">
+			  <div class="dropdown-trigger" style="width:100%;">
+			    <button class="is-size-6" style="display: flex;width: 100%;justify-content: space-between;" aria-haspopup="true" aria-controls="dropdown-menu3">
 			      <span >Instructions</span>
 			      <span class="icon is-small">
 				<i class="fas fa-angle-down" aria-hidden="true"></i>
@@ -819,11 +819,13 @@ $(".navbar-item").click(function() {
 const dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
 
 if (dropdowns.length > 0) {
-  // For each dropdown, add event handler to open on click.
+  // For each dropdown, add event handler to open/close on click.
   dropdowns.forEach(function(el) {
     el.addEventListener('click', function(e) {
-    closeDropdowns();
+      // Prevent click from propagating to document
       e.stopPropagation();
+
+      // Toggle the 'is-active' class, which will open or close the dropdown
       el.classList.toggle('is-active');
     });
   });
@@ -850,7 +852,6 @@ document.addEventListener('keydown', function (event) {
     closeDropdowns();
   }
 });
-
 
 	</script>
   </body>
