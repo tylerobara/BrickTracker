@@ -287,7 +287,7 @@
 		    {% for file in files %}
 			{% if ns.found is sameas false and file.startswith(i[0]) %}
 
-			<div class="card-footer-item dropdown" style="width:100%;">
+			<div class="card-footer-item dropdown">
 			  <div class="dropdown-trigger" style="width:100%;">
 			    <button class="is-size-6" style="display: flex;width: 100%;justify-content: space-between;" aria-haspopup="true" aria-controls="dropdown-menu3">
 			      <span >Instructions</span>
@@ -299,7 +299,6 @@
 			  <div class="dropdown-menu" id="dropdown-menu3" role="menu">
 			    <div class="dropdown-content">
 				<!-- <a class="js-modal-trigger is-size-6" style="color: #363636;"  data-id="{{ i[0] }}" data-target="modal-inst">Inst.</a> -->
-					{% set ns1 = namespace(count=0) %}	
 				    {% for x in files %}
 				    {% if x.startswith(i[0]) %}
 					 <a href="/files/{{ x }}" class="dropdown-item">{{ x }}</a>
