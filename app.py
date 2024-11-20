@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, jsonify, render_template, Response,url_for
+from flask import Flask, request, redirect, jsonify, render_template, Response,url_for, send_from_directory
 import os
 import json
 from flask_socketio import SocketIO
@@ -21,6 +21,9 @@ app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1)
 socketio = SocketIO(app,cors_allowed_origins=os.getenv("DOMAIN_NAME"))
 count = 0
+
+DIRECTORY = os.path.join(os.getcwd(), 'static', 'instructions')
+
 
 @app.route('/favicon.ico')
 
@@ -66,6 +69,11 @@ def start_task(data):
         thread.start()
 
     #return redirect('/')
+
+def hyphen_split(a):
+    if a.count("-") == 1:
+        return a.split("-")[0]
+    return "-".join(a.split("-", 2)[:2])
 
 @app.route('/delete/<tmp>',methods=['POST', 'GET'])
 def delete(tmp):
@@ -525,7 +533,13 @@ def index():
 
         cursor.close()
         conn.close()
-        return render_template('index.html',set_list=set_list,themes_list=theme_file,missing_list=missing_list)
+
+
+        files = [f for f in os.listdir(DIRECTORY) if f.endswith('.pdf')]
+        #files = [re.match(r'^([\w]+-[\w]+)', f).group() for f in os.listdir(DIRECTORY) if f.endswith('.pdf')]
+        print(files.sort())
+
+        return render_template('index.html',set_list=set_list,themes_list=theme_file,missing_list=missing_list,files=files)
     
     if request.method == 'POST':
         set_num = request.form.get('set_num')
@@ -578,6 +592,14 @@ def index():
         
         
         return ('', 204)
+
+# Route to serve individual files
+@app.route('/files/<path:filename>', methods=['GET'])
+def serve_file(filename):
+    try:
+        return send_from_directory(DIRECTORY, filename)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 404
 
 @app.route('/<tmp>/<u_id>', methods=['GET', 'POST'])
 def inventory(tmp,u_id):
