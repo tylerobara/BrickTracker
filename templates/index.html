@@ -215,6 +215,7 @@
 
 		<div class="column is-half">
 		  <div class="is-size-7">
+			  {% if i[0] in minifigs %} 
 		    <label class="checkbox" >
 				<input type="hidden" id="set_num" value="{{ i[0] }}">
 				<input type="hidden" id="u_id" value="{{ i[11] }}">
@@ -231,6 +232,7 @@
 		      Minifigs Collected
 		    </label>
 		      <br>
+		      {% endif %}
 		      <label class="checkbox" >
 				<input type="hidden" id="set_num" value="{{ i[0] }}">
 				<input type="hidden" id="u_id" value="{{ i[11] }}">
