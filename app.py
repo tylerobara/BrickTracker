@@ -530,6 +530,9 @@ def index():
             except Exception as e:
                 print(e)
 
+        cursor.execute('select distinct set_num from minifigures;')
+        results = cursor.fetchall()
+        minifigs = [list(i)[0] for i in results]
 
         cursor.close()
         conn.close()
@@ -539,7 +542,7 @@ def index():
         #files = [re.match(r'^([\w]+-[\w]+)', f).group() for f in os.listdir(DIRECTORY) if f.endswith('.pdf')]
         print(files.sort())
 
-        return render_template('index.html',set_list=set_list,themes_list=theme_file,missing_list=missing_list,files=files)
+        return render_template('index.html',set_list=set_list,themes_list=theme_file,missing_list=missing_list,files=files,minifigs=minifigs)
     
     if request.method == 'POST':
         set_num = request.form.get('set_num')
