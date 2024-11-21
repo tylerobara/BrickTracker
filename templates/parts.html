@@ -24,22 +24,27 @@ table.sortable tbody tr:nth-child(2n+1) td {
   background: #ecf0f1;
 }
 
-table { 
-    width: 100%; /* Ensure the table takes full width of its container */
-
+@media only screen and (max-width: 480px) {
+    /* horizontal scrollbar for tables if mobile screen */
+	img {
+		margin:0;
+		padding: 0;
+		min-width: 50px;
+		min-height: 50px;
+		display: block !important;
+		width: 50px;
+		height: 50px;
+	}
 }
 
-td {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-wrap: break-word;
-}
+@media only screen and (min-width: 600px) {
+  img {
+	margin:0;
+	padding: 0;
+	width: 50px;
+	height: 50px;
+  }
 
-.name-class {
-  max-width: 300px; 
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 @media only screen and (min-width: 600px) {
@@ -59,70 +64,18 @@ td {
 
 }
 
-
-
-
-
-      /* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-.header {
-width:100%;
-    text-align:center;
-z-index: 99;
-background-color: white;
-}
-
-.content {
-	padding: 16px;
+.name-class {
+  max-width: 200px; 
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 
-.inputContainer {
-	  display: inline-block; /* Display as an inline block */
-	    vertical-align: middle; /* Center vertically within the cell */
-	    width: 120px;
-}
-
-.inputContainer form {
-	margin: 5% auto 5% auto;
-}
-
-.inputField {
-	  display: flex;
-  align-items: center; /* Align items vertically */
-  width: 100%; /* Ensure inputField fills out inputContainer */
-  height: 100%; /* Ensure inputField fills out inputContainer */
-}
-.inputField input {
-	flex: 1;
-	width: 70%;
-	padding: 0px;
-	margin: auto 2.5px auto 2.5px;
-}
-.inputField button {
-	width: 30%;
-	padding: 0px;
-	margin: 0 2.5px 0 2.5px;
-}
-
-.square-button {
-	background-color: white;
-  border: 1px solid #d1d1d1;
-}
 
 
       /* Modal Styles */
-      #lightbox-modal {
+#lightbox-modal {
   display: none;
   position: fixed;
   z-index: 1000;
@@ -144,6 +97,8 @@ background-color: white;
 .lightbox-content {
   max-width: 90%;
   max-height: 90%;
+    height: auto;
+  width: auto;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -213,13 +168,13 @@ background-color: white;
 	</nav>
 	<center>
 	<div class="center-table" >
-		<table id="data" class="table sortable">
+		<table id="data" class="table tablemobile sortable">
 			<thead>
 			  <tr>
 				<th class="sorttable_nosort"></th>
-				<th >id</th>
-				<th >part_num</th>
-				<th >color_id</th>
+				<th >Part Num</th>
+				<th >Color</th>
+				<th class="name-class" >Name</th>
 				<th >element_id</th>
 				<th >total_quantity</th>
 			  </tr>
@@ -228,15 +183,15 @@ background-color: white;
 			  {% for brick in missing_list %}
 				<tr>
 					{% if brick[4] == 'nil' %}
-					<td><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" alt="id: {{ brick[0] }},  color: {{ brick[2] }}, qty: {{ brick[5] }}" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
+					<td style="background-color:#ffffff;" ><img src="{{ '/static/none.jpg' }}" class="lightbox-trigger" alt="id: {{ brick[0] }},  color: {{ brick[3] }}, qty: {{ brick[6] }}" loading="lazy"></td>
 					{% else %}
-					<td><img src="{{ '/static/parts/' + brick[4] + '.jpg' }}" alt="id: {{ brick[0] }},  color: {{ brick[2] }}, qty: {{ brick[5] }}" class="lightbox-trigger" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
+					<td style="background-color:#ffffff;" ><img src="{{ '/static/parts/' + brick[5] + '.jpg' }}" alt="id: {{ brick[0] }},  color: {{ brick[3] }}, qty: {{ brick[6] }}" class="lightbox-trigger" loading="lazy"></td>
 					{% endif %}
-				  <td>{{ brick[0] }}</td>
-				  <td>{{ brick[1] }}</td>
-				  <td>{{ brick[2] }}</td>
-				  <td>{{ brick[3] }}</td>
-				  <td>{{ brick[5] }}</td>			 
+				  <td><a target="_blank" href="https://www.bricklink.com/v2/catalog/catalogitem.page?P={{ brick[1] }}">{{ brick[1] }}</a></td>
+				  <td class="name-class">{{ brick[3] }}</td>
+				  <td>{{ brick[7] }}</td>
+				  <td><a target="_blank" href="https://www.rebrickable.com/elements/{{ brick[4] }}">{{ brick[4] }}</a></td>
+				  <td>{{ brick[6] }}</td>			 
 				</tr>
 			  {% endfor %}
 			</tbody>

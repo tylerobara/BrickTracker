@@ -457,21 +457,21 @@ def missing():
 def parts():
     conn = sqlite3.connect('app.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT id, part_num, color_id, element_id, part_img_url_id, SUM(quantity) AS total_quantity FROM inventory GROUP BY id, part_num, part_img_url_id, color_id, element_id;') 
+    cursor.execute('SELECT id, part_num, color_id, color_name, element_id, part_img_url_id, SUM(quantity) AS total_quantity, name FROM inventory GROUP BY id, part_num, part_img_url_id, color_id, color_name, element_id, name;') 
 
     results = cursor.fetchall()
     missing_list = [list(i) for i in results]
     cursor.close()
     conn.close()
 
-    color_file = np.loadtxt("colors.csv",delimiter=",",dtype="str")
+    #color_file = np.loadtxt("colors.csv",delimiter=",",dtype="str")
 
-    color_dict = {str(code): name for code, name, _, _ in color_file}
+    #color_dict = {str(code): name for code, name, _, _ in color_file}
 
-    for item in missing_list:
-        color_code = str(item[2])
-        if color_code in color_dict:
-            item[2] = color_dict[color_code]
+    #for item in missing_list:
+    #    color_code = str(item[2])
+    #    if color_code in color_dict:
+    #        item[2] = color_dict[color_code]
 
     return render_template('parts.html',missing_list=missing_list)
 
