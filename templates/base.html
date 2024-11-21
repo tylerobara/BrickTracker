@@ -14,13 +14,15 @@
 table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
     content: " \25B4\25BE"
 }
-
-
 table.sortable tbody tr:nth-child(2n) td {
   background: #ffffff;
 }
 table.sortable tbody tr:nth-child(2n+1) td {
   background: #ecf0f1;
+}
+
+.hidden { 
+	display: none;
 }
 
 table { 
@@ -194,6 +196,9 @@ background-color: white;
         <a class="navbar-item hidden-desktop" id="expand-button">
           Expand Columns
         </a> 
+	<a class="navbar-item" id="filter-button">
+	Missing Parts
+	</a>
         
         <a class="navbar-item hidden-desktop js-modal-trigger" data-target="modal-delete-set" >
             Delete
@@ -296,5 +301,73 @@ background-color: white;
     }
   });
 });
+
+/*
+  document.getElementById("filter-button").addEventListener("click", () => {
+  const table = document.getElementById("data");
+  const rows = table.querySelectorAll("tbody tr");
+
+  // Check if any rows are currently hidden
+  const isFiltered = Array.from(rows).some(row => row.classList.contains("hidden"));
+
+  rows.forEach(row => {
+    const inputField = row.querySelector("input#missing");
+    if (inputField) {
+      const inputValue = inputField.value.trim();
+      if (isFiltered) {
+        // If currently filtered, show all rows
+        row.classList.remove("hidden");
+      } else {
+        // If not filtered, hide rows with empty input fields
+        if (inputValue === "") {
+          row.classList.add("hidden");
+        }
+      }
+    }
+  });
+
+  // Update button text based on the state
+  document.getElementById("filter-button").textContent = isFiltered
+    ? "Only Show Missing"
+    : "Show All Parts";
+});
+
+*/
+document.getElementById("filter-button").addEventListener("click", () => {
+      const tables = document.querySelectorAll("#data"); // Select all tables with the class 'data-table'
+      let isFiltered = false;
+
+      // Check if any row in any table is hidden
+      tables.forEach(table => {
+        const rows = table.querySelectorAll("tbody tr");
+        if (Array.from(rows).some(row => row.classList.contains("hidden"))) {
+          isFiltered = true;
+        }
+      });
+
+      // Apply toggle logic to each table
+      tables.forEach(table => {
+        const rows = table.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+          const inputField = row.querySelector("input#missing");
+          if (inputField) {
+            const inputValue = inputField.value.trim();
+            if (isFiltered) {
+              row.classList.remove("hidden");
+            } else {
+              if (inputValue === "") {
+                row.classList.add("hidden");
+              }
+            }
+          }
+        });
+      });
+
+      // Update button text based on the state
+      document.getElementById("filter-button").textContent = isFiltered
+        ? "Missing Parts"
+        : "All Parts";
+    });
+
   </script>
 </html>
