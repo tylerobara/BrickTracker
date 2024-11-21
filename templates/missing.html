@@ -8,7 +8,73 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+                  <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 <style>
+
+
+
+table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
+    content: " \25B4\25BE"
+}
+
+
+table.sortable tbody tr:nth-child(2n) td {
+  background: #ffffff;
+}
+table.sortable tbody tr:nth-child(2n+1) td {
+  background: #ecf0f1;
+}
+
+
+@media only screen and (max-width: 480px) {
+    /* horizontal scrollbar for tables if mobile screen */
+	img {
+		margin:0;
+		padding: 0;
+		min-width: 50px;
+		min-height: 50px;
+		display: block !important;
+		width: 50px;
+		height: 50px;
+	}
+}
+
+@media only screen and (min-width: 600px) {
+  img {
+	margin:0;
+	padding: 0;
+	width: 50px;
+	height: 50px;
+  }
+
+}
+
+@media only screen and (min-width: 600px) {
+
+  .hidden-desktop {
+    display: none;
+  }
+
+}
+
+
+@media only screen and (max-width: 480px) {
+    /* horizontal scrollbar for tables if mobile screen */
+    .hidden-mobile {
+  	display: none;
+    }
+
+}
+
+.name-class {
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+
     /* Modal Styles */
       #lightbox-modal {
   display: none;
@@ -32,6 +98,9 @@
 .lightbox-content {
   max-width: 90%;
   max-height: 90%;
+      height: auto;
+  width: auto;
+
   position: absolute;
   top: 50%;
   left: 50%;
@@ -97,14 +166,14 @@
 	</nav>
 	<center>
 	<div class="center-table" >
-		<table id="data" class="table">
+		<table id="data" class="table sortable tablemobile">
 			<thead>
 			  <tr>
-				<th ></th>
-				<th >part_num</th>
-				<th >color</th>
-				<th >element_id</th>
-				<th >total_quantity</th>
+				<th class="sorttable_nosort"></th>
+				<th >Part Num</th>
+				<th >Color</th>
+				<th >Element ID</th>
+				<th >Qty</th>
 			  </tr>
 			</thead>
 			<tbody>
@@ -115,10 +184,10 @@
 					{% else %}
 					<td><img src="{{ '/static/parts/' + brick[3] + '.jpg' }}" alt="{{ brick[3] }}" class="lightbox-trigger" style="height: 50px; width: 50px;margin:0;padding: 0;" loading="lazy"></td>
 					{% endif %}
-				  <td>{{ brick[0] }}</td>
+				  <td><a target="_blank" href="https://www.bricklink.com/v2/catalog/catalogitem.page?P={{ brick[0] }}">{{ brick[0] }}</a></td>
 				  <td>{{ brick[1] }}</td>
-				  <td>{{ brick[2] }}</td>
-				  <td>{{ brick[3] }}</td>			 
+				  <td><a target="_blank" href="https://www.rebrickable.com/elements/{{ brick[2] }}">{{ brick[2] }}</a></td>
+				  <td>{{ brick[4] }}</td>			 
 				</tr>
 			  {% endfor %}
 			</tbody>
