@@ -220,18 +220,20 @@ display: none !important;
       <div class="grid-item">
 	      <div class="card">
 	      <div class="columns" style="">
-		<div class="column is-two-thirds" style="text-align: left;">
+		<div class="column is-full" style="text-align: left;">
 		  <p class="is-size-5 searchTitle">
 		    <span style="font-weight: bold;" class="set_id">{{ i[0] }}</span> <span style="font-weight: bold;" class="set_name">{{ i[1] }}</span><br>
 			<a class="is-size-7 set_theme" style="color: #363636;">{{ i[3] }}</a> <a class="is-size-7" style="color: #363636;"> (<span class='set_year'>{{ i[2] }}</span>)</a>
+			<span></span>
+			<a class="is-size-5" style="color: #363636;float:right;"><b>Parts:</b> {{ i[4] }}</a>
 		  </p>
 		</div>
-		<div class="column" style="text-align: left;">
+		<!--<div class="column" style="text-align: left;">
 		  <div class="is-size-5">
 		    <b>Parts:</b> 
 		    <span class='set_parts'>{{ i[4] }}</span>
 		  </div>
-		</div>
+		</div> -->
 	      </div>
 	      <div class="columns" style="">
 		<div class="column is-half" style="">
@@ -242,7 +244,7 @@ display: none !important;
 		  </figure>
 		</div>
 
-		<div class="column is-half">
+		<div class="column is-half" style="display: flex;align-items: center;">
 		  <div class="is-size-7">
 			  {% if i[0] in minifigs %} 
 		    <label class="checkbox" >
