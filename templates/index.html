@@ -12,6 +12,13 @@
 
       <style>
 
+@media only screen and (max-width: 480px) {
+/* horizontal scrollbar for tables if mobile screen */
+.hidden-mobile {
+display: none !important;
+}
+
+}
 .dropdown-menu {
   width: max-content; /* Remove default width */
   overflow-wrap: break-word;
@@ -94,6 +101,7 @@
     padding: 10px;
   }
 
+
       </style>
   </head>
   <body>
@@ -106,10 +114,16 @@
 			<a class="navbar-item" href="/create">
 				Add Set
 			</a>
-			<a class="navbar-item" href="/missing">
+			<a class="navbar-item hidden-mobile" href="/missing">
 				Missing
 			</a> 
-			<a class="navbar-item" href="/config">
+			<a class="navbar-item hidden-mobile" href="/parts">
+				Parts
+			</a> 
+			<a class="navbar-item hidden-mobile" href="/minifigs">
+				Minifigs
+			</a> 
+			<a class="navbar-item hidden-mobile" href="/config">
 				Config
 			</a>
 			<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
