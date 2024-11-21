@@ -12,6 +12,20 @@
 
       <style>
 
+.dropdown-menu {
+  width: max-content; /* Remove default width */
+  overflow-wrap: break-word;
+}
+  .dropdown.is-right .dropdown-menu {
+  right: 0; /* Align dropdown to the right of the trigger */
+  left: auto;
+}
+
+.dropdown.is-left .dropdown-menu {
+  left: 0; /* Align dropdown to the left of the trigger */
+  right: auto;
+}
+
   .grid-container {
     display: grid;
     /* grid-template-columns: repeat(auto-fit, minmax(10%, 23%)); /* Between 33% and 50% width */
@@ -79,10 +93,11 @@
   .search-container {
     padding: 10px;
   }
+
       </style>
   </head>
   <body>
-	<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+	<nav class="navbar is-dark is-fixed-top is-size-6" role="navigation" aria-label="main navigation">
 		<div class="navbar-brand">
 			<a class="navbar-item" href="/">
 				Home
@@ -267,20 +282,13 @@
 		  </div>
 		</div>
 	      </div>
-		<footer class="card-footer" style="">
-		  <p class="card-footer-item">
+		<footer class="card-footer" style="width:95%;">
+		  <p class="card-footer-item"style="">
 		  <span>
 			<span class="is-size-7">{{ i[11] }}</span>
 			  
 		  </span>
 		  </p>
-
-		  <p class="card-footer-item">
-		  <span>
-			  <a class="is-size-6" style="color: #363636;" href="/{{ i[0] }}/{{ i[11] }}">Inv.</a>
-		  </span>
-		  </p>
-
 
 			{% set ns = namespace(found=false) %}
 
@@ -288,16 +296,15 @@
 			{% if ns.found is sameas false and file.startswith(i[0]) %}
 
 			<div class="card-footer-item dropdown">
-			  <div class="dropdown-trigger" style="width:100%;">
-			    <button class="is-size-6" style="display: flex;width: 100%;justify-content: space-between;" aria-haspopup="true" aria-controls="dropdown-menu3">
-			      <span >Instructions</span>
-			      <span class="icon is-small">
-				<i class="fas fa-angle-down" aria-hidden="true"></i>
-			      </span>
+			  <div class="dropdown-trigger">
+			    <button class="is-size-6" aria-haspopup="true" aria-controls="dropdown-menu3">
+		  <span>
+			  <a class="is-size-6" style="color: #363636;">Inst.</a>
+		  </span>
 			    </button>
 			  </div>
 			  <div class="dropdown-menu" id="dropdown-menu3" role="menu">
-			    <div class="dropdown-content">
+			    <div class="dropdown-content" style="width:max-content;">
 				<!-- <a class="js-modal-trigger is-size-6" style="color: #363636;"  data-id="{{ i[0] }}" data-target="modal-inst">Inst.</a> -->
 				    {% for x in files %}
 				    {% if x.startswith(i[0]) %}
@@ -311,6 +318,13 @@
 			{% set ns.found = true %}
 			{% endif %}
 		    {% endfor %}
+		  <p class="card-footer-item" style="">
+		  <span>
+			  <a class="is-size-6" style="color: #363636;" href="/{{ i[0] }}/{{ i[11] }}">Inv.</a>
+		  </span>
+		  </p>
+
+
 
 		</footer>
 	      </div>
