@@ -8,8 +8,45 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 
 	  <style>
+
+
+table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
+    content: " \25B4\25BE"
+}
+
+
+table.sortable tbody tr:nth-child(2n) td {
+  background: #ffffff;
+}
+table.sortable tbody tr:nth-child(2n+1) td {
+  background: #ecf0f1;
+}
+
+@media only screen and (max-width: 480px) {
+    /* horizontal scrollbar for tables if mobile screen */
+	img {
+		margin:0;
+		padding: 0;
+		display: block;
+	}
+}
+
+@media only screen and (min-width: 600px) {
+  img {
+	margin:0;
+	padding: 0;
+	height: 150px; 
+	width: auto;
+  }
+
+}
+
+		
+
+
 		/* Modal Styles */
 		#lightbox-modal {
   display: none;
@@ -33,6 +70,8 @@
 .lightbox-content {
   max-width: 90%;
   max-height: 90%;
+  height: auto;
+  width: auto;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -98,19 +137,19 @@
 	</nav>
 	<center>
 		<div class="center-table">
-			<table id="data" class="table">
+			<table id="data" class="table sortable tablemobile">
 				<thead>
 					<tr>
-						<th class="fixed-width"></th>
-						<th>fig_num</th>
+						<th class="fixed-width sorttable_nosort"></th>
+						<th>Num.</th>
 						<th>Name</th>
-						<th>total_quantity</th>
+						<th>Qty</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for brick in missing_list %}
 					<tr>
-						<td><img src="{{ '/static/minifigs/' + brick[0] + '.jpg' }}" class="lightbox-trigger" alt="{{ brick[1] }}" style="height: 150px; width: auto;margin:0;padding: 0;" loading="lazy">
+						<td><img src="{{ '/static/minifigs/' + brick[0] + '.jpg' }}" class="lightbox-trigger" alt="{{ brick[1] }}" loading="lazy">
 						</td>
 						<td>{{ brick[0] }}</td>
 						<td>{{ brick[1] }}</td>
