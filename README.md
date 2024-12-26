@@ -61,6 +61,15 @@ docker compose up -d
 - View complete parts inventory in the Parts page
 - View all minifigures in the Minifigures page
 
+### Instructions
+
+Instructions can be added to the `static/instructions` folder. Instructions **must** be named:
+
+- SetNumber.pdf: `10312-1.pdf` or `7001-1.pdf`. Sets with multiple versions (eg. collectible minifigures) use `-1, -2 etc) like `71039-1.pdf` and `71039-2.pdf`.
+- SetNumber-pdf_number.pdf: `10294-1-1.pdf`, `10294-1-2.pdf` and `10294-1-3.pdf` for all three PDFs of the `10294-1` set.
+
+Instructions are not automatically downloaded!
+
 ## Docker Configuration
 
 The application uses two main configuration files:

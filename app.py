@@ -193,7 +193,7 @@ def new_set(set_num):
     # Get inventory and add to SQL
     # >>>>>>>>
     progress(count, total_parts,'Get set inventory')
-    response = json.loads(rebrick.lego.get_set_elements(set_num,page_size=20000).read())
+    response = json.loads(rebrick.lego.get_set_elements(set_num,page_size=500).read())
     count+=1
     total_parts += len(response['results'])
     
