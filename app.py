@@ -508,7 +508,15 @@ def generate_unique_set_unique():
 @app.route('/',methods=['GET','POST'])
 def index():
     set_list = []
-    theme_file = np.loadtxt("themes.csv",delimiter=",",dtype="str")
+    try:
+        theme_file = np.loadtxt("themes.csv",delimiter=",",dtype="str")
+    except: #First time running, no csvs.
+        initialize_database()
+        urls = ["themes","sets","colors"]
+        for i in urls:
+            download_and_unzip("https://cdn.rebrickable.com/media/downloads/"+i+".csv.gz")
+        get_nil_images()
+        return redirect('/create')
 
     if request.method == 'GET':
         

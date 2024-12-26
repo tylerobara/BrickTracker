@@ -23,6 +23,7 @@ A web application for organizing and tracking LEGO sets, parts, and minifigures.
 ```bash
 git clone https://gitea.baerentsen.space/FrederikBaerentsen/LEGOOrganizer.git
 cd LEGOOrganizer
+mkdir static/{sets,instructions,parts}
 ```
 
 2. Create a `.env` file with your configuration:
@@ -30,6 +31,8 @@ cd LEGOOrganizer
 REBRICKABLE_API_KEY=your_api_key_here
 DOMAIN_NAME=https://your.domain.com
 ```
+
+If using locally, set `DOMAIN_NAME` to `http://localhost:3333`.
 
 3. Deploy with Docker Compose:
 ```bash
