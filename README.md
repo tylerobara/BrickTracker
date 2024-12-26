@@ -2,6 +2,8 @@
 
 A web application for organizing and tracking LEGO sets, parts, and minifigures. Uses the Rebrickable API to fetch LEGO data and allows users to track missing pieces and collection status.
 
+> Screenshots at the end of the readme! 
+
 ## Features
 
 - Track multiple LEGO sets with their parts and minifigures
@@ -10,54 +12,6 @@ A web application for organizing and tracking LEGO sets, parts, and minifigures.
 - View parts inventory across sets
 - View minifigures across sets
 - Automatic updates for LEGO data (themes, colors, sets)
-
-## Screenshots
-
-### Front page 
-![](https://xbackbone.baerentsen.space/LaMU8/koLAhiWe94.png/raw)
-
-Search your inventory and sort by theme, year, parts, id, name or sort by missing pieces. If you download instructions as PDF, add them to a specific folder and they show up [under each set](https://xbackbone.baerentsen.space/LaMU8/ZIyIQUdo31.png/raw)
-
-### Inventory
-
-![](https://xbackbone.baerentsen.space/LaMU8/MeXaYuVI44.png/raw)
-
-Filter by color, quantity, name. Add if a piece is missing. Press images to [show them](https://xbackbone.baerentsen.space/LaMU8/FIFOQicE66.png/raw). Filter by only [missing pieces](https://xbackbone.baerentsen.space/LaMU8/LUQeTETA28.png). Minifigures and their parts are listed [at the end](https://xbackbone.baerentsen.space/LaMU8/nEPujImi75.png/raw).
-
-### Missing pieces
-
-![](https://xbackbone.baerentsen.space/LaMU8/YEPEKOsE50.png/raw)
-
-List of all your missing pieces, with links to bricklink and rebrickable. 
-
-### All parts
-
-![](https://xbackbone.baerentsen.space/LaMU8/TApONAkA94.png/raw)
-List of all parts in your inventory.
-
-### Minifigures
-
-![](https://xbackbone.baerentsen.space/LaMU8/RuWoduFU08.png/raw)
-
-List of all minifigures in your inventory and quantity.
-
-### Multiple sets
-
-![](https://xbackbone.baerentsen.space/LaMU8/BUHAYOYe40.png/raw)
-
-Each set is given a unique ID, such that you can have multiple copies of a set with different pieces missing in each copy. Sets can also easily be [deleted](https://xbackbone.baerentsen.space/LaMU8/xeroHupE22.png/raw) from the inventory. 
-
-### Add set
-
-![](https://xbackbone.baerentsen.space/LaMU8/lAlUcOhE38.png/raw)
-
-Sets are added from rebrickable using your own API key. Set numbers are checked against sets.csv from rebrickable and can be updated from the [config page](https://xbackbone.baerentsen.space/LaMU8/lErImaCE12.png/raw). When a set is added, all images from rebrickable are downloaded and stored locally, so if multiple sets contains the same part/color, only one image is downloaded and stored. This also make no calls to rebrickable when just browsing and using the site. Only time rebrickable to used it when up adding a new set. 
-
-### Wishlist
-
-![](https://xbackbone.baerentsen.space/LaMU8/hACAbArO44.png/raw)
-
-Sets are added from rebrickable and again checked against sets.csv. If you can't add a brand new set, consider updating your data from the [`/config` page](https://xbackbone.baerentsen.space/LaMU8/lErImaCE12.png/raw). Press the delete button to remove a set. Known Issue: If multiple sets of the same number is added, they will all be deleted.
 
 ## Prerequisites
 
@@ -155,3 +109,51 @@ Key files:
 - Database is stored in `app.db` (SQLite)
 - LEGO data is cached in CSV files from Rebrickable
 - Images are downloaded from Rebrickable when entering a set and then stored locally.
+
+## Screenshots
+
+### Front page 
+![](https://xbackbone.baerentsen.space/LaMU8/koLAhiWe94.png/raw)
+
+Search your inventory and sort by theme, year, parts, id, name or sort by missing pieces. If you download instructions as PDF, add them to a specific folder and they show up [under each set](https://xbackbone.baerentsen.space/LaMU8/ZIyIQUdo31.png/raw)
+
+### Inventory
+
+![](https://xbackbone.baerentsen.space/LaMU8/MeXaYuVI44.png/raw)
+
+Filter by color, quantity, name. Add if a piece is missing. Press images to [show them](https://xbackbone.baerentsen.space/LaMU8/FIFOQicE66.png/raw). Filter by only [missing pieces](https://xbackbone.baerentsen.space/LaMU8/LUQeTETA28.png). Minifigures and their parts are listed [at the end](https://xbackbone.baerentsen.space/LaMU8/nEPujImi75.png/raw).
+
+### Missing pieces
+
+![](https://xbackbone.baerentsen.space/LaMU8/YEPEKOsE50.png/raw)
+
+List of all your missing pieces, with links to bricklink and rebrickable. 
+
+### All parts
+
+![](https://xbackbone.baerentsen.space/LaMU8/TApONAkA94.png/raw)
+List of all parts in your inventory.
+
+### Minifigures
+
+![](https://xbackbone.baerentsen.space/LaMU8/RuWoduFU08.png/raw)
+
+List of all minifigures in your inventory and quantity.
+
+### Multiple sets
+
+![](https://xbackbone.baerentsen.space/LaMU8/BUHAYOYe40.png/raw)
+
+Each set is given a unique ID, such that you can have multiple copies of a set with different pieces missing in each copy. Sets can also easily be [deleted](https://xbackbone.baerentsen.space/LaMU8/xeroHupE22.png/raw) from the inventory. 
+
+### Add set
+
+![](https://xbackbone.baerentsen.space/LaMU8/lAlUcOhE38.png/raw)
+
+Sets are added from rebrickable using your own API key. Set numbers are checked against sets.csv from rebrickable and can be updated from the [config page](https://xbackbone.baerentsen.space/LaMU8/lErImaCE12.png/raw). When a set is added, all images from rebrickable are downloaded and stored locally, so if multiple sets contains the same part/color, only one image is downloaded and stored. This also make no calls to rebrickable when just browsing and using the site. Only time rebrickable to used it when up adding a new set. 
+
+### Wishlist
+
+![](https://xbackbone.baerentsen.space/LaMU8/hACAbArO44.png/raw)
+
+Sets are added from rebrickable and again checked against sets.csv. If you can't add a brand new set, consider updating your data from the [`/config` page](https://xbackbone.baerentsen.space/LaMU8/lErImaCE12.png/raw). Press the delete button to remove a set. Known Issue: If multiple sets of the same number is added, they will all be deleted.
