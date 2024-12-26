@@ -1,4 +1,4 @@
-# LEGO Organizer
+# BrickTracker
 
 A web application for organizing and tracking LEGO sets, parts, and minifigures. Uses the Rebrickable API to fetch LEGO data and allows users to track missing pieces and collection status.
 
@@ -21,8 +21,8 @@ A web application for organizing and tracking LEGO sets, parts, and minifigures.
 
 1. Clone the repository:
 ```bash
-git clone https://gitea.baerentsen.space/FrederikBaerentsen/LEGOOrganizer.git
-cd LEGOOrganizer
+git clone https://gitea.baerentsen.space/FrederikBaerentsen/BrickTracker.git
+cd BrickTracker
 mkdir static/{sets,instructions,parts}
 ```
 
@@ -65,8 +65,8 @@ The application uses two main configuration files:
 ### docker-compose.yml
 ```yaml
 services:
-  legoorganizer:
-    container_name: LEGOOrganizer
+  bricktracker:
+    container_name: BrickTracker
     restart: unless-stopped
     build: .
     ports:

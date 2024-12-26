@@ -1,6 +1,6 @@
 services:
-  legoorganizer:
-    container_name: LEGOOrganizer
+  bricktracker:
+    container_name: BrickTracker
     restart: unless-stopped
     build: .
     ports:
