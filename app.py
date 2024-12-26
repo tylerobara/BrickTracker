@@ -494,46 +494,56 @@ def wishlist():
     input_value = 'None'
 
     if request.method == 'POST':
-        input_value = request.form.get('inputField')
-        print(input_value)
-    
+        if 'create_submit' in request.form:
+            input_value = request.form.get('inputField')
+            print(input_value)
+        
 
-        input_value = input_value.replace(" ","")
-        if '-' not in input_value:
-            input_value = input_value + '-1'
+            input_value = input_value.replace(" ","")
+            if '-' not in input_value:
+                input_value = input_value + '-1'
 
-        total_set_file = np.genfromtxt("sets.csv",delimiter=",",dtype="str",usecols=(0))
-        if input_value not in total_set_file:
-            print('ERROR: ' + input_value)
-            #return render_template('wishlist.html',error=input_value)
+            total_set_file = np.genfromtxt("sets.csv",delimiter=",",dtype="str",usecols=(0))
+            if input_value not in total_set_file:
+                print('ERROR: ' + input_value)
+                #return render_template('wishlist.html',error=input_value)
 
-        else:
-            set_num = input_value
-            
-            input_value = 'None'
+            else:
+                set_num = input_value
+                
+                input_value = 'None'
+                conn = sqlite3.connect('app.db')
+                cursor = conn.cursor()
+                rb = rebrick.init(os.getenv("REBRICKABLE_API_KEY"))
+                response = json.loads(rebrick.lego.get_set(set_num).read()) 
+                cursor.execute('''INSERT INTO wishlist (
+                    set_num,
+                    name,
+                    year,
+                    theme_id,
+                    num_parts,
+                    set_img_url,
+                    set_url,
+                    last_modified_dt
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ''', (response['set_num'], response['name'], response['year'], response['theme_id'], response['num_parts'],response['set_img_url'],response['set_url'],response['last_modified_dt']))
+                set_img_url = response["set_img_url"]
+                res = requests.get(set_img_url, stream = True)
+                if res.status_code == 200:
+                    with open("./static/sets/"+set_num+".jpg",'wb') as f:
+                        shutil.copyfileobj(res.raw, f)
+                else:
+                    logging.error('set_img_url: ' + set_num)
+
+                conn.commit()
+                conn.close()
+        elif 'add_to_list' in request.form:
+            set_num = request.form.get('set_num')
             conn = sqlite3.connect('app.db')
             cursor = conn.cursor()
-            rb = rebrick.init(os.getenv("REBRICKABLE_API_KEY"))
-            response = json.loads(rebrick.lego.get_set(set_num).read()) 
-            cursor.execute('''INSERT INTO wishlist (
-                set_num,
-                name,
-                year,
-                theme_id,
-                num_parts,
-                set_img_url,
-                set_url,
-                last_modified_dt
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ''', (response['set_num'], response['name'], response['year'], response['theme_id'], response['num_parts'],response['set_img_url'],response['set_url'],response['last_modified_dt']))
-            set_img_url = response["set_img_url"]
-            res = requests.get(set_img_url, stream = True)
-            if res.status_code == 200:
-                with open("./static/sets/"+set_num+".jpg",'wb') as f:
-                    shutil.copyfileobj(res.raw, f)
-            else:
-                logging.error('set_img_url: ' + set_num)
 
+            cursor.execute('DELETE FROM wishlist where set_num="' +set_num+ '";')
             conn.commit()
+            cursor.close()
             conn.close()
 
     conn = sqlite3.connect('app.db')

@@ -3,7 +3,7 @@
 
 
   <head>
-      <title>{{ tmp }} - {{ title }}</title>
+      <title>Withlist</title>
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1.0">    <!-- CSS Reset -->
     <link
       rel="stylesheet"
@@ -217,7 +217,7 @@ background-color: white;
           </div>
           <div class="field">
             <div class="control">
-              <button id="submitButton" class="button is-primary" type="submit">Submit</button>
+              <button id="submitButton" class="button is-primary" type="submit" name="create_submit">Submit</button>
             </div>
           </div>
         </form>
@@ -229,11 +229,12 @@ background-color: white;
 	<table id="data" class="table tablemobile sortable">
     <thead>
       <tr>
-        <th></th>
-        <th style="text-align:center;margin:0px;" class="fixed-width hidden-mobile">ID</th>
-        <th class="fixed-width hidden-mobile">Name</th>
-	<th style="text-align: center;" class="fixed-width">Year</th>
-	<th style="text-align: center;" class="fixed-width">Parts</th>
+        <th class="fixed-width sorttable_nosort"></th>
+        <th style="text-align:center;margin:0px;" class="fixed-width">ID</th>
+        <th class="fixed-width">Name</th>
+	<th style="text-align: center;" class="fixed-width hidden-mobile">Year</th>
+	<th style="text-align: center;" class="fixed-width hidden-mobile">Parts</th>
+	<th style="text-align: center;" class="sorttable_nosort">Delete</th>
       </tr>
     </thead>
     <tbody> <!-- set_num|name|year|theme_id|num_parts|set_img_url|set_url|last_modified_dt -->
@@ -242,8 +243,14 @@ background-color: white;
 	  <td><img src="{{ '/static/sets/' + sets[0] + '.jpg' }}" class="lightbox-trigger" style="height: 50px; width: auto;"></td>
 	  <td  style="text-align:center;margin:0px;">{{ sets[0] }}</td>
 	  <td>{{ sets[1] }}</td>
-	  <td style="text-align:center;">{{ sets[2] }}</td>
-	  <td style="text-align:center;">{{ sets[4] }}</td>
+	  <td style="text-align:center;" class="hidden-mobile">{{ sets[2] }}</td>
+	  <td style="text-align:center;" class="hidden-mobile">{{ sets[4] }}</td>
+	  <td style="text-align:center;">
+            <form method="POST" style="margin:0">
+              <input type="hidden" name="set_num" value="{{ sets[0] }}">
+              <button type="submit" class="btn btn-primary" name="add_to_list">Delete</button>
+            </form>
+          </td>
 	</tr>
 	{% endfor %}
     </tbody>
