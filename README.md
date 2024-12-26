@@ -12,6 +12,7 @@ A web application for organizing and tracking LEGO sets, parts, and minifigures.
 - View parts inventory across sets
 - View minifigures across sets
 - Automatic updates for LEGO data (themes, colors, sets)
+- Wishlist to keep track of what to buy
 
 ## Prerequisites
 
