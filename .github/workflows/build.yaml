@@ -1,5 +1,4 @@
-name: Build and push Nginx image
-
+name: Build and push image
 on:
   push:
     # Publish semver tags as releases.
@@ -13,7 +12,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-db:
+  build:
     runs-on: ubuntu-latest
 
     permissions:
@@ -54,7 +53,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: docker/nginx
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }} # Don't push on PR
           tags: ${{ steps.meta.outputs.tags }}
