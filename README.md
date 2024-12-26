@@ -41,9 +41,7 @@ docker compose up -d
 
 4. Access the web interface at `http://localhost:3333`
 
-5. Go to the Config page and:
-   - Click "Update local data" to download latest LEGO data
-   - Click "Create Database" to initialize the database
+5. The database is created, csv files are downloaded and you will be redirected to the `/create` page for inputting a set number.
 
 ## Usage
 
@@ -55,6 +53,7 @@ docker compose up -d
 ### Managing Sets
 - Mark sets as checked/collected using the checkboxes
 - Track missing pieces by entering quantities in the parts table
+    - Note, the checkbox for missing pieces is updated automatically, if the set has missing pieces. It cannot be manually checked off.
 - View all missing pieces across sets in the Missing page
 - View complete parts inventory in the Parts page
 - View all minifigures in the Minifigures page
