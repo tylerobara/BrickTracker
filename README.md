@@ -2,7 +2,7 @@
 
 A web application for organizing and tracking LEGO sets, parts, and minifigures. Uses the Rebrickable API to fetch LEGO data and allows users to track missing pieces and collection status.
 
-> Screenshots at the end of the readme! 
+> **Screenshots at the end of the readme!**
 
 ## Features
 
@@ -109,6 +109,7 @@ Key files:
 - Database is stored in `app.db` (SQLite)
 - LEGO data is cached in CSV files from Rebrickable
 - Images are downloaded from Rebrickable when entering a set and then stored locally.
+- The code is AS-IS! I am not a professional programmer and this has been a hobby projects for a long time. Don't expect anything neat! 
 
 ## Screenshots
 
