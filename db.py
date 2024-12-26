@@ -11,6 +11,17 @@ def initialize_database():
     cursor = conn.cursor()
 
     # Create the required tables if they do not exist
+    cursor.execute('''CREATE TABLE IF NOT EXISTS wishlist (
+        set_num TEXT,
+        name TEXT,
+        year INTEGER,
+        theme_id INTEGER,
+        num_parts INTEGER,
+        set_img_url TEXT,
+        set_url TEXT,
+        last_modified_dt TEXT
+    )''')
+
     cursor.execute('''CREATE TABLE IF NOT EXISTS sets (
         set_num TEXT,
         name TEXT,

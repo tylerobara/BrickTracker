@@ -1,0 +1,348 @@
+<!doctype html>
+<html data-theme="light" class="has-navbar-fixed-top">
+
+
+  <head>
+      <title>{{ tmp }} - {{ title }}</title>
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1.0">    <!-- CSS Reset -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<style>
+
+table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
+    content: " \25B4\25BE"
+}
+table.sortable tbody tr:nth-child(2n) td {
+  background: #ffffff;
+}
+table.sortable tbody tr:nth-child(2n+1) td {
+  background: #ecf0f1;
+}
+
+.hidden { 
+	display: none;
+}
+
+table { 
+    width: 100%; /* Ensure the table takes full width of its container */
+
+}
+
+td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+}
+
+.name-class {
+  max-width: 300px; 
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media only screen and (min-width: 600px) {
+
+  .hidden-desktop {
+    display: none;
+  }
+
+}
+
+
+@media only screen and (max-width: 480px) {
+    /* horizontal scrollbar for tables if mobile screen */
+    .hidden-mobile {
+  	display: none;
+    }
+
+}
+
+
+
+
+
+      /* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.header {
+width:100%;
+    text-align:center;
+z-index: 99;
+background-color: white;
+}
+
+.content {
+	padding: 16px;
+}
+
+
+.inputContainer {
+	  display: inline-block; /* Display as an inline block */
+	    vertical-align: middle; /* Center vertically within the cell */
+	    width: 120px;
+}
+
+.inputContainer form {
+	margin: 5% auto 5% auto;
+}
+
+.inputField {
+	  display: flex;
+  align-items: center; /* Align items vertically */
+  width: 100%; /* Ensure inputField fills out inputContainer */
+  height: 100%; /* Ensure inputField fills out inputContainer */
+}
+.inputField input {
+	flex: 1;
+	width: 70%;
+	padding: 0px;
+	margin: auto 2.5px auto 2.5px;
+}
+.inputField button {
+	width: 30%;
+	padding: 0px;
+	margin: 0 2.5px 0 2.5px;
+}
+
+.square-button {
+	background-color: white;
+  border: 1px solid #d1d1d1;
+}
+
+
+      /* Modal Styles */
+      #lightbox-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 50px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.lightbox-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+
+
+.lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#lightbox-text {
+  position: absolute;
+  bottom: 20px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.5); /* Adjust background color and opacity */
+  color: white;
+  text-align: center;
+}
+
+
+#lightbox-modal .close {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  font-size: 50px;
+  color: white;
+  cursor: pointer;
+}
+
+#lightbox-modal img {
+  display: block;
+  margin: 0 auto;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+</style>
+      
+
+</head>
+  <body>
+<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          Home
+        </a>
+    
+      </div>
+      
+      <div id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+    
+        </div>
+    
+        <div class="navbar-end">
+              
+        </div>
+      </div>
+    </nav>    
+    <section class="section">
+	          <div class="container">
+
+	<form id="createForm" action="/wishlist" method="POST">
+          <div class="field">
+            <label class="label" for="inputField">Input:</label>
+            <div class="control">
+              <input class="input" type="text" id="inputField" name="inputField">
+            </div>
+          </div>
+          <div class="field">
+            <div class="control">
+              <button id="submitButton" class="button is-primary" type="submit">Submit</button>
+            </div>
+          </div>
+        </form>
+        
+		  </div>
+    </section>
+
+<div class="center-table">
+	<table id="data" class="table tablemobile sortable">
+    <thead>
+      <tr>
+        <th></th>
+        <th style="text-align:center;margin:0px;" class="fixed-width hidden-mobile">ID</th>
+        <th class="fixed-width hidden-mobile">Name</th>
+	<th style="text-align: center;" class="fixed-width">Year</th>
+	<th style="text-align: center;" class="fixed-width">Parts</th>
+      </tr>
+    </thead>
+    <tbody> <!-- set_num|name|year|theme_id|num_parts|set_img_url|set_url|last_modified_dt -->
+      {% for sets in wishlist %}
+        <tr>
+	  <td><img src="{{ '/static/sets/' + sets[0] + '.jpg' }}" class="lightbox-trigger" style="height: 50px; width: auto;"></td>
+	  <td  style="text-align:center;margin:0px;">{{ sets[0] }}</td>
+	  <td>{{ sets[1] }}</td>
+	  <td style="text-align:center;">{{ sets[2] }}</td>
+	  <td style="text-align:center;">{{ sets[4] }}</td>
+	</tr>
+	{% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+    <button class="js-modal-trigger" data-target="modal-js-example" id="modal-js">
+    </button> 
+
+
+
+    <div class="modal" id="modal-js-example">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Cannot add set!</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          Set number does not exists: 
+          <br>
+          <b id="error-code"></b>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <button class="button is-primary">OK</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+    </body>
+
+<script>
+
+  // Event listener for the form submission
+  //document.getElementById("createForm").addEventListener("submit", function (event) {
+  //  event.preventDefault(); // Prevent default form submission
+  //  var inputField = document.getElementById("inputField").value;
+//	  console.log(inputField);
+ // });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const error = "{{ error }}"
+	  console.log("{{ error }}")
+    if (error && error !== 'None') {
+       document.getElementById("modal-js").click();
+    	document.getElementById("error-code").innerHTML = error;
+	document.getElementById("inputField").value = "";
+	            const modal = document.getElementById('modal-js-example');
+	                modal.classList.add('is-active');
+    }
+
+	// Functions to open and close a modal
+    function openModal($el) {
+      $el.classList.add('is-active');
+    }
+
+    function closeModal($el) {
+      $el.classList.remove('is-active');
+    }
+
+    function closeAllModals() {
+      (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+        closeModal($modal);
+      });
+    }
+
+    // Add a click event on buttons to open a specific modal
+    (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+      const modal = $trigger.dataset.target;
+      const $target = document.getElementById(modal);
+
+      $trigger.addEventListener('click', () => {
+        openModal($target);
+      });
+    });
+
+    // Add a click event on various child elements to close the parent modal
+    (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+      const $target = $close.closest('.modal');
+
+      $close.addEventListener('click', () => {
+        closeModal($target);
+      });
+    });
+
+    // Add a keyboard event to close all modals
+    document.addEventListener('keydown', (event) => {
+      if (event.key === "Escape") {
+        closeAllModals();
+      }
+    });
+  });
+    </script>
+
+</html>
+
