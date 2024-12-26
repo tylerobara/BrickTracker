@@ -25,7 +25,7 @@ A web application for organizing and tracking LEGO sets, parts, and minifigures.
 ```bash
 git clone https://gitea.baerentsen.space/FrederikBaerentsen/BrickTracker.git
 cd BrickTracker
-mkdir static/{sets,instructions,parts}
+mkdir static/{sets,instructions,parts,minifigs}
 ```
 
 2. Create a `.env` file with your configuration:
