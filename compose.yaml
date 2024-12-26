@@ -9,8 +9,3 @@ services:
       - .:/app
     env_file:
       - .env
-    networks:
-      - webproxy
-networks:
-  webproxy:
-    external: true
