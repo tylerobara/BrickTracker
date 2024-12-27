@@ -2,10 +2,10 @@ services:
   bricktracker:
     container_name: BrickTracker
     restart: unless-stopped
-    build: .
+    image: ghcr.io/tylerobara/tylerobara/bricktracker:master
     ports:
       - "3333:3333"
     volumes:
-      - .:/app
+      - ${STATIC_DIR:-./}.:/app
     env_file:
       - .env
